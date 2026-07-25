@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/*
+ * Hum-inspired token layer (Hallmark playful genre: warm, organic,
+ * humanist-rounded). One anchor hue (coral), everything else is a
+ * chroma-tinted neutral — no pure #000/#fff, no default Tailwind gray.
+ */
+:root {
+  /* Paper (surfaces) — warm off-white, never pure white */
+  --color-paper: oklch(98.2% 0.008 70);
+  --color-paper-raised: oklch(96.5% 0.012 70);
+  --color-paper-sunken: oklch(94% 0.014 70);
+
+  /* Ink (text) — warm near-black, never pure black */
+  --color-ink: oklch(23% 0.02 55);
+  --color-ink-muted: oklch(48% 0.02 55);
+  --color-ink-faint: oklch(68% 0.015 65);
+
+  /* Line (borders) */
+  --color-line: oklch(89% 0.012 70);
+  --color-line-strong: oklch(80% 0.015 70);
+
+  /* Accent — single anchor hue, coral. Used sparingly: primary actions,
+     active states, links. Never a background fill for large areas. */
+  --color-accent: oklch(64% 0.19 38);
+  --color-accent-hover: oklch(58% 0.19 38);
+  --color-accent-ink: oklch(99% 0.005 70); /* text on accent fill (L>50 → light-on-dark-ish coral) */
+  --color-accent-wash: oklch(95% 0.03 38); /* faint accent tint for selected rows */
+
+  /* Semantic status (functional, not decorative — kept distinct from accent) */
+  --color-status-indexing: oklch(78% 0.15 85);
+  --color-status-ready: oklch(64% 0.14 145);
+  --color-status-error: oklch(58% 0.19 25);
+
+  /* Radius scale — generous, humanist-rounded (Hum genre) */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
+  --radius-pill: 999px;
+
+  /* Motion — exponential ease-out per Hallmark's motion rule */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@theme inline {
+  --color-paper: var(--color-paper);
+  --color-paper-raised: var(--color-paper-raised);
+  --color-paper-sunken: var(--color-paper-sunken);
+  --color-ink: var(--color-ink);
+  --color-ink-muted: var(--color-ink-muted);
+  --color-ink-faint: var(--color-ink-faint);
+  --color-line: var(--color-line);
+  --color-line-strong: var(--color-line-strong);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-ink: var(--color-accent-ink);
+  --color-accent-wash: var(--color-accent-wash);
+  --color-status-indexing: var(--color-status-indexing);
+  --color-status-ready: var(--color-status-ready);
+  --color-status-error: var(--color-status-error);
+
+  --font-display: var(--font-jakarta);
+  --font-body: var(--font-inter);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-pill: var(--radius-pill);
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+}
+
+* {
+  transition-timing-function: var(--ease-out-expo);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

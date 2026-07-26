@@ -1,20 +1,20 @@
+import { getDocumentProxy, extractText } from "unpdf";
 import { chunkText, RawChunk } from "../chunking";
 
-// pdf-parse v2 exports a PDFParse class (the old v1 callback-style function
-// API is gone). getText() returns per-page text directly, which is exactly
-// what we need to attach a `page` number to each chunk's metadata.
 export async function extractPdf(buffer: Buffer): Promise<RawChunk[]> {
-  const { PDFParse } = await import("pdf-parse");
-  const parser = new PDFParse({ data: buffer });
+  const pdf = await getDocumentProxy(new Uint8Array(buffer));
+  const { text } = await extractText(pdf, { mergePages: false });
+  const chunks: RawChunk[] = [];
+  const textPages = Array.isArray(text) ? text : [text];
 
-  try {
-    const result = await parser.getText();
-    const chunks: RawChunk[] = [];
-    for (const page of result.pages) {
-      chunks.push(...chunkText(page.text, { page: page.num }));
+  for (let i = 0; i < textPages.length; i++) {
+    const pageText = textPages[i];
+    if (pageText && pageText.trim().length > 0) {
+      chunks.push(...chunkText(pageText, { page: i + 1 }));
     }
-    return chunks;
-  } finally {
-    await parser.destroy();
   }
+
+  return chunks;
 }
+
+

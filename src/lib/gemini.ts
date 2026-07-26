@@ -1,98 +1,61 @@
-import { GoogleGenerativeAI, TaskType } from "@google/generative-ai";
+import Groq from "groq-sdk";
+import { pipeline, env } from "@xenova/transformers";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+// Configure Transformers.js for Node server environment
+env.allowLocalModels = false;
+env.useBrowserCache = false;
 
-const EMBED_MODEL = "gemini-embedding-001"; // text-embedding-004 was deprecated
-const LLM_MODEL = "gemini-2.0-flash"; // fast + cheap, good for RAG answers
+export const LLM_MODEL = "llama-3.3-70b-versatile";
+const EMBED_MODEL = "Xenova/bge-small-en-v1.5";
 
-// gemini-embedding-001 outputs 3072 dims natively, but pgvector's ivfflat/hnsw
-// indexes cap out at 2000 dims. The model is trained with Matryoshka
-// Representation Learning, so truncating to the first N dims is a supported,
-// quality-preserving operation (Google's own docs recommend 768/1536/3072) —
-// this isn't a hack. 1536 keeps near-3072 retrieval quality while indexing.
-const EMBED_DIM = 1536;
+class EmbeddingPipeline {
+  static instance: any = null;
 
-const MAX_RETRIES = 5;
-const BASE_DELAY_MS = 1000;
-
-function isRateLimitError(err: any): boolean {
-  const status = err?.status ?? err?.response?.status;
-  const message = String(err?.message ?? "");
-  return status === 429 || message.includes("429") || message.toLowerCase().includes("quota");
-}
-
-async function sleep(ms: number) {
-  return new Promise((r) => setTimeout(r, ms));
-}
-
-// Retries with exponential backoff + jitter on 429/quota errors specifically —
-// other errors (bad input, auth) fail fast instead of masking a real bug.
-async function withRetry<T>(fn: () => Promise<T>, label: string): Promise<T> {
-  let lastErr: any;
-  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-    try {
-      return await fn();
-    } catch (err: any) {
-      lastErr = err;
-      if (!isRateLimitError(err) || attempt === MAX_RETRIES) throw err;
-      const delay = BASE_DELAY_MS * 2 ** attempt + Math.random() * 300;
-      console.warn(`${label}: rate limited, retrying in ${Math.round(delay)}ms (attempt ${attempt + 1})`);
-      await sleep(delay);
+  static async getInstance() {
+    if (this.instance === null) {
+      this.instance = await pipeline("feature-extraction", EMBED_MODEL);
     }
+    return this.instance;
   }
-  throw lastErr;
 }
 
-// Truncates to EMBED_DIM then L2-normalizes. gemini-embedding-001 only
-// auto-normalizes the full 3072-dim output — after truncating ourselves
-// (the @google/generative-ai SDK doesn't expose outputDimensionality),
-// re-normalizing is required or cosine similarity via pgvector skews.
-function truncateAndNormalize(values: number[]): number[] {
-  const truncated = values.slice(0, EMBED_DIM);
-  const magnitude = Math.sqrt(truncated.reduce((sum, v) => sum + v * v, 0));
-  if (magnitude === 0) return truncated;
-  return truncated.map((v) => v / magnitude);
+export function getGroq() {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    throw new Error("GROQ_API_KEY is not configured in .env.local");
+  }
+  return new Groq({ apiKey });
 }
 
 export async function embedText(
   text: string,
-  taskType: TaskType = TaskType.RETRIEVAL_DOCUMENT
+  _taskType?: any
 ): Promise<number[]> {
-  return withRetry(async () => {
-    const model = genAI.getGenerativeModel({ model: EMBED_MODEL });
-    const result = await model.embedContent({
-      content: { role: "user", parts: [{ text }] },
-      taskType,
-    });
-    return truncateAndNormalize(result.embedding.values);
-  }, "embedText");
+  const extractor = await EmbeddingPipeline.getInstance();
+  const output = await extractor(text, { pooling: "mean", normalize: true });
+  return Array.from(output.data as Float32Array);
 }
 
-// Batch embed with rate-limit-aware retry per item. A single chunk that
-// keeps failing after MAX_RETRIES throws — the caller (ingest.ts) marks
-// the whole source as errored rather than silently storing partial data.
 export async function embedBatch(texts: string[]): Promise<number[][]> {
-  const out: number[][] = [];
+  const extractor = await EmbeddingPipeline.getInstance();
+  const embeddings: number[][] = [];
   for (const t of texts) {
-    out.push(await embedText(t, TaskType.RETRIEVAL_DOCUMENT));
-    await sleep(50);
+    const output = await extractor(t, { pooling: "mean", normalize: true });
+    embeddings.push(Array.from(output.data as Float32Array));
   }
-  return out;
+  return embeddings;
 }
 
-export function getLLM() {
-  return genAI.getGenerativeModel({ model: LLM_MODEL });
+export interface ChatTurn {
+  role: "user" | "assistant";
+  content: string;
 }
 
-// Rewrites a follow-up ("what about part 2?") into a standalone question
-// using the recent conversation, so retrieval embeds something searchable
-// instead of a bare pronoun. No-op (returns the question unchanged) when
-// there's no history yet, or if the rewrite call itself fails.
 export async function condenseQuestion(question: string, history: ChatTurn[]): Promise<string> {
   if (history.length === 0) return question;
 
   try {
-    const model = getLLM();
+    const groq = getGroq();
     const recent = history
       .slice(-6)
       .map((h) => `${h.role === "user" ? "User" : "Assistant"}: ${h.content}`)
@@ -108,29 +71,27 @@ User: ${question}
 
 Standalone question:`;
 
-    const result = await withRetry(() => model.generateContent(prompt), "condenseQuestion");
-    const rewritten = result.response.text().trim();
+    const response = await groq.chat.completions.create({
+      model: LLM_MODEL,
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.2,
+      max_tokens: 256,
+    });
+
+    const rewritten = response.choices[0]?.message?.content?.trim();
     return rewritten || question;
-  } catch {
-    return question; // never block the query on a rewrite failure
+  } catch (err) {
+    console.warn("condenseQuestion failed, falling back to original question:", err);
+    return question;
   }
 }
 
-export interface ChatTurn {
-  role: "user" | "assistant";
-  content: string;
-}
-
-// Streaming grounded answer generation. Accepts prior turns so follow-up
-// questions ("what about X instead?") resolve correctly — retrieval itself
-// still runs on the latest question only (the route decides that), but the
-// LLM sees the conversation so it can track pronouns/references across turns.
 export async function* streamAnswer(
   question: string,
   contextChunks: { content: string; metadata: any; source_id: string }[],
   history: ChatTurn[] = []
 ) {
-  const model = getLLM();
+  const groq = getGroq();
 
   const contextBlock = contextChunks
     .map(
@@ -142,7 +103,7 @@ export async function* streamAnswer(
   const historyBlock = history.length
     ? "Conversation so far:\n" +
       history
-        .slice(-6) // last 3 exchanges is plenty of context, keeps prompt small
+        .slice(-6)
         .map((h) => `${h.role === "user" ? "User" : "Assistant"}: ${h.content}`)
         .join("\n") +
       "\n\n"
@@ -160,13 +121,16 @@ Question: ${question}
 
 Answer (with inline [n] citations):`;
 
-  // Only the stream-start call is retried (rate limits show up here, before
-  // any tokens land) — once tokens are flowing we let a mid-stream failure
-  // surface as-is rather than silently restarting a partial answer.
-  const result = await withRetry(() => model.generateContentStream(prompt), "streamAnswer");
+  const stream = await groq.chat.completions.create({
+    model: LLM_MODEL,
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.3,
+    stream: true,
+  });
 
-  for await (const chunk of result.stream) {
-    const text = chunk.text();
+  for await (const chunk of stream) {
+    const text = chunk.choices[0]?.delta?.content;
     if (text) yield text;
   }
 }
+

@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { embedText, streamAnswer, condenseQuestion, ChatTurn } from "@/lib/gemini";
-import { TaskType } from "@google/generative-ai";
 
 export async function POST(req: NextRequest) {
   const { notebookId, question, history } = await req.json();
@@ -17,7 +16,7 @@ export async function POST(req: NextRequest) {
   // follow-ups ("what about the second one?") embed something searchable —
   // the LLM answer still sees the raw question + full recent history.
   const retrievalQuestion = await condenseQuestion(question, chatHistory);
-  const queryEmbedding = await embedText(retrievalQuestion, TaskType.RETRIEVAL_QUERY);
+  const queryEmbedding = await embedText(retrievalQuestion);
 
   // Notebook isolation enforced here via match_notebook_id filter — a
   // chunk from another notebook can never surface in this search.
@@ -41,25 +40,35 @@ export async function POST(req: NextRequest) {
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
-      controller.enqueue(
-        encoder.encode(
-          `event: citations\ndata: ${JSON.stringify(
-            matches.map((m: any, i: number) => ({
-              n: i + 1,
-              source_id: m.source_id,
-              metadata: m.metadata,
-              snippet: m.content.slice(0, 160),
-            }))
-          )}\n\n`
-        )
-      );
+      try {
+        controller.enqueue(
+          encoder.encode(
+            `event: citations\ndata: ${JSON.stringify(
+              matches.map((m: any, i: number) => ({
+                n: i + 1,
+                source_id: m.source_id,
+                metadata: m.metadata,
+                snippet: m.content.slice(0, 160),
+              }))
+            )}\n\n`
+          )
+        );
 
-      for await (const token of streamAnswer(question, matches, chatHistory)) {
-        controller.enqueue(encoder.encode(`event: token\ndata: ${JSON.stringify(token)}\n\n`));
+        for await (const token of streamAnswer(question, matches, chatHistory)) {
+          controller.enqueue(encoder.encode(`event: token\ndata: ${JSON.stringify(token)}\n\n`));
+        }
+
+        controller.enqueue(encoder.encode(`event: done\ndata: {}\n\n`));
+      } catch (err: any) {
+        console.error("Stream generation error:", err);
+        controller.enqueue(
+          encoder.encode(
+            `event: error\ndata: ${JSON.stringify({ error: err?.message || "Generation error" })}\n\n`
+          )
+        );
+      } finally {
+        controller.close();
       }
-
-      controller.enqueue(encoder.encode(`event: done\ndata: {}\n\n`));
-      controller.close();
     },
   });
 

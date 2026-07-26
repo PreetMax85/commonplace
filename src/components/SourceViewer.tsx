@@ -34,6 +34,14 @@ export default function SourceViewer({
 
   if (!data) return <div className="p-5 text-ink-faint text-sm">Loading source...</div>;
 
+  if ((data as any).error || !data.source) {
+    return (
+      <div className="h-full flex items-center justify-center text-ink-faint text-sm p-8 text-center bg-paper-sunken">
+        ⚠️ Source not found or deleted.
+      </div>
+    );
+  }
+
   const { source, chunks, fileUrl } = data;
 
   return (

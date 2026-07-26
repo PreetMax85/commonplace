@@ -1,6 +1,7 @@
 # Notebook RAG — Groq-powered research assistant
 
-[Demo](YOUR_DEMO_VIDEO_URL_HERE)
+### Demo Video:
+[Click here to see the demo video on youtube](YOUR_DEMO_VIDEO_URL_HERE)
 
 Upload PDFs, text, URLs, YouTube videos, and transcripts into isolated notebooks, ask questions, and get grounded, streamed answers with clickable citations that jump to the exact page, timestamp, or passage in the source.
 

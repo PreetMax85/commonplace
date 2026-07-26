@@ -113,13 +113,16 @@ export async function* streamAnswer(
 Cite every claim using [n] matching the context block numbers. If the context does not contain
 the answer, say so explicitly — never make up information. Use the prior conversation only to
 resolve references (like "it" or "that video") — never to answer from outside the context.
+Format your answer in markdown: use **bold** for key terms, bullet or numbered lists for
+multi-part answers, and short paragraphs. Keep citations attached to the specific claim they
+support, not bundled at the end.
 
 ${historyBlock}Context:
 ${contextBlock}
 
 Question: ${question}
 
-Answer (with inline [n] citations):`;
+Answer (markdown, with inline [n] citations):`;
 
   const stream = await groq.chat.completions.create({
     model: LLM_MODEL,

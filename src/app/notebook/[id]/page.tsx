@@ -72,7 +72,7 @@ export default function NotebookPage() {
   return (
     <div className="h-screen flex flex-col bg-paper">
       {/* Header */}
-      <header className="border-b border-line px-5 py-3 flex items-center gap-4 shrink-0 bg-paper-raised">
+      <header className="border-b border-line px-5 py-3 flex items-center gap-4 shrink-0 bg-paper-raised/80 backdrop-blur-sm sticky top-0 z-10">
         <Link href="/" className="text-ink-faint hover:text-accent text-sm transition-colors">
           ← Notebooks
         </Link>
@@ -109,7 +109,11 @@ export default function NotebookPage() {
               + Add Source
             </button>
             {sourcesLoading ? (
-              <p className="text-sm text-ink-faint px-2">Loading sources...</p>
+              <div className="space-y-1.5">
+                {[0, 1, 2].map((i) => (
+                  <div key={i} className="h-8 rounded-md bg-paper-sunken animate-pulse" />
+                ))}
+              </div>
             ) : (
               <SourceList
                 sources={sources}

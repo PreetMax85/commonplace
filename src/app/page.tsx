@@ -83,7 +83,11 @@ export default function Home() {
       </div>
 
       {loading ? (
-        <p className="text-ink-faint text-sm">Loading...</p>
+        <ul className="space-y-2.5">
+          {[0, 1, 2].map((i) => (
+            <li key={i} className="border border-line rounded-lg px-4 py-3.5 h-[52px] bg-paper-raised animate-pulse" />
+          ))}
+        </ul>
       ) : notebooks.length === 0 ? (
         <div className="border border-dashed border-line rounded-lg py-10 text-center text-ink-muted text-sm">
           No notebooks yet.

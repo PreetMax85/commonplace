@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface ViewData {
   source: { id: string; type: string; title: string; raw_ref: string };
@@ -16,13 +16,23 @@ export default function SourceViewer({
   metadata?: Record<string, any>;
 }) {
   const [data, setData] = useState<ViewData | null>(null);
+  const highlightRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     if (!sourceId) return;
+    setData(null);
     fetch(`/api/sources/${sourceId}/view`)
       .then((r) => r.json())
       .then(setData);
   }, [sourceId]);
+
+  // Once the cited chunk is on screen, scroll it into the center of the
+  // pane instead of leaving the user to hunt for the highlight themselves.
+  useEffect(() => {
+    if (data && highlightRef.current) {
+      highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [data, metadata]);
 
   if (!sourceId) {
     return (
@@ -32,15 +42,13 @@ export default function SourceViewer({
     );
   }
 
-  if (!data) return <div className="p-5 text-ink-faint text-sm">Loading source...</div>;
-
-  if ((data as any).error || !data.source) {
+  if (!data)
     return (
-      <div className="h-full flex items-center justify-center text-ink-faint text-sm p-8 text-center bg-paper-sunken">
-        ⚠️ Source not found or deleted.
+      <div className="p-5 space-y-3">
+        <div className="h-5 w-2/3 rounded bg-paper-raised animate-pulse" />
+        <div className="h-40 rounded-lg bg-paper-raised animate-pulse" />
       </div>
     );
-  }
 
   const { source, chunks, fileUrl } = data;
 
@@ -75,6 +83,7 @@ export default function SourceViewer({
             return (
               <p
                 key={c.id}
+                ref={isCited ? highlightRef : undefined}
                 className={
                   isCited
                     ? "bg-accent-wash text-ink rounded-md px-2.5 py-1.5 -mx-2.5"

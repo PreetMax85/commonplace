@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Citation {
   n: number;
@@ -25,6 +27,12 @@ export default function ChatPanel({
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to the latest message, including mid-stream as tokens arrive.
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages, streaming]);
 
   async function ask() {
     const question = input.trim();
@@ -100,22 +108,31 @@ export default function ChatPanel({
         {messages.map((m, i) => (
           <div key={i} className={m.role === "user" ? "text-right" : ""}>
             <div
-              className={`inline-block rounded-lg px-4 py-2.5 max-w-[80%] text-sm leading-relaxed ${
+              className={`inline-block rounded-lg px-4 py-2.5 max-w-[80%] text-sm leading-relaxed text-left ${
                 m.role === "user"
                   ? "bg-accent text-accent-ink"
                   : "bg-paper-raised text-ink border border-line"
               }`}
             >
-              {renderWithCitations(m.content, m.citations, onCitationClick)}
+              {m.role === "assistant" ? (
+                <MarkdownAnswer
+                  content={m.content}
+                  citations={m.citations}
+                  onCitationClick={onCitationClick}
+                />
+              ) : (
+                m.content
+              )}
             </div>
           </div>
         ))}
         {streaming && messages[messages.length - 1]?.content === "" && (
           <p className="text-xs text-ink-faint">Thinking...</p>
         )}
+        <div ref={bottomRef} />
       </div>
 
-      <div className="border-t border-line p-3.5 flex gap-2 bg-paper-raised">
+      <div className="border-t border-line p-3.5 flex gap-2 bg-paper-raised/80 backdrop-blur-sm sticky bottom-0">
         <input
           className="border border-line rounded-full px-4 py-2.5 flex-1 text-sm bg-paper text-ink placeholder:text-ink-faint outline-none focus:border-accent focus:ring-2 focus:ring-accent-wash transition-colors"
           placeholder="Type a Query here....."
@@ -135,28 +152,54 @@ export default function ChatPanel({
   );
 }
 
-// Splits assistant text on [n] markers and renders each as a clickable
-// citation button wired to the source viewer.
-function renderWithCitations(
-  text: string,
-  citations: Citation[] | undefined,
-  onClick: (c: Citation) => void
-) {
-  if (!citations || citations.length === 0) return text;
-  const parts = text.split(/(\[\d+\])/g);
-  return parts.map((part, i) => {
-    const match = part.match(/^\[(\d+)\]$/);
-    if (!match) return <span key={i}>{part}</span>;
-    const citation = citations.find((c) => c.n === Number(match[1]));
-    if (!citation) return <span key={i}>{part}</span>;
-    return (
-      <button
-        key={i}
-        className="text-accent underline decoration-accent/40 hover:decoration-accent font-semibold"
-        onClick={() => onClick(citation)}
+// Renders assistant markdown (bold, lists, tables via remark-gfm) while
+// keeping [n] citation markers clickable. We pre-convert "[n]" into a
+// markdown link "[n](citation:n)" before parsing, then intercept links
+// with that scheme in the `a` renderer instead of letting them navigate.
+function MarkdownAnswer({
+  content,
+  citations,
+  onCitationClick,
+}: {
+  content: string;
+  citations: Citation[] | undefined;
+  onCitationClick: (c: Citation) => void;
+}) {
+  const withCitationLinks = citations?.length
+    ? content.replace(/\[(\d+)\]/g, (match, n) =>
+        citations.some((c) => c.n === Number(n)) ? `[${match}](citation:${n})` : match
+      )
+    : content;
+
+  return (
+    <div className="prose-chat">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          a: ({ href, children }) => {
+            if (href?.startsWith("citation:")) {
+              const n = Number(href.replace("citation:", ""));
+              const citation = citations?.find((c) => c.n === n);
+              if (!citation) return <>{children}</>;
+              return (
+                <button
+                  className="text-accent underline decoration-accent/40 hover:decoration-accent font-semibold"
+                  onClick={() => onCitationClick(citation)}
+                >
+                  {children}
+                </button>
+              );
+            }
+            return (
+              <a href={href} target="_blank" rel="noopener noreferrer" className="text-accent underline">
+                {children}
+              </a>
+            );
+          },
+        }}
       >
-        {part}
-      </button>
-    );
-  });
+        {withCitationLinks}
+      </ReactMarkdown>
+    </div>
+  );
 }

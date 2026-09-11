@@ -1,4 +1,4 @@
-# Notebook RAG — Groq-powered research assistant
+# Commonplace
 
 ### Demo Video:
 [Click here to see the demo video on youtube](YOUR_DEMO_VIDEO_URL_HERE)
@@ -15,11 +15,11 @@ Upload PDFs, text, URLs, YouTube videos, and transcripts into isolated notebooks
 
 ## Stack
 
-- **Next.js (App Router)** — single deploy, API routes + frontend together
-- **Supabase Postgres + pgvector** — notebook/source/chunk metadata and vector search
-- **Supabase Storage** — original PDF/VTT files for source viewer
-- **Groq** — `llama-3.3-70b-versatile` for grounded, streamed answers
-- **@xenova/transformers** — local embeddings (`bge-small-en-v1.5`)
+- **Next.js (App Router)**: single deploy, API routes and frontend together
+- **Supabase Postgres + pgvector**: notebook, source, and chunk metadata plus vector search
+- **Supabase Storage**: original PDF/VTT files for the source viewer
+- **Groq**: `llama-3.3-70b-versatile` for question rewriting, grounded streamed answers, and the roadmap
+- **Transformers.js** (`@xenova/transformers`): `bge-small-en-v1.5` embeddings computed in-process, no embedding API
 
 ## Architecture
 
@@ -37,7 +37,7 @@ notebooks (1) ──< sources (many) ──< chunks (many, with embedding vector
 3. Type-specific extractor pulls text + per-segment metadata.
 4. Shared `chunkText()` splits long segments further (~1000 chars, 150 overlap), preserving metadata on every sub-chunk.
 5. Chunks embedded and inserted into `chunks`.
-6. `status → "ready"` (green dot) or `"error"` with message — never silently stuck.
+6. `status → "ready"` (green dot) or `"error"` with message, never silently stuck.
 
 ### Retrieval + answer flow
 
@@ -53,10 +53,10 @@ Each question is sent with the prior conversation. A lightweight LLM call rewrit
 
 ### Rate limits
 
-Retries on embedding calls and answer-stream start use exponential backoff on 429/quota errors — other errors fail fast. A chunk that fails after retries marks the whole source as `error`.
+Retries on embedding calls and answer-stream start use exponential backoff on 429/quota errors; other errors fail fast. A chunk that fails after retries marks the whole source as `error`.
 
 ## Known scope cuts
 
-- No auth/multi-user layer — single-tenant by design.
+- No auth/multi-user layer; single-tenant by design.
 - Podcast/voice-over bonus deprioritized in favor of the roadmap bonus (YouTube sources → ordered concept list grounded in transcript timestamps).
 - PDF source viewer jumps to the cited page but doesn't highlight the exact passage (text/VTT/URL sources do highlight).

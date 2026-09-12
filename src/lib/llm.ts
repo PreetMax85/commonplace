@@ -20,12 +20,21 @@ export const LLM_MODEL = "openai/gpt-oss-120b";
 export const REWRITE_MODEL = "openai/gpt-oss-20b";
 const EMBED_MODEL = "Xenova/bge-small-en-v1.5";
 
-class EmbeddingPipeline {
-  static instance: any = null;
+// pipeline() returns a union across every task it supports, so the
+// feature-extraction shape is named here to keep the call sites typed.
+type FeatureExtractor = (
+  text: string,
+  options: { pooling: "mean"; normalize: boolean }
+) => Promise<{ data: Float32Array }>;
 
-  static async getInstance() {
+class EmbeddingPipeline {
+  // The in-flight promise is cached, not the resolved pipeline, so two uploads
+  // arriving together share one model download instead of racing to start two.
+  static instance: Promise<FeatureExtractor> | null = null;
+
+  static getInstance(): Promise<FeatureExtractor> {
     if (this.instance === null) {
-      this.instance = await pipeline("feature-extraction", EMBED_MODEL);
+      this.instance = pipeline("feature-extraction", EMBED_MODEL) as Promise<FeatureExtractor>;
     }
     return this.instance;
   }
@@ -36,11 +45,12 @@ export function getGroq() {
   if (!apiKey) {
     throw new Error("GROQ_API_KEY is not configured in .env.local");
   }
-  // The SDK already retries 429s with exponential backoff and obeys the
-  // retry-after header, so the budget is raised rather than reimplemented.
-  // The free tier caps tokens per minute well before requests per minute, so
-  // a burst of questions hits the limit long before the request count does.
-  return new Groq({ apiKey, maxRetries: 3 });
+  // The SDK already retries 429s with backoff and obeys retry-after, so retries
+  // are configured rather than reimplemented. The budget is deliberately small:
+  // retry-after on a rate-limited free tier can be tens of seconds, and the
+  // caller is a person watching an empty chat bubble. One retry absorbs a brief
+  // spike; past that, saying so beats making them wait in silence.
+  return new Groq({ apiKey, maxRetries: 1 });
 }
 
 /**
@@ -50,22 +60,25 @@ export function getGroq() {
  */
 export function describeGroqError(err: unknown): string {
   const status = (err as { status?: number })?.status;
-  if (status === 429) {
+  const message = (err as { message?: string })?.message ?? "";
+  // An error raised once the stream is already flowing carries no status at
+  // all, so the message text is the only thing left to go on.
+  if (status === 429 || /rate.?limit/i.test(message)) {
     return "Groq's free tier is rate limited right now. Wait a few seconds and ask again.";
   }
   if (status === 401 || status === 403) {
     return "Groq rejected the API key. Check GROQ_API_KEY.";
   }
-  return (err as { message?: string })?.message || "Something went wrong generating the answer.";
+  if (status === 400) {
+    return "Groq could not complete this request. Try again with fewer sources.";
+  }
+  return message || "Something went wrong generating the answer.";
 }
 
-export async function embedText(
-  text: string,
-  _taskType?: any
-): Promise<number[]> {
+export async function embedText(text: string): Promise<number[]> {
   const extractor = await EmbeddingPipeline.getInstance();
   const output = await extractor(text, { pooling: "mean", normalize: true });
-  return Array.from(output.data as Float32Array);
+  return Array.from(output.data);
 }
 
 export async function embedBatch(texts: string[]): Promise<number[][]> {
@@ -73,7 +86,7 @@ export async function embedBatch(texts: string[]): Promise<number[][]> {
   const embeddings: number[][] = [];
   for (const t of texts) {
     const output = await extractor(t, { pooling: "mean", normalize: true });
-    embeddings.push(Array.from(output.data as Float32Array));
+    embeddings.push(Array.from(output.data));
   }
   return embeddings;
 }
@@ -109,6 +122,10 @@ Standalone question:`;
       temperature: 0.2,
       reasoning_effort: "low",
       max_completion_tokens: 256,
+    }, {
+      // This call already falls back to the raw question on failure, so waiting
+      // out a rate limit here would only delay the answer for no benefit.
+      maxRetries: 0,
     });
 
     const rewritten = response.choices[0]?.message?.content?.trim();
@@ -162,6 +179,10 @@ Answer (markdown, with inline [n] citations):`;
     messages: [{ role: "user", content: prompt }],
     temperature: 0.3,
     reasoning_effort: "low",
+    // Keep the model's own reasoning out of the token stream. It is hidden by
+    // default today, but the chat renders whatever arrives, so this is declared
+    // rather than assumed.
+    reasoning_format: "hidden",
     stream: true,
   });
 

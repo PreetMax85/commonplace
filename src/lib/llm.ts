@@ -1,9 +1,14 @@
 import Groq from "groq-sdk";
 import { pipeline, env } from "@xenova/transformers";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
-// Configure Transformers.js for Node server environment
+// Configure Transformers.js for Node server environment. The default cache
+// lives inside node_modules, which is read-only on serverless hosts, so the
+// model download is pointed at the one writable directory available there.
 env.allowLocalModels = false;
 env.useBrowserCache = false;
+env.cacheDir = join(tmpdir(), "transformers-cache");
 
 // Groq shut down llama-3.3-70b-versatile on 2026-08-16. gpt-oss-120b is Groq's
 // own recommended replacement; reasoning_effort stays low because answers are

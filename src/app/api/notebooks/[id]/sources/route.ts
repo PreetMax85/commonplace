@@ -1,6 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ingestSource, SourceType } from "@/lib/ingest";
+
+// Embedding a long PDF runs well past a default request, and after() inherits
+// this budget.
+export const maxDuration = 300;
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -61,8 +65,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Fire-and-forget ingestion; client polls GET /sources for status updates.
-  ingestSource({ sourceId: source.id, notebookId, type, fileBuffer, rawText, url });
+  // Ingestion continues after this response is sent, and the client polls
+  // GET /sources for status. On serverless a bare floating promise is not
+  // guaranteed to run once the response is returned, which used to leave
+  // sources stuck on "indexing" forever; after() keeps the function alive.
+  after(async () => {
+    await ingestSource({ sourceId: source.id, notebookId, type, fileBuffer, rawText, url });
+  });
 
   return NextResponse.json(source, { status: 202 });
 }

@@ -5,7 +5,14 @@ import { pipeline, env } from "@xenova/transformers";
 env.allowLocalModels = false;
 env.useBrowserCache = false;
 
-export const LLM_MODEL = "llama-3.3-70b-versatile";
+// Groq shut down llama-3.3-70b-versatile on 2026-08-16. gpt-oss-120b is Groq's
+// own recommended replacement; reasoning_effort stays low because answers are
+// grounded in retrieved context, so long chains of thought only burn the free
+// tier's tokens-per-minute budget and delay the first streamed token.
+export const LLM_MODEL = "openai/gpt-oss-120b";
+// Question rewriting is a short, mechanical task, so it runs on the small model
+// to keep the answer call's share of the rate limit intact.
+export const REWRITE_MODEL = "openai/gpt-oss-20b";
 const EMBED_MODEL = "Xenova/bge-small-en-v1.5";
 
 class EmbeddingPipeline {
@@ -72,10 +79,11 @@ User: ${question}
 Standalone question:`;
 
     const response = await groq.chat.completions.create({
-      model: LLM_MODEL,
+      model: REWRITE_MODEL,
       messages: [{ role: "user", content: prompt }],
       temperature: 0.2,
-      max_tokens: 256,
+      reasoning_effort: "low",
+      max_completion_tokens: 256,
     });
 
     const rewritten = response.choices[0]?.message?.content?.trim();
@@ -128,6 +136,7 @@ Answer (markdown, with inline [n] citations):`;
     model: LLM_MODEL,
     messages: [{ role: "user", content: prompt }],
     temperature: 0.3,
+    reasoning_effort: "low",
     stream: true,
   });
 

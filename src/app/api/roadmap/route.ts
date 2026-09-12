@@ -50,10 +50,10 @@ export async function POST(req: NextRequest) {
     }
 
     const prompt = `You are building a personalized learning roadmap from these video transcripts.
-For each distinct concept taught across the videos, produce a roadmap step in this exact JSON shape:
-{ "steps": [ { "concept": string, "why": string, "source_id": string, "timestamp_start": number, "timestamp_end": number } ] }
-Order steps from foundational to advanced. Ground every step in an actual transcript segment —
-do not invent concepts that aren't in the transcripts. Return ONLY valid JSON, no markdown fences.
+For each distinct concept taught across the videos, produce a roadmap step.
+Order steps from foundational to advanced. Ground every step in an actual transcript segment,
+and never invent concepts that are not in the transcripts. Use the source_id of the video the
+step comes from, and timestamps that fall inside that video's transcript.
 
 Videos:
 ${bySource.map((s) => `### ${s.title} (source_id: ${s.source_id})\n${s.transcript}`).join("\n\n")}
@@ -64,12 +64,42 @@ ${bySource.map((s) => `### ${s.title} (source_id: ${s.source_id})\n${s.transcrip
       model: LLM_MODEL,
       messages: [{ role: "user", content: prompt }],
       temperature: 0.2,
-      response_format: { type: "json_object" },
+      reasoning_effort: "low",
+      // Strict schema means the model cannot emit prose, fences or a stray key,
+      // so the response parses without any clean-up guesswork on our side.
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "roadmap",
+          strict: true,
+          schema: {
+            type: "object",
+            properties: {
+              steps: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    concept: { type: "string" },
+                    why: { type: "string" },
+                    source_id: { type: "string" },
+                    timestamp_start: { type: "number" },
+                    timestamp_end: { type: "number" },
+                  },
+                  required: ["concept", "why", "source_id", "timestamp_start", "timestamp_end"],
+                  additionalProperties: false,
+                },
+              },
+            },
+            required: ["steps"],
+            additionalProperties: false,
+          },
+        },
+      },
     });
 
     const text = response.choices[0]?.message?.content?.trim() || "";
-    const parsed = JSON.parse(text.replace(/^```json|```$/g, "").trim());
-    return NextResponse.json(parsed);
+    return NextResponse.json(JSON.parse(text));
   } catch (err: any) {
     console.error("Roadmap generation error:", err);
     return NextResponse.json(

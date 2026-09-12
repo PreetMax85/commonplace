@@ -34,7 +34,12 @@ export async function POST(req: NextRequest) {
       .in(
         "source_id",
         youtubeSources.map((s) => s.id)
-      );
+      )
+      // Without this the rows come back in no defined order, so the transcript
+      // handed to the model would be a shuffled bag of 30-second windows and
+      // "order these concepts from foundational to advanced" would be asking
+      // it to sequence something it cannot see the sequence of.
+      .order("metadata->timestamp_start", { ascending: true });
 
     const bySource = youtubeSources.map((s) => ({
       title: s.title,
@@ -112,8 +117,19 @@ ${validSources.map((s) => `### ${s.title} (source_id: ${s.source_id})\n${s.trans
       },
     });
 
-    const text = response.choices[0]?.message?.content?.trim() || "";
-    return NextResponse.json(JSON.parse(text));
+    const choice = response.choices[0];
+    const text = choice?.message?.content?.trim();
+    if (!text) {
+      throw new Error("Groq returned an empty roadmap. Try again.");
+    }
+
+    // A strict schema keeps the JSON well formed even when the model runs out
+    // of room, so the parse is safe, but the result is quietly shorter than the
+    // model intended. Say so rather than passing off a cut-off roadmap.
+    return NextResponse.json({
+      ...JSON.parse(text),
+      truncated: choice.finish_reason === "length",
+    });
   } catch (err: any) {
     console.error("Roadmap generation error:", err);
     return NextResponse.json({ error: describeGroqError(err) }, { status: 500 });

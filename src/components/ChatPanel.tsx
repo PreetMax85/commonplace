@@ -89,6 +89,17 @@ export default function ChatPanel({
             copy[copy.length - 1] = { role: "assistant", content: answer, citations };
             return copy;
           });
+        } else if (type === "error") {
+          // Failures after the response headers are sent can only arrive as a
+          // stream event. Without this the bubble just stops, and rate limiting
+          // is the expected failure on a free tier, so silence is the wrong
+          // thing to show. Anything already streamed is kept above the notice.
+          answer += `${answer ? "\n\n" : ""}⚠️ ${data.error}`;
+          setMessages((m) => {
+            const copy = [...m];
+            copy[copy.length - 1] = { role: "assistant", content: answer, citations };
+            return copy;
+          });
         }
       }
     }

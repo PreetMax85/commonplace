@@ -14,7 +14,11 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     .from("chunks")
     .select("id, content, metadata")
     .eq("source_id", id)
-    .order("metadata->chunk_index", { ascending: true });
+    // Ordering by metadata->chunk_index put the viewer in the wrong order for
+    // every source type: it restarts at 0 on each PDF page, so pages
+    // interleaved, and YouTube and VTT chunks never carry it, so their order
+    // was whatever the database happened to return.
+    .order("ordinal", { ascending: true });
 
   let fileUrl: string | null = null;
   if (source.type === "pdf" || source.type === "vtt") {

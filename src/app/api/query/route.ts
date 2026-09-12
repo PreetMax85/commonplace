@@ -47,6 +47,11 @@ export async function POST(req: NextRequest) {
               matches.map((m: any, i: number) => ({
                 n: i + 1,
                 source_id: m.source_id,
+                // The viewer highlights on this. Matching on metadata instead
+                // cannot identify a single chunk: two chunks on one PDF page
+                // share a page number, and overlapping text chunks share
+                // everything but their index.
+                chunk_id: m.id,
                 metadata: m.metadata,
                 snippet: m.content.slice(0, 160),
               }))

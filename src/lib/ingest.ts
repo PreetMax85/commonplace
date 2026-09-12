@@ -22,7 +22,13 @@ interface IngestInput {
 async function setStatus(sourceId: string, status: string, errorMessage?: string) {
   await supabaseAdmin
     .from("sources")
-    .update({ status, error_message: errorMessage ?? null })
+    .update({
+      status,
+      error_message: errorMessage ?? null,
+      // Stamped on every transition so a source that stops progressing can be
+      // told apart from one that is simply slow.
+      updated_at: new Date().toISOString(),
+    })
     .eq("id", sourceId);
 }
 
@@ -80,6 +86,10 @@ export async function ingestSource(input: IngestInput) {
       notebook_id: notebookId,
       content: c.content,
       metadata: c.metadata,
+      // Reading order within the source. Nothing in metadata can play this
+      // role: chunk_index restarts on every PDF page, and the transcript
+      // extractors never set it at all.
+      ordinal: i,
       embedding: embeddings[i],
     }));
 
@@ -90,7 +100,7 @@ export async function ingestSource(input: IngestInput) {
       if (error) throw error;
     }
 
-    const updates: Record<string, any> = { status: "ready" };
+    const updates: Record<string, any> = { status: "ready", updated_at: new Date().toISOString() };
     // pdf/vtt already have raw_ref set to their storage path by the upload
     // route — don't clobber it here.
     if (rawRef !== undefined) updates.raw_ref = rawRef;

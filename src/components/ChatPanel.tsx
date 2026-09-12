@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 interface Citation {
   n: number;
   source_id: string;
+  chunk_id: string;
   metadata: Record<string, any>;
   snippet: string;
 }

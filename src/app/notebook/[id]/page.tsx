@@ -18,6 +18,7 @@ export default function NotebookPage() {
   const [sourcesLoading, setSourcesLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [viewerSourceId, setViewerSourceId] = useState<string | null>(null);
+  const [viewerChunkId, setViewerChunkId] = useState<string | null>(null);
   const [viewerMetadata, setViewerMetadata] = useState<Record<string, any> | undefined>();
 
   const loadSources = useCallback(async () => {
@@ -132,6 +133,7 @@ export default function NotebookPage() {
             onOpenStep={(sourceId, metadata) => {
               setViewerSourceId(sourceId);
               setViewerMetadata(metadata);
+              setViewerChunkId(null);
             }}
           />
         </aside>
@@ -143,13 +145,18 @@ export default function NotebookPage() {
             onCitationClick={(c) => {
               setViewerSourceId(c.source_id);
               setViewerMetadata(c.metadata);
+              setViewerChunkId(c.chunk_id);
             }}
           />
         </section>
 
         {/* Source viewer */}
         <aside className="w-[420px] min-h-0">
-          <SourceViewer sourceId={viewerSourceId} metadata={viewerMetadata} />
+          <SourceViewer
+            sourceId={viewerSourceId}
+            metadata={viewerMetadata}
+            chunkId={viewerChunkId}
+          />
         </aside>
       </div>
 

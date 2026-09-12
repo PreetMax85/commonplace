@@ -11,9 +11,13 @@ interface ViewData {
 export default function SourceViewer({
   sourceId,
   metadata,
+  chunkId,
 }: {
   sourceId: string | null;
   metadata?: Record<string, any>;
+  // Citations identify the exact chunk. Roadmap steps have no chunk to point
+  // at, so they still arrive as metadata alone and match on timestamp below.
+  chunkId?: string | null;
 }) {
   const [data, setData] = useState<ViewData | null>(null);
   const highlightRef = useRef<HTMLParagraphElement>(null);
@@ -32,7 +36,7 @@ export default function SourceViewer({
     if (data && highlightRef.current) {
       highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  }, [data, metadata]);
+  }, [data, metadata, chunkId]);
 
   if (!sourceId) {
     return (
@@ -75,11 +79,11 @@ export default function SourceViewer({
       {(source.type === "text" || source.type === "vtt" || source.type === "url") && (
         <div className="space-y-3 text-sm leading-relaxed text-ink-muted">
           {chunks.map((c) => {
-            const isCited =
-              metadata &&
-              ((metadata.chunk_index !== undefined && c.metadata.chunk_index === metadata.chunk_index) ||
-                (metadata.timestamp_start !== undefined &&
-                  c.metadata.timestamp_start === metadata.timestamp_start));
+            const isCited = chunkId
+              ? c.id === chunkId
+              : metadata !== undefined &&
+                metadata.timestamp_start !== undefined &&
+                c.metadata.timestamp_start === metadata.timestamp_start;
             return (
               <p
                 key={c.id}

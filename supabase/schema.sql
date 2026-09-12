@@ -15,7 +15,8 @@ create table if not exists sources (
   raw_ref text,               -- storage path, url, or youtube video id
   status text not null default 'uploading' check (status in ('uploading','indexing','ready','error')),
   error_message text,
-  created_at timestamptz default now()
+  created_at timestamptz default now(),
+  updated_at timestamptz default now() -- last status change, used to spot stalled indexing
 );
 
 create table if not exists chunks (
@@ -24,6 +25,7 @@ create table if not exists chunks (
   notebook_id uuid references notebooks(id) on delete cascade, -- denormalized for fast filtered search
   content text not null,
   metadata jsonb not null default '{}', -- {page, timestamp_start, timestamp_end, section, chunk_index}
+  ordinal int not null default 0, -- position within the source, assigned at ingest
   embedding vector(384), -- bge-small-en-v1.5, computed locally via Transformers.js
   created_at timestamptz default now()
 );
@@ -36,6 +38,7 @@ create index if not exists chunks_embedding_idx on chunks
   using hnsw (embedding vector_cosine_ops);
 
 create index if not exists chunks_notebook_idx on chunks(notebook_id);
+create index if not exists chunks_source_ordinal_idx on chunks(source_id, ordinal);
 create index if not exists sources_notebook_idx on sources(notebook_id);
 
 -- RPC for filtered vector search (notebook isolation happens here)

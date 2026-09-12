@@ -1,14 +1,14 @@
 # Commonplace
 
 ### Demo Video:
-[Click here to see the demo video on youtube](YOUR_DEMO_VIDEO_URL_HERE)
+[Watch the demo on YouTube](https://youtu.be/jj3FkC2HFJA)
 
 Upload PDFs, text, URLs, YouTube videos, and transcripts into isolated notebooks, ask questions, and get grounded, streamed answers with clickable citations that jump to the exact page, timestamp, or passage in the source.
 
 ## Setup
 
-1. Create a Supabase project. Run `supabase/schema.sql` in the SQL editor.
-2. Create a public **Storage** bucket named `sources` in Supabase.
+1. Create a Supabase project. Run `supabase/schema.sql` in the SQL editor. If the project predates the move to local embeddings, run the files in `supabase/migrations/` instead.
+2. Create a private **Storage** bucket named `sources` in Supabase. The app hands out short-lived signed URLs, so the files never need to be publicly listable.
 3. Copy `.env.example` to `.env.local` and fill in `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `GROQ_API_KEY`.
 4. `npm install`
 5. `npm run dev`
@@ -18,7 +18,7 @@ Upload PDFs, text, URLs, YouTube videos, and transcripts into isolated notebooks
 - **Next.js (App Router)**: single deploy, API routes and frontend together
 - **Supabase Postgres + pgvector**: notebook, source, and chunk metadata plus vector search
 - **Supabase Storage**: original PDF/VTT files for the source viewer
-- **Groq**: `llama-3.3-70b-versatile` for question rewriting, grounded streamed answers, and the roadmap
+- **Groq**: `openai/gpt-oss-120b` for grounded streamed answers and the roadmap, `openai/gpt-oss-20b` for question rewriting
 - **Transformers.js** (`@xenova/transformers`): `bge-small-en-v1.5` embeddings computed in-process, no embedding API
 
 ## Architecture
@@ -37,7 +37,7 @@ notebooks (1) ──< sources (many) ──< chunks (many, with embedding vector
 3. Type-specific extractor pulls text + per-segment metadata.
 4. Shared `chunkText()` splits long segments further (~1000 chars, 150 overlap), preserving metadata on every sub-chunk.
 5. Chunks embedded and inserted into `chunks`.
-6. `status → "ready"` (green dot) or `"error"` with message, never silently stuck.
+6. `status → "ready"` (green dot) or `"error"` with the reason shown on the source. A source that fails partway through has its chunks deleted, so a half-indexed document is never left searchable.
 
 ### Retrieval + answer flow
 
@@ -53,7 +53,7 @@ Each question is sent with the prior conversation. A lightweight LLM call rewrit
 
 ### Rate limits
 
-Retries on embedding calls and answer-stream start use exponential backoff on 429/quota errors; other errors fail fast. A chunk that fails after retries marks the whole source as `error`.
+Embeddings run locally, so indexing is never rate limited and never costs an API call. Only the Groq calls can hit a limit, and the free tier runs out of tokens per minute long before requests per minute: one grounded answer costs roughly 3k of the 8k available. The Groq SDK retries a 429 once, honouring `retry-after`, and past that the reader is told to wait rather than left watching an empty bubble. The roadmap endpoint trims transcripts to a fixed budget so a long video cannot exceed the per-minute limit on its own.
 
 ## Known scope cuts
 

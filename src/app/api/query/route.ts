@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { embedText, streamAnswer, condenseQuestion, ChatTurn } from "@/lib/llm";
+import { embedText, streamAnswer, condenseQuestion, describeGroqError, ChatTurn } from "@/lib/llm";
 
 export async function POST(req: NextRequest) {
   const { notebookId, question, history } = await req.json();
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
         console.error("Stream generation error:", err);
         controller.enqueue(
           encoder.encode(
-            `event: error\ndata: ${JSON.stringify({ error: err?.message || "Generation error" })}\n\n`
+            `event: error\ndata: ${JSON.stringify({ error: describeGroqError(err) })}\n\n`
           )
         );
       } finally {

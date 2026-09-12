@@ -36,7 +36,27 @@ export function getGroq() {
   if (!apiKey) {
     throw new Error("GROQ_API_KEY is not configured in .env.local");
   }
-  return new Groq({ apiKey });
+  // The SDK already retries 429s with exponential backoff and obeys the
+  // retry-after header, so the budget is raised rather than reimplemented.
+  // The free tier caps tokens per minute well before requests per minute, so
+  // a burst of questions hits the limit long before the request count does.
+  return new Groq({ apiKey, maxRetries: 3 });
+}
+
+/**
+ * Turns a Groq failure into something worth showing a reader. Rate limiting is
+ * the expected failure on the free tier, and "429" on its own tells them
+ * nothing about what to do next.
+ */
+export function describeGroqError(err: unknown): string {
+  const status = (err as { status?: number })?.status;
+  if (status === 429) {
+    return "Groq's free tier is rate limited right now. Wait a few seconds and ask again.";
+  }
+  if (status === 401 || status === 403) {
+    return "Groq rejected the API key. Check GROQ_API_KEY.";
+  }
+  return (err as { message?: string })?.message || "Something went wrong generating the answer.";
 }
 
 export async function embedText(

@@ -97,6 +97,11 @@ export async function ingestSource(input: IngestInput) {
     await supabaseAdmin.from("sources").update(updates).eq("id", sourceId);
   } catch (err: any) {
     console.error(`Ingestion failed for source ${sourceId}:`, err);
+    // Chunks go in a batch at a time, so a failure partway through leaves
+    // earlier batches behind. Those orphans would still be searchable and
+    // citable even though the source reads as failed, so a source that errors
+    // is rolled back to holding nothing.
+    await supabaseAdmin.from("chunks").delete().eq("source_id", sourceId);
     await setStatus(sourceId, "error", err.message ?? String(err));
   }
 }

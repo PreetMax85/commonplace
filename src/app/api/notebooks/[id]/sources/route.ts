@@ -6,8 +6,32 @@ import { ingestSource, SourceType } from "@/lib/ingest";
 // this budget.
 export const maxDuration = 300;
 
+// A function that dies mid-ingest, most likely by exhausting maxDuration on a
+// very long document, takes its error handling down with it and leaves the
+// source reading "indexing" forever. There is no background worker on this
+// stack to notice, and this poll is the only thing that runs regularly, so the
+// sweep lives here. The window is generously past maxDuration so that a merely
+// slow ingest is never mistaken for a dead one.
+const STALE_INDEXING_MS = 10 * 60 * 1000;
+
+async function failStalledSources(notebookId: string) {
+  const cutoff = new Date(Date.now() - STALE_INDEXING_MS).toISOString();
+  const { error } = await supabaseAdmin
+    .from("sources")
+    .update({
+      status: "error",
+      error_message: "Indexing stopped unexpectedly. Re-index to try again.",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("notebook_id", notebookId)
+    .in("status", ["uploading", "indexing"])
+    .lt("updated_at", cutoff);
+  if (error) console.error(`Stalled source sweep failed for notebook ${notebookId}:`, error);
+}
+
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  await failStalledSources(id);
   const { data, error } = await supabaseAdmin
     .from("sources")
     .select("*")

@@ -24,20 +24,23 @@ create table if not exists chunks (
   notebook_id uuid references notebooks(id) on delete cascade, -- denormalized for fast filtered search
   content text not null,
   metadata jsonb not null default '{}', -- {page, timestamp_start, timestamp_end, section, chunk_index}
-  embedding vector(1536), -- gemini-embedding-001 truncated to 1536 (native 3072 exceeds pgvector's 2000-dim ivfflat/hnsw index limit)
+  embedding vector(384), -- bge-small-en-v1.5, computed locally via Transformers.js
   created_at timestamptz default now()
 );
 
--- Vector similarity index
+-- Vector similarity index. HNSW rather than ivfflat: an ivfflat index built
+-- before any rows exist picks its centroids from an empty table, and every
+-- later search then probes one badly placed list, so real matches get missed.
+-- HNSW builds incrementally and needs no representative training data.
 create index if not exists chunks_embedding_idx on chunks
-  using ivfflat (embedding vector_cosine_ops) with (lists = 100);
+  using hnsw (embedding vector_cosine_ops);
 
 create index if not exists chunks_notebook_idx on chunks(notebook_id);
 create index if not exists sources_notebook_idx on sources(notebook_id);
 
 -- RPC for filtered vector search (notebook isolation happens here)
 create or replace function match_chunks(
-  query_embedding vector(1536),
+  query_embedding vector(384),
   match_notebook_id uuid,
   match_count int default 8
 )

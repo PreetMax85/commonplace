@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { embedText, streamAnswer, condenseQuestion, ChatTurn } from "@/lib/gemini";
+import { embedText, streamAnswer, condenseQuestion, ChatTurn } from "@/lib/llm";
 
 export async function POST(req: NextRequest) {
   const { notebookId, question, history } = await req.json();

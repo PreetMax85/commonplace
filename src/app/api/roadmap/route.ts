@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { getGroq, LLM_MODEL } from "@/lib/gemini";
+import { getGroq, LLM_MODEL } from "@/lib/llm";
 
 // Bonus feature: given the YouTube sources already ingested into a notebook,
 // ask the LLM to synthesize an ordered concept roadmap, each step pointing

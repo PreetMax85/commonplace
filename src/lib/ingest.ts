@@ -1,5 +1,5 @@
 import { supabaseAdmin } from "./supabase";
-import { embedBatch } from "./gemini";
+import { embedBatch } from "./llm";
 import { extractPdf } from "./extract/pdf";
 import { extractPlainText } from "./extract/text";
 import { extractUrl } from "./extract/url";

@@ -97,12 +97,21 @@ export async function ingestSource(input: IngestInput) {
     await supabaseAdmin.from("sources").update(updates).eq("id", sourceId);
   } catch (err: any) {
     console.error(`Ingestion failed for source ${sourceId}:`, err);
-    // Chunks go in a batch at a time, so a failure partway through leaves
-    // earlier batches behind. Those orphans would still be searchable and
-    // citable even though the source reads as failed, so a source that errors
-    // is rolled back to holding nothing.
-    await supabaseAdmin.from("chunks").delete().eq("source_id", sourceId);
+    // Record the failure first. Cleanup talks to the same database that just
+    // failed, so doing it first risks throwing again and leaving the source
+    // stuck on "indexing" with nothing to explain it.
     await setStatus(sourceId, "error", err.message ?? String(err));
+
+    // Chunks go in a batch at a time, so a failure partway through leaves
+    // earlier batches behind, still searchable and citable under a source that
+    // reads as failed.
+    const { error: cleanupError } = await supabaseAdmin
+      .from("chunks")
+      .delete()
+      .eq("source_id", sourceId);
+    if (cleanupError) {
+      console.error(`Chunk cleanup failed for source ${sourceId}:`, cleanupError);
+    }
   }
 }
 

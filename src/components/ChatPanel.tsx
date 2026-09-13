@@ -168,6 +168,8 @@ export default function ChatPanel({
 // keeping [n] citation markers clickable. We pre-convert "[n]" into a
 // markdown link "[n](citation:n)" before parsing, then intercept links
 // with that scheme in the `a` renderer instead of letting them navigate.
+// gpt-oss often ignores the prompt and cites in its own training format,
+// "【n】" or "【n†L1-L4】", so those are accepted and rewritten as "[n]".
 function MarkdownAnswer({
   content,
   citations,
@@ -178,8 +180,8 @@ function MarkdownAnswer({
   onCitationClick: (c: Citation) => void;
 }) {
   const withCitationLinks = citations?.length
-    ? content.replace(/\[(\d+)\]/g, (match, n) =>
-        citations.some((c) => c.n === Number(n)) ? `[${match}](citation:${n})` : match
+    ? content.replace(/[\[【](\d+)(?:†[^\]】\s]{0,32})?[\]】]/g, (match, n) =>
+        citations.some((c) => c.n === Number(n)) ? `[[${n}]](citation:${n})` : match
       )
     : content;
 

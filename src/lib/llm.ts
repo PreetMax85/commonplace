@@ -160,7 +160,8 @@ export async function* streamAnswer(
     : "";
 
   const prompt = `You are a research assistant. Answer the question using ONLY the context below.
-Cite every claim using [n] matching the context block numbers. If the context does not contain
+Cite every claim using [n] matching the context block numbers, written with plain ASCII square
+brackets exactly like [1] and never as 【1】 or 【1†L1-L4】. If the context does not contain
 the answer, say so explicitly — never make up information. Use the prior conversation only to
 resolve references (like "it" or "that video") — never to answer from outside the context.
 Format your answer in markdown: use **bold** for key terms, bullet or numbered lists for

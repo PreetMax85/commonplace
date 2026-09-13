@@ -7,11 +7,12 @@ Upload PDFs, text, URLs, YouTube videos, and transcripts into isolated notebooks
 
 ## Setup
 
-1. Create a Supabase project. Run `supabase/schema.sql` in the SQL editor. If the project predates the move to local embeddings, run the files in `supabase/migrations/` instead.
+1. Create a Supabase project. Run `supabase/schema.sql` in the SQL editor. For a project created from an older schema, run the files in `supabase/migrations/` in order instead.
 2. Create a private **Storage** bucket named `sources` in Supabase. The app hands out short-lived signed URLs, so the files never need to be publicly listable.
 3. Copy `.env.example` to `.env.local` and fill in `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `GROQ_API_KEY`.
 4. `npm install`
 5. `npm run dev`
+6. Optional: to make a notebook the read-only public demo, run `update notebooks set is_demo = true where id = '<notebook id>';` in the SQL editor.
 
 ## Stack
 
@@ -37,7 +38,7 @@ notebooks (1) ──< sources (many) ──< chunks (many, with embedding vector
 3. Type-specific extractor pulls text + per-segment metadata.
 4. Shared `chunkText()` splits long segments further (~1000 chars, 150 overlap), preserving metadata on every sub-chunk.
 5. Chunks embedded and inserted into `chunks`.
-6. `status → "ready"` (green dot) or `"error"` with the reason shown on the source. A source that fails partway through has its chunks deleted, so a half-indexed document is never left searchable.
+6. `status → "ready"` (green dot) or `"error"` with the reason shown on the source. A source that fails partway through has its chunks deleted, so a half-indexed document is never left searchable. Re-indexing keeps the previous chunks until the new ones are fully written, so a failed re-index leaves the source as it was.
 
 ### Retrieval + answer flow
 
@@ -57,6 +58,6 @@ Embeddings run locally, so indexing is never rate limited and never costs an API
 
 ## Known scope cuts
 
-- No auth/multi-user layer; single-tenant by design.
+- No auth or multi-user layer yet. The public deployment is protected instead: demo notebooks are read-only, uploads and pasted text are capped at 4 MB (Vercel rejects function request bodies over 4.5 MB), and a notebook holds up to 15 sources.
 - Podcast/voice-over bonus deprioritized in favor of the roadmap bonus (YouTube sources → ordered concept list grounded in transcript timestamps).
 - PDF source viewer jumps to the cited page but doesn't highlight the exact passage (text/VTT/URL sources do highlight).

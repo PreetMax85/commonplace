@@ -2,7 +2,6 @@ import { supabaseAdmin } from "./supabase";
 import { embedBatch } from "./llm";
 import { extractPdf } from "./extract/pdf";
 import { extractPlainText } from "./extract/text";
-import { extractUrl } from "./extract/url";
 import { extractYoutube } from "./extract/youtube";
 import { extractVtt } from "./extract/vtt";
 import { RawChunk } from "./chunking";
@@ -63,6 +62,10 @@ export async function ingestSource(input: IngestInput, { replacing = false }: { 
         break;
       case "url": {
         if (!input.url) throw new Error("Missing URL");
+        // Loaded on demand. jsdom is heavy and has already failed to load on
+        // Vercel once; imported at the top, that failure took down listing,
+        // adding and re-indexing for every source type, not just web links.
+        const { extractUrl } = await import("./extract/url");
         const result = await extractUrl(input.url);
         chunks = result.chunks;
         rawRef = input.url;

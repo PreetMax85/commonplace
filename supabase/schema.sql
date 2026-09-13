@@ -4,6 +4,7 @@ create extension if not exists vector;
 create table if not exists notebooks (
   id uuid primary key default gen_random_uuid(),
   name text not null,
+  is_demo boolean not null default false, -- public demo, protected from delete and re-index
   created_at timestamptz default now()
 );
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse, after } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ingestSource, SourceType } from "@/lib/ingest";
 import { isDemoNotebook, demoReadOnlyResponse } from "@/lib/demo";
+import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB, MAX_SOURCES_PER_NOTEBOOK } from "@/lib/limits";
 
 // Embedding a long PDF runs well past a default request, and after() inherits
 // this budget.
@@ -14,6 +15,10 @@ export const maxDuration = 300;
 // sweep lives here. The window is generously past maxDuration so that a merely
 // slow ingest is never mistaken for a dead one.
 const STALE_INDEXING_MS = 10 * 60 * 1000;
+
+function tooLarge() {
+  return NextResponse.json({ error: `Sources can be up to ${MAX_UPLOAD_MB} MB.` }, { status: 413 });
+}
 
 async function failStalledSources(notebookId: string) {
   const cutoff = new Date(Date.now() - STALE_INDEXING_MS).toISOString();
@@ -46,6 +51,26 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: notebookId } = await params;
   if (await isDemoNotebook(notebookId)) return demoReadOnlyResponse();
+
+  // Refuse an oversized body before parsing it into memory, allowing a little
+  // room for the multipart envelope. The header can be absent, so the file and
+  // text checks below still apply.
+  if (Number(req.headers.get("content-length") ?? 0) > MAX_UPLOAD_BYTES + 1024 * 1024) {
+    return tooLarge();
+  }
+
+  const { count, error: countError } = await supabaseAdmin
+    .from("sources")
+    .select("id", { count: "exact", head: true })
+    .eq("notebook_id", notebookId);
+  if (countError) return NextResponse.json({ error: countError.message }, { status: 500 });
+  if ((count ?? 0) >= MAX_SOURCES_PER_NOTEBOOK) {
+    return NextResponse.json(
+      { error: `A notebook can hold up to ${MAX_SOURCES_PER_NOTEBOOK} sources. Remove one to add another.` },
+      { status: 409 }
+    );
+  }
+
   const contentType = req.headers.get("content-type") || "";
 
   let type: SourceType;
@@ -59,6 +84,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     type = form.get("type") as SourceType; // "pdf" or "vtt" (file-based)
     const file = form.get("file") as File | null;
     if (!file) return NextResponse.json({ error: "File required" }, { status: 400 });
+    if (file.size > MAX_UPLOAD_BYTES) return tooLarge();
     title = (form.get("title") as string) || file.name;
     fileBuffer = Buffer.from(await file.arrayBuffer());
     if (type !== "pdf") {
@@ -82,6 +108,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     rawText = body.text;
     url = body.url;
   }
+
+  if (rawText && Buffer.byteLength(rawText) > MAX_UPLOAD_BYTES) return tooLarge();
 
   // Create the source row first so the UI can show "uploading" -> "indexing" immediately.
   const { data: source, error } = await supabaseAdmin

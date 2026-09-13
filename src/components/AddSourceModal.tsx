@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from "@/lib/limits";
 
 type SourceKind = "pdf" | "text" | "url" | "youtube" | "vtt";
 
@@ -41,6 +42,10 @@ export default function AddSourceModal({
     }
     if (kind === "text" && !textValue.trim()) {
       setError("Paste some text first.");
+      return;
+    }
+    if ((kind === "pdf" || kind === "vtt") && file!.size > MAX_UPLOAD_BYTES) {
+      setError(`Files can be up to ${MAX_UPLOAD_MB} MB.`);
       return;
     }
 

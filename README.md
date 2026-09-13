@@ -1,5 +1,7 @@
 # Commonplace
 
+**Live:** [commonplace-lm.vercel.app](https://commonplace-lm.vercel.app). Open the notebook marked Demo to try it without uploading anything.
+
 ### Demo Video:
 [Watch the demo on YouTube](https://youtu.be/jj3FkC2HFJA)
 
@@ -61,3 +63,4 @@ Embeddings run locally, so indexing is never rate limited and never costs an API
 - No auth or multi-user layer yet. The public deployment is protected instead: demo notebooks are read-only, uploads and pasted text are capped at 4 MB (Vercel rejects function request bodies over 4.5 MB), and a notebook holds up to 15 sources.
 - Podcast/voice-over bonus deprioritized in favor of the roadmap bonus (YouTube sources → ordered concept list grounded in transcript timestamps).
 - PDF source viewer jumps to the cited page but doesn't highlight the exact passage (text/VTT/URL sources do highlight).
+- Adding a new YouTube source works locally but not on the deployed site, because YouTube refuses transcript requests from cloud IPs. The demo notebook's videos were indexed locally. Uploading a VTT or SRT transcript works everywhere.

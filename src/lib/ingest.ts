@@ -109,7 +109,14 @@ export async function ingestSource(input: IngestInput, { replacing = false }: { 
       insertedIds.push(...inserted.map((row) => row.id));
     }
 
-    await deleteChunks(previousIds);
+    // Every new chunk is in, so from here the new version stands. If clearing
+    // the old one fails, the leftovers are duplicates the next re-index sweeps
+    // up, which beats rolling back work that already succeeded.
+    try {
+      await deleteChunks(previousIds);
+    } catch (cleanupError) {
+      console.error(`Removing previous chunks failed for source ${sourceId}:`, cleanupError);
+    }
 
     const updates: Record<string, any> = {
       status: "ready",

@@ -34,12 +34,21 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   // this returns and only keeps polling while something is in flight, so a
   // status still reading "ready" here would stop the poll and leave the UI
   // frozen on stale state until a manual refresh.
-  const { error: statusError } = await supabaseAdmin
+  // The flip only claims a source that is not already in flight. Two re-indexes
+  // started together would each read the same old chunks, write a full new
+  // set and delete only the old one, leaving two copies behind. Postgres
+  // re-checks the condition under the row lock, so only one request wins.
+  const { data: claimed, error: statusError } = await supabaseAdmin
     .from("sources")
     .update({ status: "indexing", error_message: null, updated_at: new Date().toISOString() })
-    .eq("id", id);
+    .eq("id", id)
+    .not("status", "in", "(uploading,indexing)")
+    .select("id");
   if (statusError) {
     return NextResponse.json({ error: statusError.message }, { status: 500 });
+  }
+  if (!claimed?.length) {
+    return NextResponse.json({ error: "This source is already being indexed." }, { status: 409 });
   }
 
   // The work itself outlives the response, as it does for a new upload.

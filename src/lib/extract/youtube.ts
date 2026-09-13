@@ -2,6 +2,9 @@ import { YoutubeTranscript, YoutubeTranscriptNotAvailableLanguageError } from "y
 import { RawChunk } from "../chunking";
 
 export function extractYoutubeId(url: string): string {
+  // A YouTube source stores only its video id as raw_ref, and re-index passes
+  // that back in here, so a bare id has to be accepted as well as a URL.
+  if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
   const match = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
   if (!match) throw new Error("Could not parse YouTube video ID from URL");
   return match[1];

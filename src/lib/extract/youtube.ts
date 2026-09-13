@@ -1,4 +1,4 @@
-import { YoutubeTranscript } from "youtube-transcript";
+import { YoutubeTranscript, YoutubeTranscriptNotAvailableLanguageError } from "youtube-transcript";
 import { RawChunk } from "../chunking";
 
 export function extractYoutubeId(url: string): string {
@@ -7,12 +7,27 @@ export function extractYoutubeId(url: string): string {
   return match[1];
 }
 
+// Without a language the library takes the first caption track, which on a
+// widely translated video can be any community translation. Kurzgesagt's
+// "Optimistic Nihilism" came back in Albanian. Ask for English first and only
+// fall back to the default track when the video has no English captions.
+async function fetchPreferringEnglish(videoId: string) {
+  try {
+    return await YoutubeTranscript.fetchTranscript(videoId, { lang: "en" });
+  } catch (err) {
+    if (err instanceof YoutubeTranscriptNotAvailableLanguageError) {
+      return YoutubeTranscript.fetchTranscript(videoId);
+    }
+    throw err;
+  }
+}
+
 // Groups raw transcript entries into ~30s windows so each chunk carries a
 // tight timestamp range — this is what lets the source viewer jump to the
 // exact moment a cited answer came from.
 export async function extractYoutube(url: string): Promise<{ chunks: RawChunk[]; videoId: string }> {
   const videoId = extractYoutubeId(url);
-  const entries = await YoutubeTranscript.fetchTranscript(videoId);
+  const entries = await fetchPreferringEnglish(videoId);
 
   const WINDOW_SECONDS = 30;
   const chunks: RawChunk[] = [];

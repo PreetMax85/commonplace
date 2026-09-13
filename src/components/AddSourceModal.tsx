@@ -48,6 +48,10 @@ export default function AddSourceModal({
       setError(`Files can be up to ${MAX_UPLOAD_MB} MB.`);
       return;
     }
+    if (kind === "text" && new Blob([textValue]).size > MAX_UPLOAD_BYTES) {
+      setError(`Pasted text can be up to ${MAX_UPLOAD_MB} MB.`);
+      return;
+    }
 
     setSubmitting(true);
     setError(null);

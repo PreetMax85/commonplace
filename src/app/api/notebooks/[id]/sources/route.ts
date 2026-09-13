@@ -53,9 +53,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (await isDemoNotebook(notebookId)) return demoReadOnlyResponse();
 
   // Refuse an oversized body before parsing it into memory, allowing a little
-  // room for the multipart envelope. The header can be absent, so the file and
-  // text checks below still apply.
-  if (Number(req.headers.get("content-length") ?? 0) > MAX_UPLOAD_BYTES + 1024 * 1024) {
+  // room for the multipart envelope while staying under Vercel's 4.5 MB body
+  // limit. The header can be absent, so the file and text checks below still apply.
+  if (Number(req.headers.get("content-length") ?? 0) > MAX_UPLOAD_BYTES + 256 * 1024) {
     return tooLarge();
   }
 

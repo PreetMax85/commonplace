@@ -12,6 +12,7 @@ import RoadmapPanel from "@/components/RoadmapPanel";
 export default function NotebookPage() {
   const { id } = useParams<{ id: string }>();
   const [notebookName, setNotebookName] = useState<string | null>(null);
+  const [isDemo, setIsDemo] = useState(false);
   const [renaming, setRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState("");
   const [sources, setSources] = useState<SourceItem[]>([]);
@@ -30,7 +31,10 @@ export default function NotebookPage() {
   useEffect(() => {
     fetch(`/api/notebooks/${id}`)
       .then((r) => r.json())
-      .then((nb) => setNotebookName(nb.name ?? "Untitled"));
+      .then((nb) => {
+        setNotebookName(nb.name ?? "Untitled");
+        setIsDemo(nb.is_demo === true);
+      });
   }, [id]);
 
   useEffect(() => {
@@ -77,7 +81,9 @@ export default function NotebookPage() {
         <Link href="/" className="text-ink-faint hover:text-accent text-sm transition-colors">
           ← Notebooks
         </Link>
-        {renaming ? (
+        {isDemo ? (
+          <span className="font-display font-semibold text-sm text-ink">{notebookName}</span>
+        ) : renaming ? (
           <input
             autoFocus
             className="border border-accent rounded-md px-2 py-1 text-sm font-display font-semibold bg-paper outline-none"
@@ -97,18 +103,30 @@ export default function NotebookPage() {
             {notebookName ?? "Loading..."}
           </button>
         )}
+        {isDemo && (
+          <span className="text-xs text-ink-faint border border-line rounded-full px-2 py-0.5">
+            Demo, read-only
+          </span>
+        )}
       </header>
 
       <div className="flex-1 flex min-h-0">
         {/* Sidebar */}
         <aside className="w-64 border-r border-line flex flex-col bg-paper-raised">
           <div className="flex-1 overflow-y-auto p-3">
-            <button
-              className="border border-line rounded-full py-2.5 mb-4 w-full text-sm font-semibold text-ink hover:border-accent hover:bg-accent-wash transition-colors"
-              onClick={() => setShowAdd(true)}
-            >
-              + Add Source
-            </button>
+            {isDemo ? (
+              <p className="text-xs text-ink-faint mb-4 leading-relaxed">
+                Ask this notebook anything, then click a citation to see where the answer came from.
+                To add your own sources, create a notebook from the home page.
+              </p>
+            ) : (
+              <button
+                className="border border-line rounded-full py-2.5 mb-4 w-full text-sm font-semibold text-ink hover:border-accent hover:bg-accent-wash transition-colors"
+                onClick={() => setShowAdd(true)}
+              >
+                + Add Source
+              </button>
+            )}
             {sourcesLoading ? (
               <div className="space-y-1.5">
                 {[0, 1, 2].map((i) => (
@@ -125,6 +143,7 @@ export default function NotebookPage() {
                 }}
                 onDelete={deleteSource}
                 onReindex={reindexSource}
+                readOnly={isDemo}
               />
             )}
           </div>

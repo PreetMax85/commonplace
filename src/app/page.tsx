@@ -6,6 +6,7 @@ import Link from "next/link";
 interface Notebook {
   id: string;
   name: string;
+  is_demo: boolean;
   created_at: string;
 }
 
@@ -115,19 +116,25 @@ export default function Home() {
                   {nb.name}
                 </Link>
               )}
-              <span className="flex gap-4 text-sm">
-                {renamingId !== nb.id && (
-                  <button className="text-ink-faint hover:text-ink transition-colors" onClick={() => startRename(nb)}>
-                    Rename
+              {nb.is_demo ? (
+                <span className="text-xs text-ink-faint border border-line rounded-full px-2 py-0.5">
+                  Demo, try me
+                </span>
+              ) : (
+                <span className="flex gap-4 text-sm">
+                  {renamingId !== nb.id && (
+                    <button className="text-ink-faint hover:text-ink transition-colors" onClick={() => startRename(nb)}>
+                      Rename
+                    </button>
+                  )}
+                  <button
+                    className="text-ink-faint hover:text-status-error transition-colors"
+                    onClick={() => deleteNotebook(nb.id)}
+                  >
+                    Delete
                   </button>
-                )}
-                <button
-                  className="text-ink-faint hover:text-status-error transition-colors"
-                  onClick={() => deleteNotebook(nb.id)}
-                >
-                  Delete
-                </button>
-              </span>
+                </span>
+              )}
             </li>
           ))}
         </ul>

@@ -17,8 +17,10 @@ export default function SourceList({
   onSelect,
   onDelete,
   onReindex,
+  readOnly = false,
 }: {
   sources: SourceItem[];
+  readOnly?: boolean;
   selectedId: string | null;
   onSelect: (id: string) => void;
   onDelete: (id: string) => Promise<void> | void;
@@ -68,6 +70,7 @@ export default function SourceList({
               <StatusDot status={s.status} />
               <span className="truncate text-ink">{s.title}</span>
             </span>
+            {!readOnly && (
             <span className="flex gap-2 opacity-0 group-hover:opacity-100 shrink-0 transition-opacity">
               {pendingId === s.id ? (
                 <span className="text-xs text-ink-faint animate-pulse">...</span>
@@ -98,6 +101,7 @@ export default function SourceList({
                 </>
               )}
             </span>
+            )}
           </div>
           {s.status === "error" && s.error_message && (
             <p className="text-xs text-status-error px-2.5 pb-1.5 truncate" title={s.error_message}>

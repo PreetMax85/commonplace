@@ -5,6 +5,8 @@ export async function GET() {
   const { data, error } = await supabaseAdmin
     .from("notebooks")
     .select("*")
+    // The demo leads the list so a first-time visitor opens it before anything else.
+    .order("is_demo", { ascending: false })
     .order("created_at", { ascending: false });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data);

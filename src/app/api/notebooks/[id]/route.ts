@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { isDemoNotebook, demoReadOnlyResponse } from "@/lib/demo";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -10,6 +11,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  if (await isDemoNotebook(id)) return demoReadOnlyResponse();
   const { name } = await req.json();
   const { data, error } = await supabaseAdmin
     .from("notebooks")
@@ -23,6 +25,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  if (await isDemoNotebook(id)) return demoReadOnlyResponse();
   // Cascades to sources + chunks via FK on delete cascade.
   const { error } = await supabaseAdmin.from("notebooks").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

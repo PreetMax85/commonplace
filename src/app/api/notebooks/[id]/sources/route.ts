@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse, after } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ingestSource, SourceType } from "@/lib/ingest";
+import { isDemoNotebook, demoReadOnlyResponse } from "@/lib/demo";
 
 // Embedding a long PDF runs well past a default request, and after() inherits
 // this budget.
@@ -44,6 +45,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 // Accepts multipart/form-data for pdf uploads, JSON for text/url/youtube/vtt.
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: notebookId } = await params;
+  if (await isDemoNotebook(notebookId)) return demoReadOnlyResponse();
   const contentType = req.headers.get("content-type") || "";
 
   let type: SourceType;

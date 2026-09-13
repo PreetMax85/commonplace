@@ -103,7 +103,7 @@ export default function SourceList({
             </span>
             )}
           </div>
-          {s.status === "error" && s.error_message && (
+          {s.error_message && (
             <p className="text-xs text-status-error px-2.5 pb-1.5 truncate" title={s.error_message}>
               ⚠ {s.error_message}
             </p>

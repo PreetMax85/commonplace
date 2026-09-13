@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse, after } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { reindexSource } from "@/lib/ingest";
+import { reindexSource, recordFailure } from "@/lib/ingest";
 import { isDemoSource, demoReadOnlyResponse } from "@/lib/demo";
 
 // Re-extracting and re-embedding a source takes as long as the original
@@ -49,16 +49,13 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     } catch (err: any) {
       // ingestSource handles its own failures, so reaching here means the
       // re-index failed before ingestion started, for example a file that is
-      // no longer in Storage.
+      // no longer in Storage. The old chunks are untouched at that point.
       console.error(`Re-index failed for source ${id}:`, err);
-      await supabaseAdmin
-        .from("sources")
-        .update({
-          status: "error",
-          error_message: err?.message ?? String(err),
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", id);
+      const { count } = await supabaseAdmin
+        .from("chunks")
+        .select("id", { count: "exact", head: true })
+        .eq("source_id", id);
+      await recordFailure(id, err?.message ?? String(err), (count ?? 0) > 0);
     }
   });
 

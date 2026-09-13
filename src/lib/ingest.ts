@@ -32,11 +32,19 @@ async function setStatus(sourceId: string, status: string, errorMessage?: string
     .eq("id", sourceId);
 }
 
-export async function ingestSource(input: IngestInput) {
+export async function ingestSource(input: IngestInput, { replacing = false }: { replacing?: boolean } = {}) {
   const { sourceId, notebookId, type } = input;
+  // A re-index writes the new chunks next to the old ones and removes the old
+  // ones only once every new batch is in, so a failed re-index leaves the
+  // source searchable as it was instead of empty. For a moment both sets are
+  // live and a query can see a passage twice, which is the cheaper failure.
+  let previousIds: string[] = [];
+  // What this run has written, so a failure removes its own work and nothing else.
+  const insertedIds: string[] = [];
 
   try {
     await setStatus(sourceId, "indexing");
+    if (replacing) previousIds = await chunkIdsFor(sourceId);
 
     let chunks: RawChunk[] = [];
     let rawRef: string | undefined;
@@ -96,11 +104,18 @@ export async function ingestSource(input: IngestInput) {
     // Insert in batches of 100 to stay under payload limits.
     for (let i = 0; i < rows.length; i += 100) {
       const batch = rows.slice(i, i + 100);
-      const { error } = await supabaseAdmin.from("chunks").insert(batch);
+      const { data: inserted, error } = await supabaseAdmin.from("chunks").insert(batch).select("id");
       if (error) throw error;
+      insertedIds.push(...inserted.map((row) => row.id));
     }
 
-    const updates: Record<string, any> = { status: "ready", updated_at: new Date().toISOString() };
+    await deleteChunks(previousIds);
+
+    const updates: Record<string, any> = {
+      status: "ready",
+      error_message: null,
+      updated_at: new Date().toISOString(),
+    };
     // pdf/vtt already have raw_ref set to their storage path by the upload
     // route — don't clobber it here.
     if (rawRef !== undefined) updates.raw_ref = rawRef;
@@ -110,18 +125,59 @@ export async function ingestSource(input: IngestInput) {
     // Record the failure first. Cleanup talks to the same database that just
     // failed, so doing it first risks throwing again and leaving the source
     // stuck on "indexing" with nothing to explain it.
-    await setStatus(sourceId, "error", err.message ?? String(err));
+    await recordFailure(sourceId, err.message ?? String(err), previousIds.length > 0);
 
     // Chunks go in a batch at a time, so a failure partway through leaves
-    // earlier batches behind, still searchable and citable under a source that
-    // reads as failed.
-    const { error: cleanupError } = await supabaseAdmin
-      .from("chunks")
-      .delete()
-      .eq("source_id", sourceId);
-    if (cleanupError) {
+    // earlier batches behind, still searchable and citable next to whatever
+    // the source held before.
+    try {
+      await deleteChunks(insertedIds);
+    } catch (cleanupError) {
       console.error(`Chunk cleanup failed for source ${sourceId}:`, cleanupError);
     }
+  }
+}
+
+// A failed re-index of a source that still has its previous chunks remains
+// usable, so it reads as ready with a note rather than as broken.
+export async function recordFailure(sourceId: string, message: string, keptPreviousVersion: boolean) {
+  if (!keptPreviousVersion) {
+    await setStatus(sourceId, "error", message);
+    return;
+  }
+  await supabaseAdmin
+    .from("sources")
+    .update({
+      status: "ready",
+      error_message: `Re-index failed, so the previous version is still in use: ${message}`,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", sourceId);
+}
+
+// Pages through the ids, since a select returns at most 1000 rows by default
+// and a long document can run past that.
+async function chunkIdsFor(sourceId: string): Promise<string[]> {
+  const ids: string[] = [];
+  for (let from = 0; ; from += 1000) {
+    const { data, error } = await supabaseAdmin
+      .from("chunks")
+      .select("id")
+      .eq("source_id", sourceId)
+      .order("id")
+      .range(from, from + 999);
+    if (error) throw error;
+    ids.push(...data.map((row) => row.id));
+    if (data.length < 1000) return ids;
+  }
+}
+
+// Deletes in batches, since hundreds of ids in one filter would run past URL
+// length limits on the REST API.
+async function deleteChunks(ids: string[]) {
+  for (let i = 0; i < ids.length; i += 100) {
+    const { error } = await supabaseAdmin.from("chunks").delete().in("id", ids.slice(i, i + 100));
+    if (error) throw error;
   }
 }
 
@@ -137,9 +193,6 @@ export async function reindexSource(sourceId: string) {
     .single();
   if (error || !source) throw new Error("Source not found");
 
-  // Wipe old chunks before re-ingesting.
-  await supabaseAdmin.from("chunks").delete().eq("source_id", sourceId);
-
   switch (source.type as SourceType) {
     case "url":
     case "youtube":
@@ -148,7 +201,7 @@ export async function reindexSource(sourceId: string) {
         notebookId: source.notebook_id,
         type: source.type,
         url: source.raw_ref,
-      });
+      }, { replacing: true });
       break;
 
     case "text":
@@ -158,7 +211,7 @@ export async function reindexSource(sourceId: string) {
         notebookId: source.notebook_id,
         type: "text",
         rawText: source.raw_ref,
-      });
+      }, { replacing: true });
       break;
 
     case "pdf":
@@ -176,7 +229,7 @@ export async function reindexSource(sourceId: string) {
         type: source.type,
         fileBuffer: source.type === "pdf" ? buffer : undefined,
         rawText: source.type === "vtt" ? buffer.toString("utf-8") : undefined,
-      });
+      }, { replacing: true });
       break;
     }
 

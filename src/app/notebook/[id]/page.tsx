@@ -12,7 +12,9 @@ import RoadmapPanel from "@/components/RoadmapPanel";
 export default function NotebookPage() {
   const { id } = useParams<{ id: string }>();
   const [notebookName, setNotebookName] = useState<string | null>(null);
-  const [isDemo, setIsDemo] = useState(false);
+  // Unknown until the notebook loads. Treated as read-only meanwhile, so the
+  // demo never flashes controls that would only answer with a 403.
+  const [isDemo, setIsDemo] = useState<boolean | null>(null);
   const [renaming, setRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState("");
   const [sources, setSources] = useState<SourceItem[]>([]);
@@ -81,8 +83,8 @@ export default function NotebookPage() {
         <Link href="/" className="text-ink-faint hover:text-accent text-sm transition-colors">
           ← Notebooks
         </Link>
-        {isDemo ? (
-          <span className="font-display font-semibold text-sm text-ink">{notebookName}</span>
+        {isDemo !== false ? (
+          <span className="font-display font-semibold text-sm text-ink">{notebookName ?? "Loading..."}</span>
         ) : renaming ? (
           <input
             autoFocus
@@ -114,7 +116,7 @@ export default function NotebookPage() {
         {/* Sidebar */}
         <aside className="w-64 border-r border-line flex flex-col bg-paper-raised">
           <div className="flex-1 overflow-y-auto p-3">
-            {isDemo ? (
+            {isDemo === null ? null : isDemo ? (
               <p className="text-xs text-ink-faint mb-4 leading-relaxed">
                 Ask this notebook anything, then click a citation to see where the answer came from.
                 To add your own sources, create a notebook from the home page.
@@ -143,7 +145,7 @@ export default function NotebookPage() {
                 }}
                 onDelete={deleteSource}
                 onReindex={reindexSource}
-                readOnly={isDemo}
+                readOnly={isDemo !== false}
               />
             )}
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { defaultUrlTransform } from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 interface Citation {
@@ -189,6 +189,10 @@ function MarkdownAnswer({
     <div className="prose-chat">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        // react-markdown blanks any href outside http, https, mailto and a few
+        // others, which turned every citation into an empty link that opened
+        // the app in a new tab. Let the citation scheme through untouched.
+        urlTransform={(url) => (url.startsWith("citation:") ? url : defaultUrlTransform(url))}
         components={{
           a: ({ href, children }) => {
             if (href?.startsWith("citation:")) {

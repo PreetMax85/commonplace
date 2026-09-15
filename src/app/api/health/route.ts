@@ -16,7 +16,12 @@ export async function GET() {
   // The same daily run clears finished rate limit windows. The longest window
   // is a day, so anything older than two days can no longer be counted against.
   const cutoff = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString();
-  const { error: pruneError } = await supabaseAdmin.from("rate_limits").delete().lt("window_start", cutoff);
+  // A refused request is refunded rather than deleted, so a burst of refusals
+  // from new addresses leaves rows at zero. Those count nothing and can go too.
+  const { error: pruneError } = await supabaseAdmin
+    .from("rate_limits")
+    .delete()
+    .or(`window_start.lt.${cutoff},count.lte.0`);
   if (pruneError) console.error("Rate limit prune failed:", pruneError);
 
   return NextResponse.json({ ok: true });

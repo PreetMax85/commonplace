@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { embedText, streamAnswer, condenseQuestion, describeGroqError, ChatTurn } from "@/lib/llm";
+import { enforceRateLimit } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
   const { notebookId, question, history } = await req.json();
@@ -9,6 +10,9 @@ export async function POST(req: NextRequest) {
       status: 400,
     });
   }
+
+  const limited = await enforceRateLimit(req, "query");
+  if (limited) return limited;
 
   const chatHistory: ChatTurn[] = Array.isArray(history) ? history : [];
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { getGroq, LLM_MODEL, describeGroqError } from "@/lib/llm";
+import { enforceRateLimit } from "@/lib/rateLimit";
 
 // Roughly four characters per token. The free tier allows 8k tokens a minute
 // across prompt and completion, so the transcripts are trimmed to leave room
@@ -67,7 +68,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const prompt = `You are building a personalized learning roadmap from these video transcripts.
+    // Counted only once there is something to send, so a notebook without
+    // videos does not use up a visitor's roadmaps.
+    const limited = await enforceRateLimit(req, "roadmap");
+    if (limited) return limited;
+
+    const prompt =`You are building a personalized learning roadmap from these video transcripts.
 For each distinct concept taught across the videos, produce a roadmap step.
 Order steps from foundational to advanced. Ground every step in an actual transcript segment,
 and never invent concepts that are not in the transcripts. Use the source_id of the video the

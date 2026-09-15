@@ -9,7 +9,9 @@ import { supabaseAdmin } from "./supabase";
 // both routes because they draw on the same 8k tokens a minute.
 
 type Scope = "ip" | "site";
-type Rule = { name: string; scope: Scope; windowSeconds: number; limit: number };
+// weight is how many slots one request takes. The counter has no notion of
+// cost, so a weighted rule is simply sent that many times.
+type Rule = { name: string; scope: Scope; windowSeconds: number; limit: number; weight?: number };
 
 const MINUTE = 60;
 const DAY = 24 * 60 * MINUTE;
@@ -26,7 +28,8 @@ const RULES = {
   roadmap: [
     { name: "roadmap:day", scope: "ip", windowSeconds: DAY, limit: 2 },
     { name: "roadmap:day", scope: "site", windowSeconds: DAY, limit: 8 },
-    GROQ_PER_MINUTE,
+    // A roadmap spends about as many tokens as two answers.
+    { ...GROQ_PER_MINUTE, weight: 2 },
   ],
   notebook: [
     { name: "notebook:day", scope: "ip", windowSeconds: DAY, limit: 2 },
@@ -47,11 +50,24 @@ const ACTION_LABELS: Record<RateLimitedAction, string> = {
   source: "adding or re-indexing sources",
 };
 
+// One IPv6 subscriber is normally handed a whole /64, so counting full
+// addresses would give each visitor billions of separate allowances.
+function networkOf(ip: string): string {
+  if (!ip.includes(":")) return ip;
+  const mappedV4 = ip.match(/(\d{1,3}\.){3}\d{1,3}$/);
+  if (mappedV4) return mappedV4[0];
+  const [head, tail] = ip.split("%")[0].split("::");
+  const front = head ? head.split(":") : [];
+  const back = tail ? tail.split(":") : [];
+  const groups = [...front, ...Array(Math.max(0, 8 - front.length - back.length)).fill("0"), ...back];
+  return groups.slice(0, 4).map((g) => parseInt(g || "0", 16).toString(16)).join(":") + "::/64";
+}
+
 // Vercel sets x-forwarded-for itself and drops any value the client sent, so
 // the first entry is the real client address. Only a hash is stored.
 function clientKey(req: Request): string {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  return createHash("sha256").update(ip).digest("hex").slice(0, 24);
+  return createHash("sha256").update(networkOf(ip)).digest("hex").slice(0, 24);
 }
 
 function formatWait(seconds: number): string {
@@ -67,7 +83,7 @@ export async function enforceRateLimit(
   req: Request,
   action: RateLimitedAction
 ): Promise<NextResponse | null> {
-  const rules: Rule[] = RULES[action];
+  const rules: Rule[] = (RULES[action] as Rule[]).flatMap((r) => Array(r.weight ?? 1).fill(r));
   const client = clientKey(req);
   const keys = rules.map((r) => (r.scope === "ip" ? `${r.name}:ip:${client}` : `${r.name}:site`));
 
@@ -84,10 +100,13 @@ export async function enforceRateLimit(
   if (result.allowed) return null;
 
   const retryAfter = Math.max(1, result.retry_after ?? 60);
-  const siteWide = typeof result.blocked_key === "string" && result.blocked_key.endsWith(":site");
-  const message = siteWide
-    ? `The demo is busy right now. Try again in ${formatWait(retryAfter)}.`
-    : `You have reached the limit for ${ACTION_LABELS[action]}. Try again in ${formatWait(retryAfter)}.`;
+  const blockedKey = typeof result.blocked_key === "string" ? result.blocked_key : "";
+  const wait = formatWait(retryAfter);
+  const message = !blockedKey.endsWith(":site")
+    ? `You have reached the limit for ${ACTION_LABELS[action]}. Try again in ${wait}.`
+    : blockedKey.includes(":day:")
+      ? `The demo has used today's shared allowance for ${ACTION_LABELS[action]}. It resets in ${wait}.`
+      : `The demo is busy right now. Try again in ${wait}.`;
 
   return NextResponse.json(
     { error: message },

@@ -12,5 +12,12 @@ export async function GET() {
     console.error("Health check query failed:", error);
     return NextResponse.json({ ok: false }, { status: 503 });
   }
+
+  // The same daily run clears finished rate limit windows. The longest window
+  // is a day, so anything older than two days can no longer be counted against.
+  const cutoff = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString();
+  const { error: pruneError } = await supabaseAdmin.from("rate_limits").delete().lt("window_start", cutoff);
+  if (pruneError) console.error("Rate limit prune failed:", pruneError);
+
   return NextResponse.json({ ok: true });
 }

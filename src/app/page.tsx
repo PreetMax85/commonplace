@@ -16,6 +16,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
+  const [createError, setCreateError] = useState<string | null>(null);
 
   async function load() {
     const res = await fetch("/api/notebooks");
@@ -29,11 +30,17 @@ export default function Home() {
 
   async function createNotebook() {
     if (!newName.trim()) return;
-    await fetch("/api/notebooks", {
+    setCreateError(null);
+    const res = await fetch("/api/notebooks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: newName }),
     });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      setCreateError(body.error ?? "Could not create the notebook.");
+      return;
+    }
     setNewName("");
     load();
   }
@@ -82,6 +89,7 @@ export default function Home() {
           Create
         </button>
       </div>
+      {createError && <p className="text-sm text-status-error -mt-8 mb-10">{createError}</p>}
 
       {loading ? (
         <ul className="space-y-2.5">

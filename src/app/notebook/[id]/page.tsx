@@ -72,7 +72,11 @@ export default function NotebookPage() {
   }
 
   async function reindexSource(sourceId: string) {
-    await fetch(`/api/sources/${sourceId}`, { method: "POST" });
+    const res = await fetch(`/api/sources/${sourceId}`, { method: "POST" });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      alert(body.error ?? "Could not re-index this source.");
+    }
     loadSources();
   }
 

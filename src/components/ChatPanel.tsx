@@ -16,6 +16,9 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   citations?: Citation[];
+  // Refusals and failures are shown in the thread but never sent back as
+  // history, where they would cost tokens and confuse the next answer.
+  error?: boolean;
 }
 
 export default function ChatPanel({
@@ -41,7 +44,9 @@ export default function ChatPanel({
     setInput("");
     // Snapshot history BEFORE appending the new user turn — this is what
     // the backend uses to resolve follow-up references.
-    const history = messages.map((m) => ({ role: m.role, content: m.content }));
+    const history = messages
+      .filter((m, i) => !m.error && !messages[i + 1]?.error)
+      .map((m) => ({ role: m.role, content: m.content }));
     setMessages((m) => [...m, { role: "user", content: question }]);
     setStreaming(true);
 
@@ -53,7 +58,7 @@ export default function ChatPanel({
 
     if (!res.ok || !res.body) {
       const err = await res.json().catch(() => ({ error: "Query failed" }));
-      setMessages((m) => [...m, { role: "assistant", content: `⚠️ ${err.error}` }]);
+      setMessages((m) => [...m, { role: "assistant", content: `⚠️ ${err.error}`, error: true }]);
       setStreaming(false);
       return;
     }
@@ -98,7 +103,7 @@ export default function ChatPanel({
           answer += `${answer ? "\n\n" : ""}⚠️ ${data.error}`;
           setMessages((m) => {
             const copy = [...m];
-            copy[copy.length - 1] = { role: "assistant", content: answer, citations };
+            copy[copy.length - 1] = { role: "assistant", content: answer, citations, error: true };
             return copy;
           });
         }

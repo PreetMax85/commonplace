@@ -184,6 +184,9 @@ Answer (markdown, with inline [n] citations):`;
     // default today, but the chat renders whatever arrives, so this is declared
     // rather than assumed.
     reasoning_format: "hidden",
+    // Hidden reasoning still counts here. The cap keeps prompt plus answer under
+    // the 8k tokens a minute even when the history is at its maximum.
+    max_completion_tokens: 2000,
     stream: true,
   });
 

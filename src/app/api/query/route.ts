@@ -3,6 +3,10 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { embedText, streamAnswer, condenseQuestion, describeGroqError, ChatTurn } from "@/lib/llm";
 import { enforceRateLimit } from "@/lib/rateLimit";
 
+const MAX_QUESTION_CHARS = 1000;
+const MAX_HISTORY_TURNS = 6;
+const MAX_TURN_CHARS = 1500;
+
 export async function POST(req: NextRequest) {
   const { notebookId, question, history } = await req.json();
   if (!notebookId || !question) {
@@ -11,10 +15,42 @@ export async function POST(req: NextRequest) {
     });
   }
 
+  if (typeof question !== "string" || question.length > MAX_QUESTION_CHARS) {
+    return new Response(
+      JSON.stringify({ error: `Questions can be up to ${MAX_QUESTION_CHARS} characters.` }),
+      { status: 400 }
+    );
+  }
+
+  // Checked before the rate limit so asking a notebook that is still indexing
+  // does not use up a question.
+  const { data: anyChunk, error: chunkError } = await supabaseAdmin
+    .from("chunks")
+    .select("id")
+    .eq("notebook_id", notebookId)
+    .limit(1);
+  if (chunkError) {
+    return new Response(JSON.stringify({ error: chunkError.message }), { status: 500 });
+  }
+  if (!anyChunk?.length) {
+    return new Response(
+      JSON.stringify({ error: "No indexed sources found in this notebook yet" }),
+      { status: 404 }
+    );
+  }
+
   const limited = await enforceRateLimit(req, "query");
   if (limited) return limited;
 
-  const chatHistory: ChatTurn[] = Array.isArray(history) ? history : [];
+  // The rate limit counts requests, not tokens, and history comes straight from
+  // the client. Keeping only the recent turns and bounding each one keeps a
+  // single request inside the free tier's per-minute token budget.
+  const chatHistory: ChatTurn[] = (Array.isArray(history) ? history : [])
+    .slice(-MAX_HISTORY_TURNS)
+    .map((h: any) => ({
+      role: h?.role === "assistant" ? "assistant" : "user",
+      content: String(h?.content ?? "").slice(0, MAX_TURN_CHARS),
+    }));
 
   // Retrieval runs on a standalone-ified version of the question so
   // follow-ups ("what about the second one?") embed something searchable —

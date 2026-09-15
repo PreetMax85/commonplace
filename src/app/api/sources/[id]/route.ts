@@ -2,6 +2,7 @@ import { NextRequest, NextResponse, after } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { reindexSource, recordFailure } from "@/lib/ingest";
 import { isDemoSource, demoReadOnlyResponse } from "@/lib/demo";
+import { enforceRateLimit } from "@/lib/rateLimit";
 
 // Re-extracting and re-embedding a source takes as long as the original
 // ingest, and after() runs on this budget.
@@ -19,7 +20,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 // Re-index in place. Every source type is re-fetchable without a re-upload:
 // url and youtube from the live URL, pdf and vtt from the original file in
 // Storage, text from the raw text saved as raw_ref on first ingest.
-export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   if (await isDemoSource(id)) return demoReadOnlyResponse();
 
@@ -29,6 +30,11 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     .eq("id", id)
     .single();
   if (!source) return NextResponse.json({ error: "Source not found" }, { status: 404 });
+
+  // Checked before the status claim below, so a refused request never leaves
+  // the source reading "indexing".
+  const limited = await enforceRateLimit(req, "source");
+  if (limited) return limited;
 
   // Flip the status before responding. The client reloads its list as soon as
   // this returns and only keeps polling while something is in flight, so a

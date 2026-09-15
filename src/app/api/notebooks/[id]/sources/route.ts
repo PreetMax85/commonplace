@@ -3,6 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { ingestSource, SourceType } from "@/lib/ingest";
 import { isDemoNotebook, demoReadOnlyResponse } from "@/lib/demo";
 import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB, MAX_SOURCES_PER_NOTEBOOK } from "@/lib/limits";
+import { enforceRateLimit } from "@/lib/rateLimit";
 
 // Embedding a long PDF runs well past a default request, and after() inherits
 // this budget.
@@ -70,6 +71,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       { status: 409 }
     );
   }
+
+  const limited = await enforceRateLimit(req, "source");
+  if (limited) return limited;
 
   const contentType = req.headers.get("content-type") || "";
 

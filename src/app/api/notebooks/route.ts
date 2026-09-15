@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { enforceRateLimit } from "@/lib/rateLimit";
 
 export async function GET() {
   const { data, error } = await supabaseAdmin
@@ -15,6 +16,10 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const { name } = await req.json();
   if (!name?.trim()) return NextResponse.json({ error: "Name required" }, { status: 400 });
+
+  // The per-notebook source cap means nothing if notebooks are free to make.
+  const limited = await enforceRateLimit(req, "notebook");
+  if (limited) return limited;
 
   const { data, error } = await supabaseAdmin
     .from("notebooks")

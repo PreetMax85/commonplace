@@ -67,7 +67,7 @@ The deployed demo has no accounts, so one visitor could spend the whole Groq bud
 | New notebooks | 2 per day | 20 per day |
 | Adding or re-indexing sources | 8 per day | 40 per day |
 
-Questions and roadmaps also share a site-wide limit of 2 per minute, matching the 8k tokens a minute. A refused request is not counted, and if the counter itself cannot be reached the request is allowed rather than failing the demo. IPs are stored only as hashes, and the daily health cron deletes old windows.
+Questions and roadmaps also share a site-wide limit of 2 per minute, matching the 8k tokens a minute, with a roadmap counting as two. Because the limits count requests rather than tokens, questions are capped at 1,000 characters, history at the last 6 turns of 1,500 characters each, and answers at 2,000 completion tokens. IPv6 clients are grouped by /64. A refused request is not counted, and if the counter itself cannot be reached the request is allowed rather than failing the demo. IPs are stored only as hashes, and the daily health cron deletes old windows.
 
 ## Known scope cuts
 

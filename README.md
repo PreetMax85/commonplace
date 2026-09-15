@@ -58,6 +58,17 @@ Each question is sent with the prior conversation. A lightweight LLM call rewrit
 
 Embeddings run locally, so indexing is never rate limited and never costs an API call. Only the Groq calls can hit a limit, and the free tier runs out of tokens per minute long before requests per minute: one grounded answer costs roughly 3k of the 8k available. The Groq SDK retries a 429 once, honouring `retry-after`, and past that the reader is told to wait rather than left watching an empty bubble. The roadmap endpoint trims transcripts to a fixed budget so a long video cannot exceed the per-minute limit on its own.
 
+The deployed demo has no accounts, so one visitor could spend the whole Groq budget for everyone. The routes that call Groq or start an ingest count requests in Postgres (`hit_rate_limits`, migration `0005`), per IP and site-wide, in fixed windows, and answer `429` with a `Retry-After` header and a readable message once a window is full. The site-wide numbers are sized to the free tier's 200k tokens a day.
+
+| Action | Per IP | Site-wide |
+| --- | --- | --- |
+| Questions | 4 per 10 minutes, 15 per day | 40 per day |
+| Roadmaps | 2 per day | 8 per day |
+| New notebooks | 2 per day | 20 per day |
+| Adding or re-indexing sources | 8 per day | 40 per day |
+
+Questions and roadmaps also share a site-wide limit of 2 per minute, matching the 8k tokens a minute. A refused request is not counted, and if the counter itself cannot be reached the request is allowed rather than failing the demo. IPs are stored only as hashes, and the daily health cron deletes old windows.
+
 ## Known scope cuts
 
 - No auth or multi-user layer yet. The public deployment is protected instead: demo notebooks are read-only, uploads and pasted text are capped at 4 MB (Vercel rejects function request bodies over 4.5 MB), and a notebook holds up to 15 sources.

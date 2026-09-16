@@ -6,10 +6,10 @@
 // difference between them comes from the search and nothing else.
 //
 // It calls the same embedding function as /api/query, with the notebook's
-// questions asked one at a time. It stops
-// before the answer is written, because generating prose does not change which
-// chunks were retrieved. No Groq request is made and no API route is touched,
-// so a run costs nothing and spends none of the public demo's daily budget.
+// questions asked one at a time. It stops before the answer is written, because
+// generating prose does not change which chunks were retrieved. No Groq request
+// is made and no API route is touched, so a run costs nothing and spends none
+// of the public demo's daily budget.
 import { execSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -66,6 +66,7 @@ interface Result {
   rank: number | null;
   returned: {
     rank: number;
+    chunk_id: string;
     source: string;
     locator: string;
     similarity: number;
@@ -103,6 +104,7 @@ for (const q of set.questions) {
       rank: index === -1 ? null : index + 1,
       returned: rows.map((m, i) => ({
         rank: i + 1,
+        chunk_id: m.id,
         source: titleById.get(m.source_id) ?? m.source_id,
         locator: describe(m.metadata),
         similarity: Number(m.similarity.toFixed(4)),
@@ -114,6 +116,19 @@ for (const q of set.questions) {
   process.stdout.write(".");
 }
 process.stdout.write("\n\n");
+
+// The vector half of hybrid search should order chunks exactly as match_chunks
+// does. If the planner ever chose the index for one function and a full scan
+// for the other, the two would differ and the comparison would be unfair.
+for (const [i, hybridResult] of results.hybrid.entries()) {
+  const vectorReturned = results.vector[i].returned;
+  for (const row of hybridResult.returned) {
+    const r = row.semantic_rank;
+    if (r != null && r <= vectorReturned.length && vectorReturned[r - 1].chunk_id !== row.chunk_id) {
+      throw new Error(`${hybridResult.id}: vector rank ${r} differs between match_chunks and match_chunks_hybrid`);
+    }
+  }
+}
 
 function describe(metadata: Record<string, any>): string {
   if (metadata.page !== undefined) return `page ${metadata.page}`;
@@ -190,12 +205,12 @@ const out = join(import.meta.dirname, "results", `${stamp}.json`);
 writeFileSync(out, JSON.stringify(report, null, 2) + "\n");
 
 const { vector, hybrid } = summary;
-const fixed = (x: number) => x.toFixed(2);
+const fixed = (x: number, digits = 2) => x.toFixed(digits);
 const metrics = ["hit@1", "hit@5", "hit@8", "mrr@10"] as const;
 
 console.log("vector -> hybrid");
 for (const label of ["overall", "verbatim", "reworded"] as const) {
-  const cells = metrics.map((m) => `${m} ${fixed(vector[label][m])} -> ${fixed(hybrid[label][m])}`);
+  const cells = metrics.map((m) => `${m} ${fixed(vector[label][m], m === "mrr@10" ? 3 : 2)} -> ${fixed(hybrid[label][m], m === "mrr@10" ? 3 : 2)}`);
   console.log(`${label.padEnd(9)} n=${vector[label].questions}  ${cells.join("  ")}`);
 }
 

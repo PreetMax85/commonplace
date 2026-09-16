@@ -2,8 +2,9 @@
 --
 -- The retrieval eval showed vector search losing passages that share rare,
 -- exact words with the question ("hindrance", "furtherance") to chunks that
--- are only loosely about the same topic. Full-text search catches those words
--- directly. match_chunks_hybrid runs both searches and merges them with
+-- are only loosely about the same topic. Full-text search matches words
+-- directly, though English stemming can blunt a rare word: "hindrance" stays
+-- specific, but "furtherance" is reduced to "further". match_chunks_hybrid runs both searches and merges them with
 -- reciprocal rank fusion: each chunk scores 1 / (rrf_k + its rank) in each
 -- list it appears in, and the scores are summed. Rank is used rather than the
 -- raw scores because cosine similarity and ts_rank are on different scales.

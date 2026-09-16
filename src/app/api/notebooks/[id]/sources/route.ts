@@ -115,6 +115,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   if (rawText && Buffer.byteLength(rawText) > MAX_UPLOAD_BYTES) return tooLarge();
 
+  if (type === "youtube") {
+    const youtubeLimited = await enforceRateLimit(req, "youtube");
+    if (youtubeLimited) return youtubeLimited;
+  }
+
   // Create the source row first so the UI can show "uploading" -> "indexing" immediately.
   const { data: source, error } = await supabaseAdmin
     .from("sources")

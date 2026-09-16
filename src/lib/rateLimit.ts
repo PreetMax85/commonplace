@@ -39,6 +39,12 @@ const RULES = {
     { name: "source:day", scope: "ip", windowSeconds: DAY, limit: 8 },
     { name: "source:day", scope: "site", windowSeconds: DAY, limit: 40 },
   ],
+  // Checked on top of the source limits, because a YouTube source that falls
+  // back to the transcript service spends one of 100 free credits a month.
+  youtube: [
+    { name: "youtube:day", scope: "ip", windowSeconds: DAY, limit: 2 },
+    { name: "youtube:day", scope: "site", windowSeconds: DAY, limit: 3 },
+  ],
 } satisfies Record<string, Rule[]>;
 
 export type RateLimitedAction = keyof typeof RULES;
@@ -48,6 +54,7 @@ const ACTION_LABELS: Record<RateLimitedAction, string> = {
   roadmap: "roadmaps",
   notebook: "new notebooks",
   source: "adding or re-indexing sources",
+  youtube: "adding YouTube videos",
 };
 
 // One IPv6 subscriber is normally handed a whole /64, so counting full

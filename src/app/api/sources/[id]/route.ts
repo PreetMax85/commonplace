@@ -26,7 +26,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   const { data: source } = await supabaseAdmin
     .from("sources")
-    .select("id")
+    .select("id, type")
     .eq("id", id)
     .single();
   if (!source) return NextResponse.json({ error: "Source not found" }, { status: 404 });
@@ -35,6 +35,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // the source reading "indexing".
   const limited = await enforceRateLimit(req, "source");
   if (limited) return limited;
+
+  // Re-indexing a video re-fetches its transcript, so it costs the same as
+  // adding one.
+  if (source.type === "youtube") {
+    const youtubeLimited = await enforceRateLimit(req, "youtube");
+    if (youtubeLimited) return youtubeLimited;
+  }
 
   // Flip the status before responding. The client reloads its list as soon as
   // this returns and only keeps polling while something is in flight, so a

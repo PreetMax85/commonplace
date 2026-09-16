@@ -64,8 +64,14 @@ a time window rather than a chunk ID, so they stay valid when chunking changes.
 | Word for word | 20 | 0.45 | 0.85 | 0.85 | 0.599 |
 | Reworded | 20 | 0.25 | 0.60 | 0.65 | 0.400 |
 
-Run with `npm run eval`. It uses the same embedding call and the same
-`match_chunks` function as `/api/query`, makes no Groq request, and writes a
+Those are the numbers for vector search alone. `/api/query` now uses hybrid
+search (migration `0006`): keyword search and vector search, merged by rank.
+On the same 40 questions it puts the answer first more often (hit@1 0.35 to
+0.425, MRR@10 0.495 to 0.552) and finds about as many answers overall (hit@8
+0.725 to 0.75, within noise on 40 questions).
+
+Run with `npm run eval`. It uses the same embedding call as `/api/query`, runs
+both `match_chunks` and `match_chunks_hybrid`, makes no Groq request, and writes a
 dated file to `eval/results/` holding every question's rank and the chunks that
 came back, failures included. See [eval/README.md](eval/README.md) for method,
 what the misses show, and the limits of a 40 question set.

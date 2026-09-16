@@ -49,6 +49,46 @@ ten returned chunks were read, and none carries the labelled passage. That is
 a slightly weaker statement than "none of them answers the question", since a
 chunk that answers in different words would still score as a miss.
 
+## Hybrid search, 2026-09-16
+
+`match_chunks_hybrid` (migration `0006`) runs keyword search next to vector
+search and merges the two ranked lists with reciprocal rank fusion. Both
+searches were run on the same 40 questions in one run, commit `ade1358`, file
+`results/2026-09-16-11-21.json`.
+
+| | vector hit@1 | hybrid hit@1 | vector hit@8 | hybrid hit@8 | vector MRR@10 | hybrid MRR@10 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Overall | 0.35 | 0.425 | 0.725 | 0.75 | 0.495 | 0.552 |
+| Word for word | 0.45 | 0.60 | 0.80 | 0.85 | 0.589 | 0.722 |
+| Reworded | 0.25 | 0.25 | 0.65 | 0.65 | 0.400 | 0.383 |
+
+What this does and does not show:
+
+- The real gain is ranking: three more questions get the answer in first place,
+  all of them worded like the source. Reworded questions are unchanged, which is
+  expected, since keyword search needs shared words.
+- The gain in how many answers are found at all is one or two questions, which
+  is within noise on a set this size. Asking for 8 chunks, as the live app
+  does, hybrid found every answer vector search found plus two more.
+- Vector search alone scores 0.70 at hit@5 here, not the 0.72 above. Adding the
+  keyword column rewrote the table and rebuilt the HNSW index, which is
+  approximate, and the rebuilt index misses one passage. An exact search over
+  the same chunks scores 0.725.
+- Meditations went from 2 of 8 to 1 of 8 at hit@5. Its running header ("MARCUS
+  AURELIUS") shares words with most questions about it, and its 1000 character
+  chunks each hold several unrelated numbered passages, so the answering chunk
+  shares few words with the question.
+
+Two follow-ups were tried on a local copy of the same 903 chunks and dropped:
+
+- Weighting rare words above common ones (BM25 style) found one more answer at
+  hit@5 and doubled query time. One question is noise, so it was not shipped.
+- Stripping page headers and page numbers from the PDFs before chunking changed
+  nothing for hybrid search and cost vector search one question.
+
+`/api/query` now calls `match_chunks_hybrid`. `match_chunks` is kept so the
+comparison can be rerun.
+
 ## How the questions were built
 
 20 facts, each asked twice:

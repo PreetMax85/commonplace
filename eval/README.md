@@ -7,7 +7,7 @@ question, on a fixed set of questions with known answers.
 
 ## The numbers, as of 2026-09-16
 
-40 questions against the demo notebook: 9 sources, 903 chunks, commit `d15e3e9`.
+40 questions against the demo notebook: 9 sources, 903 chunks, commit `977b8cc`.
 
 | | questions | hit@1 | hit@5 | hit@8 | MRR@10 |
 | --- | --- | --- | --- | --- | --- |
@@ -31,14 +31,23 @@ noticeably worse when it does not: hit@5 drops from 0.85 to 0.60 on exactly the
 same 20 facts, asked in different words. That gap is the argument for adding
 keyword matching alongside vector search rather than relying on vectors alone.
 
+For scale, a question whose label is a single chunk has roughly a 1 in 100
+chance of being answered by luck in a top 10 of 903 chunks. These numbers are
+well clear of that, which is the least that should be true and is worth stating
+once rather than assuming.
+
 One source is responsible for most of the failures. The scanned Meditations
-edition is 441 of the 903 chunks and scores 2 of 8, while the other eight
-sources together score 27 of 32. Looking at what came back instead, the losing
-chunks are usually the translator's introduction or a page carrying little more
-than the running header, which are close to the query in a general "stoicism"
-sense without answering anything. Every one of the ten misses is a real
-retrieval failure, not a mislabelled question: the chunks returned do not
-contain the answer.
+edition is 441 of the 903 chunks and scores 2 of 8 at hit@5, while the other
+eight sources together score 27 of 32. Looking at what came back instead, the
+losing chunks are usually the translator's introduction or a page carrying
+little more than the running header, which are close to the query in a general
+"stoicism" sense without answering anything. Each results file holds the
+per-source split so these figures are computed rather than added up by hand.
+
+None of the ten misses is caused by a mislabelled question: in every case all
+ten returned chunks were read, and none carries the labelled passage. That is
+a slightly weaker statement than "none of them answers the question", since a
+chunk that answers in different words would still score as a miss.
 
 ## How the questions were built
 
@@ -57,16 +66,25 @@ search returned.
 
 ## How a gold label survives re-chunking
 
-A label names a source plus a passage, never a chunk ID, so it stays valid when
-chunk boundaries move.
+A label names a source plus a passage rather than a chunk ID, so it stays valid
+when chunk boundaries move.
 
 - **Documents and web pages** use a short quote. The chunker overlaps
   consecutive chunks by 150 characters, so any quote shorter than that is
   guaranteed to sit whole inside at least one chunk wherever the boundaries
-  fall. A chunk counts as correct when its text contains the quote.
+  fall within a page. PDFs are chunked a page at a time, so a quote must not
+  straddle a page break. The longest quote used here is 88 characters. A chunk
+  counts as correct when its text contains the quote.
 - **Transcripts** use a time window, because they are split by time rather than
   by character count. A chunk counts as correct when its window overlaps the
-  labelled one.
+  labelled one, strictly at both ends, so two windows that meet at a point
+  cannot both be credited for one chunk.
+
+Being straight about how the transcript windows were produced: they were read
+off the current segmentation, so their endpoints are today's chunk boundaries
+expressed in seconds. The label form survives re-chunking, because an overlap
+test does not care where the boundaries are, but the specific numbers were not
+arrived at independently of them.
 
 Each label also records a human-readable locator, such as `page 72, Book IV.3`
 or `43:51 to 44:53`, so any question can be checked against the original.
@@ -79,23 +97,39 @@ chunks.
 
 ```
 npm run eval:check   # confirm the 20 labels still point at real passages
-npm run eval         # run the 40 questions, write a dated file to results/
+npm run eval         # run the 40 questions, write a timestamped file to results/
+npm run typecheck    # typechecks the app and these scripts separately
 ```
 
 The runner calls the same `embedText` and the same `match_chunks` database
-function that `/api/query` calls, with the same arguments. It stops before the
-answer is generated, because writing prose does not change which chunks were
-retrieved. No language model request is made and no API route is touched, so a
-run costs nothing and spends none of the public demo's daily budget.
+function that `/api/query` calls. It stops before the answer is generated,
+because writing prose does not change which chunks were retrieved. No language
+model request is made and no API route is touched, so a run spends none of the
+public demo's daily budget. The first run on a machine does download the
+embedding model, so it needs a network connection even though it costs nothing.
 
-Every run writes a dated file to `results/` holding the settings, the per
-question rank, and the top three chunks returned for each question. The failures
-are committed along with the successes, so the misses above can be inspected
-rather than taken on trust.
+Two deliberate differences from the live route, neither of which affects the
+figures above:
 
-Two runs of the same 40 questions against the same index returned the same rank
-for every question, so a change in these numbers means a change in the system
-and not run to run noise.
+- The route asks `match_chunks` for 8 chunks and the eval asks for 10, so that
+  MRR@10 has a full window to work with. hit@10 is 0.75, the same as hit@8, so
+  no question is rescued by the two extra places.
+- The route rewrites a question into standalone form before embedding it when
+  there is a prior conversation. Every question here is asked on its own, and
+  that step is skipped on an empty history, so first-turn retrieval really is
+  the same path. Follow-up questions are therefore not measured at all.
+
+Every run writes a timestamped file to `results/` holding the settings, the
+per-source split, and for each question its rank and all ten chunks that came
+back. The failures are committed along with the successes, so the misses above
+can be inspected rather than taken on trust.
+
+Repeated runs of the same 40 questions against the same index returned the same
+rank for every question, so a change in these numbers means a change in the
+system rather than run to run noise. That holds while the demo is the only
+notebook in the database. `match_chunks` filters by notebook after searching a
+shared vector index, so once other notebooks hold enough chunks, the same query
+can return a different top 10 with no change to this code.
 
 ## Honest limits
 
@@ -110,6 +144,8 @@ and not run to run noise.
 - A page-level or window-level label is coarser than pointing at one chunk. A
   time window can span two or three transcript chunks, any of which counts.
   That is the price of labels that survive re-chunking.
+- Only single-turn retrieval is measured. The question-rewriting step that runs
+  on follow-up questions is untested here.
 
 ## Why it exists now
 

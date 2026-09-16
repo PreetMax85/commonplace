@@ -18,7 +18,7 @@ export const LLM_MODEL = "openai/gpt-oss-120b";
 // Question rewriting is a short, mechanical task, so it runs on the small model
 // to keep the answer call's share of the rate limit intact.
 export const REWRITE_MODEL = "openai/gpt-oss-20b";
-const EMBED_MODEL = "Xenova/bge-small-en-v1.5";
+export const EMBED_MODEL = "Xenova/bge-small-en-v1.5";
 
 // pipeline() returns a union across every task it supports, so the
 // feature-extraction shape is named here to keep the call sites typed.

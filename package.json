@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "eval": "node --env-file=.env.local eval/run.ts",
+    "eval:check": "node --env-file=.env.local eval/check-labels.ts"
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",

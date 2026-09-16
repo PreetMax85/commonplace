@@ -1,0 +1,470 @@
+{
+  "notebook_id": "df22a1d0-431f-4667-a846-d5fa726a1799",
+  "match_count": 10,
+  "facts": {
+    "med-retreat": {
+      "source": "Meditations (Marcus Aurelius, tr. George Long)",
+      "locator": "page 72, Book IV.3",
+      "anchor": {
+        "kind": "quote",
+        "accept": [
+          "for it is in thy power whenever thou shalt choose to retire into thyself"
+        ]
+      }
+    },
+    "med-hindrance": {
+      "source": "Meditations (Marcus Aurelius, tr. George Long)",
+      "locator": "page 100, Book V.20",
+      "anchor": {
+        "kind": "quote",
+        "accept": [
+          "that which is a hindrance is made a furtherance to an act"
+        ]
+      }
+    },
+    "med-death": {
+      "source": "Meditations (Marcus Aurelius, tr. George Long)",
+      "locator": "page 156, Book IV.58 as quoted in the appendix",
+      "anchor": {
+        "kind": "quote",
+        "accept": [
+          "He who fears death either fears the loss of sensation or a different kind of sensation"
+        ]
+      }
+    },
+    "med-cooperation": {
+      "source": "Meditations (Marcus Aurelius, tr. George Long)",
+      "locator": "pages 36 and 52, Book II.1",
+      "anchor": {
+        "kind": "quote",
+        "accept": [
+          "we are made for co-operation, like feet, like hands, like eyelids"
+        ]
+      }
+    },
+    "moral-84-percent": {
+      "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+      "locator": "page 2, study 1 results",
+      "anchor": {
+        "kind": "quote",
+        "accept": [
+          "On 84.18% of the items, the majority of participants reported that morality had declined"
+        ]
+      }
+    },
+    "moral-60-nations": {
+      "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+      "locator": "page 1, abstract and introduction",
+      "anchor": {
+        "kind": "quote",
+        "accept": [
+          "people in at least 60 nations around the world believe that morality is declining",
+          "people in at least 60 nations do indeed believe that morality is declining"
+        ]
+      }
+    },
+    "moral-improvements": {
+      "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+      "locator": "page 2, exceptions to the perceived trend",
+      "anchor": {
+        "kind": "quote",
+        "accept": [
+          "51% reported improved treatment of people with physical disabilities"
+        ]
+      }
+    },
+    "crony-merit-vs-crony": {
+      "source": "Crony Beliefs (Kevin Simler)",
+      "locator": "the two reward systems",
+      "anchor": {
+        "kind": "quote",
+        "accept": [
+          "merit beliefs by helping us navigate the world, crony beliefs by helping us look good"
+        ]
+      }
+    },
+    "crony-nepotsville": {
+      "source": "Crony Beliefs (Kevin Simler)",
+      "locator": "the Acme Corp analogy",
+      "anchor": {
+        "kind": "quote",
+        "accept": [
+          "companies are expected to hire the city council's friends and family members"
+        ]
+      }
+    },
+    "peer-strong-link": {
+      "source": "The rise and fall of peer review (Adam Mastroianni)",
+      "locator": "weak-link versus strong-link science",
+      "anchor": {
+        "kind": "quote",
+        "accept": [
+          "But science is a strong-link problem: progress depends on the quality of our best work"
+        ]
+      }
+    },
+    "pg-labels": {
+      "source": "Keep Your Identity Small (Paul Graham)",
+      "locator": "closing line of the essay body",
+      "anchor": {
+        "kind": "quote",
+        "accept": [
+          "The more labels you have for yourself, the dumber they make you"
+        ]
+      }
+    },
+    "epictetus-control": {
+      "source": "The Enchiridion (Epictetus, tr. Higginson)",
+      "locator": "section I",
+      "anchor": {
+        "kind": "quote",
+        "accept": [
+          "Within our power are opinion, aim, desire, aversion"
+        ]
+      }
+    },
+    "epictetus-ship": {
+      "source": "The Enchiridion (Epictetus, tr. Higginson)",
+      "locator": "section VII",
+      "anchor": {
+        "kind": "quote",
+        "accept": [
+          "but if the captain calls, run to the ship, leave all these things, and never look behind"
+        ]
+      }
+    },
+    "sapolsky-four-circumstances": {
+      "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+      "locator": "3:10 to 4:47",
+      "anchor": {
+        "kind": "time",
+        "accept": [
+          [
+            190,
+            287
+          ]
+        ]
+      }
+    },
+    "sapolsky-twinkie": {
+      "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+      "locator": "5:19 to 6:19",
+      "anchor": {
+        "kind": "time",
+        "accept": [
+          [
+            319,
+            379
+          ]
+        ]
+      }
+    },
+    "sapolsky-two-points": {
+      "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+      "locator": "6:19 to 7:23",
+      "anchor": {
+        "kind": "time",
+        "accept": [
+          [
+            379,
+            443
+          ]
+        ]
+      }
+    },
+    "kurzgesagt-weeks": {
+      "source": "Optimistic Nihilism (Kurzgesagt)",
+      "locator": "1:38 to 2:09",
+      "anchor": {
+        "kind": "time",
+        "accept": [
+          [
+            98,
+            129
+          ]
+        ]
+      }
+    },
+    "gabrieli-chess": {
+      "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+      "locator": "9:54 to 10:57",
+      "anchor": {
+        "kind": "time",
+        "accept": [
+          [
+            594,
+            657.01
+          ]
+        ]
+      }
+    },
+    "gabrieli-encoding": {
+      "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+      "locator": "21:56 to 22:59",
+      "anchor": {
+        "kind": "time",
+        "accept": [
+          [
+            1316.14,
+            1378.97
+          ]
+        ]
+      }
+    },
+    "gabrieli-loftus": {
+      "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+      "locator": "43:51 to 44:53",
+      "anchor": {
+        "kind": "time",
+        "accept": [
+          [
+            2630.99,
+            2693.14
+          ]
+        ]
+      }
+    }
+  },
+  "questions": [
+    {
+      "id": "med-retreat-verbatim",
+      "fact": "med-retreat",
+      "phrasing": "verbatim",
+      "question": "Where does Marcus Aurelius say men seek retreats for themselves, and what retreat does he say is always in your own power?"
+    },
+    {
+      "id": "med-retreat-reworded",
+      "fact": "med-retreat",
+      "phrasing": "reworded",
+      "question": "Why does the emperor argue that you never have to travel anywhere to find calm?"
+    },
+    {
+      "id": "med-hindrance-verbatim",
+      "fact": "med-hindrance",
+      "phrasing": "verbatim",
+      "question": "What does Marcus Aurelius say the mind does with every hindrance to its activity?"
+    },
+    {
+      "id": "med-hindrance-reworded",
+      "fact": "med-hindrance",
+      "phrasing": "reworded",
+      "question": "How can something that blocks your path end up pushing you further along it?"
+    },
+    {
+      "id": "med-death-verbatim",
+      "fact": "med-death",
+      "phrasing": "verbatim",
+      "question": "What does Marcus Aurelius say a man who fears death actually fears?"
+    },
+    {
+      "id": "med-death-reworded",
+      "fact": "med-death",
+      "phrasing": "reworded",
+      "question": "The dread of dying is split into two possibilities. What are they?"
+    },
+    {
+      "id": "med-cooperation-verbatim",
+      "fact": "med-cooperation",
+      "phrasing": "verbatim",
+      "question": "What does Marcus Aurelius compare our being made for co-operation to?"
+    },
+    {
+      "id": "med-cooperation-reworded",
+      "fact": "med-cooperation",
+      "phrasing": "reworded",
+      "question": "What natural example shows that turning against another person goes against the way we are built?"
+    },
+    {
+      "id": "moral-84-percent-verbatim",
+      "fact": "moral-84-percent",
+      "phrasing": "verbatim",
+      "question": "On what percentage of the survey items did the majority of participants report that morality had declined?"
+    },
+    {
+      "id": "moral-84-percent-reworded",
+      "fact": "moral-84-percent",
+      "phrasing": "reworded",
+      "question": "Across the whole archive of polls, how often did most respondents say people had become less moral?"
+    },
+    {
+      "id": "moral-60-nations-verbatim",
+      "fact": "moral-60-nations",
+      "phrasing": "verbatim",
+      "question": "In how many nations do people believe that morality is declining, and for how long have they believed it?"
+    },
+    {
+      "id": "moral-60-nations-reworded",
+      "fact": "moral-60-nations",
+      "phrasing": "reworded",
+      "question": "How widely around the world is this belief held, and how far back does the survey evidence reach?"
+    },
+    {
+      "id": "moral-improvements-verbatim",
+      "fact": "moral-improvements",
+      "phrasing": "verbatim",
+      "question": "On which specific issues did participants report improvement rather than decline?"
+    },
+    {
+      "id": "moral-improvements-reworded",
+      "fact": "moral-improvements",
+      "phrasing": "reworded",
+      "question": "Were there any areas where people said things had actually got better, and which ones?"
+    },
+    {
+      "id": "crony-merit-vs-crony-verbatim",
+      "fact": "crony-merit-vs-crony",
+      "phrasing": "verbatim",
+      "question": "What is the difference between merit beliefs and crony beliefs?"
+    },
+    {
+      "id": "crony-merit-vs-crony-reworded",
+      "fact": "crony-merit-vs-crony",
+      "phrasing": "reworded",
+      "question": "How does the essay split the ideas we hold into ones that help us act well and ones that help our standing with other people?"
+    },
+    {
+      "id": "crony-nepotsville-verbatim",
+      "fact": "crony-nepotsville",
+      "phrasing": "verbatim",
+      "question": "What is the unwritten rule of doing business in Nepotsville?"
+    },
+    {
+      "id": "crony-nepotsville-reworded",
+      "fact": "crony-nepotsville",
+      "phrasing": "reworded",
+      "question": "In the property developer example, what did firms have to do to get their permits approved?"
+    },
+    {
+      "id": "peer-strong-link-verbatim",
+      "fact": "peer-strong-link",
+      "phrasing": "verbatim",
+      "question": "What does it mean to say that science is a strong-link problem rather than a weak-link problem?"
+    },
+    {
+      "id": "peer-strong-link-reworded",
+      "fact": "peer-strong-link",
+      "phrasing": "reworded",
+      "question": "Does progress in research depend on suppressing the worst work or on how good the best work is?"
+    },
+    {
+      "id": "pg-labels-verbatim",
+      "fact": "pg-labels",
+      "phrasing": "verbatim",
+      "question": "What does Paul Graham say about the number of labels you have for yourself?"
+    },
+    {
+      "id": "pg-labels-reworded",
+      "fact": "pg-labels",
+      "phrasing": "reworded",
+      "question": "What is the closing claim about putting yourself into categories?"
+    },
+    {
+      "id": "epictetus-control-verbatim",
+      "fact": "epictetus-control",
+      "phrasing": "verbatim",
+      "question": "According to Epictetus, which things are within our power and which are beyond our power?"
+    },
+    {
+      "id": "epictetus-control-reworded",
+      "fact": "epictetus-control",
+      "phrasing": "reworded",
+      "question": "What does the handbook say we get to control, and what does it say we do not?"
+    },
+    {
+      "id": "epictetus-ship-verbatim",
+      "fact": "epictetus-ship",
+      "phrasing": "verbatim",
+      "question": "What does Epictetus say you must do if the captain calls while you are picking up a shellfish on shore?"
+    },
+    {
+      "id": "epictetus-ship-reworded",
+      "fact": "epictetus-ship",
+      "phrasing": "reworded",
+      "question": "In the voyage comparison, what should you do the moment you are summoned back?"
+    },
+    {
+      "id": "sapolsky-four-circumstances-verbatim",
+      "fact": "sapolsky-four-circumstances",
+      "phrasing": "verbatim",
+      "question": "What do having your period, a brain tumour, eating a lot of junk food and taking anabolic steroids have in common?"
+    },
+    {
+      "id": "sapolsky-four-circumstances-reworded",
+      "fact": "sapolsky-four-circumstances",
+      "phrasing": "reworded",
+      "question": "Why does the lecturer open by grouping four unrelated bodily conditions together?"
+    },
+    {
+      "id": "sapolsky-twinkie-verbatim",
+      "fact": "sapolsky-twinkie",
+      "phrasing": "verbatim",
+      "question": "What was the Twinkie defence used by Dan White?"
+    },
+    {
+      "id": "sapolsky-twinkie-reworded",
+      "fact": "sapolsky-twinkie",
+      "phrasing": "reworded",
+      "question": "Which killing in San Francisco involved a lawyer blaming the defendant for what he had been eating?"
+    },
+    {
+      "id": "sapolsky-two-points-verbatim",
+      "fact": "sapolsky-two-points",
+      "phrasing": "verbatim",
+      "question": "What are the two key points of the entire course?"
+    },
+    {
+      "id": "sapolsky-two-points-reworded",
+      "fact": "sapolsky-two-points",
+      "phrasing": "reworded",
+      "question": "Which two directions of influence between body and mind does the lecture say the class is about?"
+    },
+    {
+      "id": "kurzgesagt-weeks-verbatim",
+      "fact": "kurzgesagt-weeks",
+      "phrasing": "verbatim",
+      "question": "How many weeks do you have at your disposal if you are lucky enough to live to one hundred?"
+    },
+    {
+      "id": "kurzgesagt-weeks-reworded",
+      "fact": "kurzgesagt-weeks",
+      "phrasing": "reworded",
+      "question": "If a person reaches a century of age, how much time is that when counted out in seven-day stretches?"
+    },
+    {
+      "id": "gabrieli-chess-verbatim",
+      "fact": "gabrieli-chess",
+      "phrasing": "verbatim",
+      "question": "Why do chess masters do worse than beginners when the pieces are placed randomly?"
+    },
+    {
+      "id": "gabrieli-chess-reworded",
+      "fact": "gabrieli-chess",
+      "phrasing": "reworded",
+      "question": "When does an expert knowledge of a board game start hurting recall instead of helping it?"
+    },
+    {
+      "id": "gabrieli-encoding-verbatim",
+      "fact": "gabrieli-encoding",
+      "phrasing": "verbatim",
+      "question": "What is shallow encoding, and what kind of memory does it lead to?"
+    },
+    {
+      "id": "gabrieli-encoding-reworded",
+      "fact": "gabrieli-encoding",
+      "phrasing": "reworded",
+      "question": "Why does judging how a word looks leave you remembering it worse than judging what it means?"
+    },
+    {
+      "id": "gabrieli-loftus-verbatim",
+      "fact": "gabrieli-loftus",
+      "phrasing": "verbatim",
+      "question": "What did Elizabeth Loftus's slides of a car at an intersection show about eyewitness testimony?"
+    },
+    {
+      "id": "gabrieli-loftus-reworded",
+      "fact": "gabrieli-loftus",
+      "phrasing": "reworded",
+      "question": "How did slipping one different word into a later question change what people said they had seen?"
+    }
+  ]
+}

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "eval": "node --env-file=.env.local eval/run.ts",
-    "eval:check": "node --env-file=.env.local eval/check-labels.ts"
+    "eval:check": "node --env-file=.env.local eval/check-labels.ts",
+    "typecheck": "tsc --noEmit -p . && tsc --noEmit -p eval"
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",

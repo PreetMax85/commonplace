@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    // These scripts run straight through node, which resolves the .ts paths
+    // they import. Nothing is emitted, so allowing the extension is safe here
+    // without loosening the typecheck the app itself is held to.
+    "allowImportingTsExtensions": true,
+    "types": ["node"]
+  },
+  "include": ["**/*.ts", "../src/lib/**/*.ts"],
+  "exclude": []
+}

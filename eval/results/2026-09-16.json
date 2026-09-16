@@ -1,0 +1,1232 @@
+{
+  "run_at": "2026-09-16T05:36:48.765Z",
+  "commit": "d15e3e9",
+  "notebook_id": "df22a1d0-431f-4667-a846-d5fa726a1799",
+  "sources": 9,
+  "chunks": 903,
+  "embedding_model": "Xenova/bge-small-en-v1.5",
+  "match_count": 10,
+  "overall": {
+    "questions": 40,
+    "hit@1": 0.35,
+    "hit@5": 0.725,
+    "hit@8": 0.75,
+    "mrr@10": 0.4996
+  },
+  "verbatim": {
+    "questions": 20,
+    "hit@1": 0.45,
+    "hit@5": 0.85,
+    "hit@8": 0.85,
+    "mrr@10": 0.5992
+  },
+  "reworded": {
+    "questions": 20,
+    "hit@1": 0.25,
+    "hit@5": 0.6,
+    "hit@8": 0.65,
+    "mrr@10": 0.4
+  },
+  "results": [
+    {
+      "id": "med-retreat-verbatim",
+      "fact": "med-retreat",
+      "phrasing": "verbatim",
+      "question": "Where does Marcus Aurelius say men seek retreats for themselves, and what retreat does he say is always in your own power?",
+      "rank": 2,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 73",
+          "similarity": 0.7478,
+          "snippet": "MARCUS AURELIUS man retire than into his own soul, particularly when he has within him such thoughts that by looking int"
+        },
+        {
+          "rank": 2,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 72",
+          "similarity": 0.729,
+          "snippet": "of art. 3. Men seek retreats for themselves, houses in the country, sea-shores, and mountains ; and thou too art wont to"
+        },
+        {
+          "rank": 3,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 11",
+          "similarity": 0.7215,
+          "snippet": "alm and dignified pursuit of cultured happiness. The other was the Stoic, which laid stress on the manly virtues of inde"
+        }
+      ]
+    },
+    {
+      "id": "med-retreat-reworded",
+      "fact": "med-retreat",
+      "phrasing": "reworded",
+      "question": "Why does the emperor argue that you never have to travel anywhere to find calm?",
+      "rank": null,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 37",
+          "similarity": 0.6713,
+          "snippet": "se: for instance, that where a man can live, there he can also live well. But he must live in a palace; —well then, he c"
+        },
+        {
+          "rank": 2,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 33",
+          "similarity": 0.6495,
+          "snippet": "INTRODUCTION the Emperor does not encourage suicide. On the contrary, the general trend of his remarks is to induce a ma"
+        },
+        {
+          "rank": 3,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 104",
+          "similarity": 0.6479,
+          "snippet": "MEDITATIONS OF and never stand still, and the organs of percep- tion are dull and easily receive false impres- sions ; a"
+        }
+      ]
+    },
+    {
+      "id": "med-hindrance-verbatim",
+      "fact": "med-hindrance",
+      "phrasing": "verbatim",
+      "question": "What does Marcus Aurelius say the mind does with every hindrance to its activity?",
+      "rank": null,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 32",
+          "similarity": 0.7325,
+          "snippet": "INTRODUCTION are not rationally directed, but are mere pup- pets, drawn this way and that — automata, whose very conscio"
+        },
+        {
+          "rank": 2,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 187",
+          "similarity": 0.7295,
+          "snippet": "MARCUS AURELIUS the doing of the things which are conform- able to man's constitution ; for a man ought to consider as a"
+        },
+        {
+          "rank": 3,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 29",
+          "similarity": 0.7207,
+          "snippet": "INTRODUCTION ridicule, because such an ideal person has never existed, and never could exist, and, as Horace laughingly "
+        }
+      ]
+    },
+    {
+      "id": "med-hindrance-reworded",
+      "fact": "med-hindrance",
+      "phrasing": "reworded",
+      "question": "How can something that blocks your path end up pushing you further along it?",
+      "rank": null,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "8:24 to 8:56",
+          "similarity": 0.5741,
+          "snippet": "strategy that we come up with a strategy to make things easier which is that we think in categories we think in categori"
+        },
+        {
+          "rank": 2,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "locator": "chunk 40",
+          "similarity": 0.5725,
+          "snippet": "you eat with another, not only the value to the body of those things which are set before you, but also the value of pro"
+        },
+        {
+          "rank": 3,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "15:14 to 15:45",
+          "similarity": 0.5698,
+          "snippet": "particularly different but because there's this boundary drawn there between passing and failing there is this dramatic "
+        }
+      ]
+    },
+    {
+      "id": "med-death-verbatim",
+      "fact": "med-death",
+      "phrasing": "verbatim",
+      "question": "What does Marcus Aurelius say a man who fears death actually fears?",
+      "rank": null,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 34",
+          "similarity": 0.7283,
+          "snippet": "INTRODUCTION After all, that which gives Marcus Aurelius his immortality is the fact that the book of his Meditations is"
+        },
+        {
+          "rank": 2,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 73",
+          "similarity": 0.7181,
+          "snippet": "MARCUS AURELIUS man retire than into his own soul, particularly when he has within him such thoughts that by looking int"
+        },
+        {
+          "rank": 3,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 61",
+          "similarity": 0.7137,
+          "snippet": "MARCUS AURELIUS III We ought to consider not only that our life is daily wasting away and a smaller part of it is left, "
+        }
+      ]
+    },
+    {
+      "id": "med-death-reworded",
+      "fact": "med-death",
+      "phrasing": "reworded",
+      "question": "The dread of dying is split into two possibilities. What are they?",
+      "rank": 3,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 60",
+          "similarity": 0.6396,
+          "snippet": "finally, waiting for death with a cheerful mind, as being nothing else than a dissolution of the elements of which every"
+        },
+        {
+          "rank": 2,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 164",
+          "similarity": 0.6371,
+          "snippet": "MEDITATIONS OF self art in continuous mutation and in a manner in continuous destruction, and the whole universe too. 20"
+        },
+        {
+          "rank": 3,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 156",
+          "similarity": 0.6355,
+          "snippet": "MEDITATIONS OF into a darkened room, for it is extended in a right line, and as it were is divided when it meets with an"
+        }
+      ]
+    },
+    {
+      "id": "med-cooperation-verbatim",
+      "fact": "med-cooperation",
+      "phrasing": "verbatim",
+      "question": "What does Marcus Aurelius compare our being made for co-operation to?",
+      "rank": null,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 109",
+          "similarity": 0.7133,
+          "snippet": "MARCUS AURELIUS are admired by men who are a little more reasonable, are referred to the things which are held together "
+        },
+        {
+          "rank": 2,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 3",
+          "similarity": 0.688,
+          "snippet": "Red Letter Library THE MEDITATIONS OF MARCUS AURELIUS"
+        },
+        {
+          "rank": 3,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 125",
+          "similarity": 0.6849,
+          "snippet": "MARCUS AURELIUS assault on a town. How then, if being lame thou canst not mount up on the battlements alone, but with th"
+        }
+      ]
+    },
+    {
+      "id": "med-cooperation-reworded",
+      "fact": "med-cooperation",
+      "phrasing": "reworded",
+      "question": "What natural example shows that turning against another person goes against the way we are built?",
+      "rank": null,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 84",
+          "similarity": 0.643,
+          "snippet": "MEDITATIONS OF turning and mutation of thy corporeal cover- ing. Where is it then ? It is in that part of thee in which "
+        },
+        {
+          "rank": 2,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "locator": "chunk 13",
+          "similarity": 0.6413,
+          "snippet": "it might be better to bristle and hold unorthodox beliefs, in order to demonstrate that we're independent thinkers or th"
+        },
+        {
+          "rank": 3,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 5",
+          "similarity": 0.6267,
+          "snippet": "ation, we provide a mathematical model of the BEAM mechanism and show how the model makes these two predictions, which w"
+        }
+      ]
+    },
+    {
+      "id": "moral-84-percent-verbatim",
+      "fact": "moral-84-percent",
+      "phrasing": "verbatim",
+      "question": "On what percentage of the survey items did the majority of participants report that morality had declined?",
+      "rank": 2,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 2",
+          "similarity": 0.8164,
+          "snippet": "participants in 59 nations other than the United States if and how they thought other people’s morality had changed over"
+        },
+        {
+          "rank": 2,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 2",
+          "similarity": 0.8154,
+          "snippet": "Nature | Vol 618 | 22 June 2023 | 783 (further methodological details can be found in the concluding method section as w"
+        },
+        {
+          "rank": 3,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 4",
+          "similarity": 0.7813,
+          "snippet": "CI = [0.40, 0.60], t(304) = 9.87, P < 0.001; interpersonal replacement b = 0.18, 95% CI = [0.13, 0.23], t(304) = 6.71, P"
+        }
+      ]
+    },
+    {
+      "id": "moral-84-percent-reworded",
+      "fact": "moral-84-percent",
+      "phrasing": "reworded",
+      "question": "Across the whole archive of polls, how often did most respondents say people had become less moral?",
+      "rank": null,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 2",
+          "similarity": 0.8024,
+          "snippet": "and, as Fig. 1 shows, in every one of those nations, the majority of participants reported that moral decline was at lea"
+        },
+        {
+          "rank": 2,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 2",
+          "similarity": 0.7964,
+          "snippet": "participants in 59 nations other than the United States if and how they thought other people’s morality had changed over"
+        },
+        {
+          "rank": 3,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 4",
+          "similarity": 0.7884,
+          "snippet": "CI = [0.40, 0.60], t(304) = 9.87, P < 0.001; interpersonal replacement b = 0.18, 95% CI = [0.13, 0.23], t(304) = 6.71, P"
+        }
+      ]
+    },
+    {
+      "id": "moral-60-nations-verbatim",
+      "fact": "moral-60-nations",
+      "phrasing": "verbatim",
+      "question": "In how many nations do people believe that morality is declining, and for how long have they believed it?",
+      "rank": 2,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 2",
+          "similarity": 0.8685,
+          "snippet": "and, as Fig. 1 shows, in every one of those nations, the majority of participants reported that moral decline was at lea"
+        },
+        {
+          "rank": 2,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 1",
+          "similarity": 0.8581,
+          "snippet": "782 | Nature | Vol 618 | 22 June 2023Article The illusion of moral decline Adam M. Mastroianni1 ✉ & Daniel T. Gilbert2 A"
+        },
+        {
+          "rank": 3,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 1",
+          "similarity": 0.8451,
+          "snippet": "sychological illusion to which people all over the world and throughout history have been susceptible. We provide eviden"
+        }
+      ]
+    },
+    {
+      "id": "moral-60-nations-reworded",
+      "fact": "moral-60-nations",
+      "phrasing": "reworded",
+      "question": "How widely around the world is this belief held, and how far back does the survey evidence reach?",
+      "rank": 2,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 2",
+          "similarity": 0.7172,
+          "snippet": "and, as Fig. 1 shows, in every one of those nations, the majority of participants reported that moral decline was at lea"
+        },
+        {
+          "rank": 2,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 1",
+          "similarity": 0.6762,
+          "snippet": "782 | Nature | Vol 618 | 22 June 2023Article The illusion of moral decline Adam M. Mastroianni1 ✉ & Daniel T. Gilbert2 A"
+        },
+        {
+          "rank": 3,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 2",
+          "similarity": 0.6744,
+          "snippet": "participants in 59 nations other than the United States if and how they thought other people’s morality had changed over"
+        }
+      ]
+    },
+    {
+      "id": "moral-improvements-verbatim",
+      "fact": "moral-improvements",
+      "phrasing": "verbatim",
+      "question": "On which specific issues did participants report improvement rather than decline?",
+      "rank": 1,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 2",
+          "similarity": 0.736,
+          "snippet": "e rate for as long as research- ers have been asking them about it. (These and all tests we report are two-tailed). Two "
+        },
+        {
+          "rank": 2,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 4",
+          "similarity": 0.7099,
+          "snippet": "adults in both 2005 and 2020. The difference between these ratings was a measure of participants’ perceptions of persona"
+        },
+        {
+          "rank": 3,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 10",
+          "similarity": 0.6993,
+          "snippet": "t instructed participants to select the option ‘other’ and to type the word ‘cloud’. Finally, participants were compensa"
+        }
+      ]
+    },
+    {
+      "id": "moral-improvements-reworded",
+      "fact": "moral-improvements",
+      "phrasing": "reworded",
+      "question": "Were there any areas where people said things had actually got better, and which ones?",
+      "rank": 2,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 2",
+          "similarity": 0.5772,
+          "snippet": "u feel things in this country are generally going in the right direction or do you feel things have pretty seriously got"
+        },
+        {
+          "rank": 2,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 2",
+          "similarity": 0.5655,
+          "snippet": "at- ment of African Americans, 51% reported improved treatment of people with physical disabilities and 50% reported imp"
+        },
+        {
+          "rank": 3,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 4",
+          "similarity": 0.5647,
+          "snippet": "result of interpersonal replacement (because no human being lives for 200 years and therefore no one who was measured at"
+        }
+      ]
+    },
+    {
+      "id": "crony-merit-vs-crony-verbatim",
+      "fact": "crony-merit-vs-crony",
+      "phrasing": "verbatim",
+      "question": "What is the difference between merit beliefs and crony beliefs?",
+      "rank": 5,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "locator": "chunk 25",
+          "similarity": 0.8505,
+          "snippet": "beliefs. Here, then, is a short list of features that crony beliefs will tend to have, relative to good-faith merit beli"
+        },
+        {
+          "rank": 2,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "locator": "chunk 20",
+          "similarity": 0.8409,
+          "snippet": "crony beliefs necessarily false. What distinguishes the two concepts is how we're rewarded for them: via effective actio"
+        },
+        {
+          "rank": 3,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "locator": "chunk 22",
+          "similarity": 0.8121,
+          "snippet": "w can we identify which of our beliefs are cronies? What makes this task difficult is that crony beliefs are designed to"
+        }
+      ]
+    },
+    {
+      "id": "crony-merit-vs-crony-reworded",
+      "fact": "crony-merit-vs-crony",
+      "phrasing": "reworded",
+      "question": "How does the essay split the ideas we hold into ones that help us act well and ones that help our standing with other people?",
+      "rank": null,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "32:18 to 32:49",
+          "similarity": 0.6655,
+          "snippet": "But, of course, if they focus on it, they can do a lot better. So this is just saying that we naturally go for gist and "
+        },
+        {
+          "rank": 2,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "15:14 to 15:45",
+          "similarity": 0.6061,
+          "snippet": "particularly different but because there's this boundary drawn there between passing and failing there is this dramatic "
+        },
+        {
+          "rank": 3,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 194",
+          "similarity": 0.6036,
+          "snippet": "MEDITATIONS OF writers, everybody knows : but the whole plan of such poetry and dramaturgy, to what end does it look ! 7"
+        }
+      ]
+    },
+    {
+      "id": "crony-nepotsville-verbatim",
+      "fact": "crony-nepotsville",
+      "phrasing": "verbatim",
+      "question": "What is the unwritten rule of doing business in Nepotsville?",
+      "rank": 5,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 133",
+          "similarity": 0.5907,
+          "snippet": "are able to get profit by means of the activity which is successful and proceeds according to our constitution, there no"
+        },
+        {
+          "rank": 2,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "locator": "chunk 33",
+          "similarity": 0.5491,
+          "snippet": "comes down hard on Acme, or (2) the other execs, who are clued in to the cronyism, have to work even harder to protect t"
+        },
+        {
+          "rank": 3,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "locator": "chunk 5",
+          "similarity": 0.5368,
+          "snippet": ", smeared in the local papers, and shut out of new business. In this environment, Acme faces two kinds of incentives, on"
+        }
+      ]
+    },
+    {
+      "id": "crony-nepotsville-reworded",
+      "fact": "crony-nepotsville",
+      "phrasing": "reworded",
+      "question": "In the property developer example, what did firms have to do to get their permits approved?",
+      "rank": 4,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "locator": "chunk 5",
+          "similarity": 0.5613,
+          "snippet": ", smeared in the local papers, and shut out of new business. In this environment, Acme faces two kinds of incentives, on"
+        },
+        {
+          "rank": 2,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "locator": "chunk 32",
+          "similarity": 0.4812,
+          "snippet": "is approach is that it addresses the symptom (irrationality) without addressing the root cause (social incentives). Let'"
+        },
+        {
+          "rank": 3,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "locator": "chunk 33",
+          "similarity": 0.4777,
+          "snippet": "comes down hard on Acme, or (2) the other execs, who are clued in to the cronyism, have to work even harder to protect t"
+        }
+      ]
+    },
+    {
+      "id": "peer-strong-link-verbatim",
+      "fact": "peer-strong-link",
+      "phrasing": "verbatim",
+      "question": "What does it mean to say that science is a strong-link problem rather than a weak-link problem?",
+      "rank": 1,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "locator": "chunk 20",
+          "similarity": 0.7852,
+          "snippet": "we had the wrong model of how science works. We treated science like it’s a weak-link problem where progress depends on "
+        },
+        {
+          "rank": 2,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "locator": "chunk 21",
+          "similarity": 0.7339,
+          "snippet": "n’s laws of physics stuck around; his recipe for the Philosopher’s Stone didn’t. We didn’t need a scientific establishme"
+        },
+        {
+          "rank": 3,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "locator": "chunk 22",
+          "similarity": 0.6653,
+          "snippet": "et off. That’s way scarier.Weak-link thinking makes scientific censorship seem reasonable, but all censorship does is ma"
+        }
+      ]
+    },
+    {
+      "id": "peer-strong-link-reworded",
+      "fact": "peer-strong-link",
+      "phrasing": "reworded",
+      "question": "Does progress in research depend on suppressing the worst work or on how good the best work is?",
+      "rank": 2,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "locator": "chunk 12",
+          "similarity": 0.6573,
+          "snippet": "is no better than chance, that’s pretty dismal.Second: once a paper gets published, we shred the reviews. A few journals"
+        },
+        {
+          "rank": 2,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "locator": "chunk 20",
+          "similarity": 0.6468,
+          "snippet": "we had the wrong model of how science works. We treated science like it’s a weak-link problem where progress depends on "
+        },
+        {
+          "rank": 3,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "locator": "chunk 17",
+          "similarity": 0.6414,
+          "snippet": "job depends on producing popular ideas, you can get very good at thought-policing yourself into never entertaining anyth"
+        }
+      ]
+    },
+    {
+      "id": "pg-labels-verbatim",
+      "fact": "pg-labels",
+      "phrasing": "verbatim",
+      "question": "What does Paul Graham say about the number of labels you have for yourself?",
+      "rank": 2,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "16:06 to 16:38",
+          "similarity": 0.642,
+          "snippet": "OK. Here are the answers. As you look at this list, put your hand up if you've got all 10, 9, 8, 7, 6, 5, 4, 3, 2. Thank"
+        },
+        {
+          "rank": 2,
+          "source": "Keep Your Identity Small (Paul Graham)",
+          "locator": "chunk 5",
+          "similarity": 0.6306,
+          "snippet": "ading this will already be fairly tolerant. But there is a step beyond thinking of yourself as x but tolerating y: not e"
+        },
+        {
+          "rank": 3,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "16:46 to 17:19",
+          "similarity": 0.5903,
+          "snippet": "that was one digit now two ditches I can't ends gone and you're on to the next one and what we see there is the third ex"
+        }
+      ]
+    },
+    {
+      "id": "pg-labels-reworded",
+      "fact": "pg-labels",
+      "phrasing": "reworded",
+      "question": "What is the closing claim about putting yourself into categories?",
+      "rank": 1,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Keep Your Identity Small (Paul Graham)",
+          "locator": "chunk 5",
+          "similarity": 0.6881,
+          "snippet": "ading this will already be fairly tolerant. But there is a step beyond thinking of yourself as x but tolerating y: not e"
+        },
+        {
+          "rank": 2,
+          "source": "Keep Your Identity Small (Paul Graham)",
+          "locator": "chunk 4",
+          "similarity": 0.6267,
+          "snippet": "'t engage the identities of any of the participants. What makes politics and religion such minefields is that they engag"
+        },
+        {
+          "rank": 3,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "locator": "chunk 21",
+          "similarity": 0.6224,
+          "snippet": "it also has social value, insofar as my team is more likely to trust me when I express this belief. So is it a \"merit be"
+        }
+      ]
+    },
+    {
+      "id": "epictetus-control-verbatim",
+      "fact": "epictetus-control",
+      "phrasing": "verbatim",
+      "question": "According to Epictetus, which things are within our power and which are beyond our power?",
+      "rank": 1,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "locator": "chunk 0",
+          "similarity": 0.7975,
+          "snippet": "THE ENCHIRIDION I There are things which are within our power, and there are things which are beyond our power. Within o"
+        },
+        {
+          "rank": 2,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 147",
+          "similarity": 0.681,
+          "snippet": "MARCUS AURELIUS 27. There are three relations [between thee and other things] : the one to the body which surrounds thee"
+        },
+        {
+          "rank": 3,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 169",
+          "similarity": 0.6696,
+          "snippet": "ether we examine these things for a hundred years or three. 38. If any man has done wrong, the harm is his own. But perh"
+        }
+      ]
+    },
+    {
+      "id": "epictetus-control-reworded",
+      "fact": "epictetus-control",
+      "phrasing": "reworded",
+      "question": "What does the handbook say we get to control, and what does it say we do not?",
+      "rank": null,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 26",
+          "similarity": 0.635,
+          "snippet": "e upon us, whether we will or no. The wise man will not disturb himself about indifferent matters, or the things outside"
+        },
+        {
+          "rank": 2,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 24",
+          "similarity": 0.5869,
+          "snippet": "INTRODUCTION should guide; the physical properties of the human being should obey. But there must be a settled purpose i"
+        },
+        {
+          "rank": 3,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "locator": "chunk 3",
+          "similarity": 0.5774,
+          "snippet": "hat to which you are averse; that he who fails of the object of his desires is disappointed; and he who incurs the objec"
+        }
+      ]
+    },
+    {
+      "id": "epictetus-ship-verbatim",
+      "fact": "epictetus-ship",
+      "phrasing": "verbatim",
+      "question": "What does Epictetus say you must do if the captain calls while you are picking up a shellfish on shore?",
+      "rank": 1,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "locator": "chunk 7",
+          "similarity": 0.7443,
+          "snippet": "ce. So that when you are in harmony with nature in this respect, you will be elated with some reason; for you will be el"
+        },
+        {
+          "rank": 2,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "locator": "chunk 32",
+          "similarity": 0.6138,
+          "snippet": "ch the whole consideration relates to the event, and in which no opportunities are afforded by reason or any other art t"
+        },
+        {
+          "rank": 3,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 63",
+          "similarity": 0.6112,
+          "snippet": "? Thou hast embarked, thou hast made the voyage, thou art come to shore; get out. If indeed to another life, there is no"
+        }
+      ]
+    },
+    {
+      "id": "epictetus-ship-reworded",
+      "fact": "epictetus-ship",
+      "phrasing": "reworded",
+      "question": "In the voyage comparison, what should you do the moment you are summoned back?",
+      "rank": 1,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "locator": "chunk 7",
+          "similarity": 0.6341,
+          "snippet": "ce. So that when you are in harmony with nature in this respect, you will be elated with some reason; for you will be el"
+        },
+        {
+          "rank": 2,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "locator": "chunk 38",
+          "similarity": 0.6279,
+          "snippet": "blance of any promised pleasure, guard yourself against being bewildered by it; but let the affair wait your leisure, an"
+        },
+        {
+          "rank": 3,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 63",
+          "similarity": 0.6103,
+          "snippet": "? Thou hast embarked, thou hast made the voyage, thou art come to shore; get out. If indeed to another life, there is no"
+        }
+      ]
+    },
+    {
+      "id": "sapolsky-four-circumstances-verbatim",
+      "fact": "sapolsky-four-circumstances",
+      "phrasing": "verbatim",
+      "question": "What do having your period, a brain tumour, eating a lot of junk food and taking anabolic steroids have in common?",
+      "rank": 1,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "3:42 to 4:13",
+          "similarity": 0.7367,
+          "snippet": "of you were not oriented to it that's the ones that build up your muscle like testosterone derivatives okay these all ha"
+        },
+        {
+          "rank": 2,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "3:10 to 3:42",
+          "similarity": 0.7081,
+          "snippet": "yay okay well everybody's gonna get an A+ then you already have the course under control okay so we start off trying to "
+        },
+        {
+          "rank": 3,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "5:49 to 6:19",
+          "similarity": 0.6545,
+          "snippet": "that led to a remarkably short jail sentence was the famed Twinkie defense the argument that his addiction to junk food "
+        }
+      ]
+    },
+    {
+      "id": "sapolsky-four-circumstances-reworded",
+      "fact": "sapolsky-four-circumstances",
+      "phrasing": "reworded",
+      "question": "Why does the lecturer open by grouping four unrelated bodily conditions together?",
+      "rank": 2,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "22:58 to 23:29",
+          "similarity": 0.6252,
+          "snippet": "Yeah, question? AUDIENCE: So if you're forced to think about-- get confused by the uppercase and the lowercase and the l"
+        },
+        {
+          "rank": 2,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "4:13 to 4:47",
+          "similarity": 0.618,
+          "snippet": "on somebody want to guess see these brief movements of hands there's people change their mind okay it all has to do with"
+        },
+        {
+          "rank": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "6:46 to 7:18",
+          "similarity": 0.6099,
+          "snippet": "repeat. AUDIENCE: 4, 2, 6, 9, 8, 5, 1. PROFESSOR: Very good. Ready? 8, 1, 6, 3, 7, 2, 4, 9. Repeat. AUDIENCE: 8, 1, 6, 7"
+        }
+      ]
+    },
+    {
+      "id": "sapolsky-twinkie-verbatim",
+      "fact": "sapolsky-twinkie",
+      "phrasing": "verbatim",
+      "question": "What was the Twinkie defence used by Dan White?",
+      "rank": 1,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "5:49 to 6:19",
+          "similarity": 0.5852,
+          "snippet": "that led to a remarkably short jail sentence was the famed Twinkie defense the argument that his addiction to junk food "
+        },
+        {
+          "rank": 2,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "5:19 to 5:49",
+          "similarity": 0.5621,
+          "snippet": "fear and you get a brain tumor there and in a number of cases you get someone who is uncontrollably violent and this has"
+        },
+        {
+          "rank": 3,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "locator": "chunk 24",
+          "similarity": 0.5037,
+          "snippet": "ed hour, in heat and cold; you must drink no cold water, and sometimes no wine—in a word, you must give yourself up to y"
+        }
+      ]
+    },
+    {
+      "id": "sapolsky-twinkie-reworded",
+      "fact": "sapolsky-twinkie",
+      "phrasing": "reworded",
+      "question": "Which killing in San Francisco involved a lawyer blaming the defendant for what he had been eating?",
+      "rank": 1,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "5:19 to 5:49",
+          "similarity": 0.6407,
+          "snippet": "fear and you get a brain tumor there and in a number of cases you get someone who is uncontrollably violent and this has"
+        },
+        {
+          "rank": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "49:03 to 49:35",
+          "similarity": 0.5893,
+          "snippet": "Sadly, this is the man who attacked and raped me. He's released from jail. By then, he's lost his money, his job, his fi"
+        },
+        {
+          "rank": 3,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "5:49 to 6:19",
+          "similarity": 0.5869,
+          "snippet": "that led to a remarkably short jail sentence was the famed Twinkie defense the argument that his addiction to junk food "
+        }
+      ]
+    },
+    {
+      "id": "sapolsky-two-points-verbatim",
+      "fact": "sapolsky-two-points",
+      "phrasing": "verbatim",
+      "question": "What are the two key points of the entire course?",
+      "rank": 4,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "41:03 to 41:33",
+          "similarity": 0.6459,
+          "snippet": "biology have to do with it okay general structure of the course the first half of the course is going to be an overview "
+        },
+        {
+          "rank": 2,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "42:35 to 43:05",
+          "similarity": 0.6354,
+          "snippet": "language use in each of these cases what's going on a second before what's going on ten million years before where do al"
+        },
+        {
+          "rank": 3,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "49:48 to 50:20",
+          "similarity": 0.6335,
+          "snippet": "going to be a huge amount of information online the coursework is going to be set up for the class there will be copies "
+        }
+      ]
+    },
+    {
+      "id": "sapolsky-two-points-reworded",
+      "fact": "sapolsky-two-points",
+      "phrasing": "reworded",
+      "question": "Which two directions of influence between body and mind does the lecture say the class is about?",
+      "rank": 6,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Meditations (Marcus Aurelius, tr. George Long)",
+          "locator": "page 180",
+          "similarity": 0.6833,
+          "snippet": "one another, and constantly attend to it, and exercise thyself about this part [of philosophy]. For nothing is so much a"
+        },
+        {
+          "rank": 2,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "22:27 to 23:00",
+          "similarity": 0.6739,
+          "snippet": "what we're going to be doing instead throughout in terms of the structure of the class when we get to actual behaviors f"
+        },
+        {
+          "rank": 3,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "locator": "32:47 to 33:19",
+          "similarity": 0.6652,
+          "snippet": "every level we're going to talk about genes hormones neurons and fire mental influence whatever it is that point will si"
+        }
+      ]
+    },
+    {
+      "id": "kurzgesagt-weeks-verbatim",
+      "fact": "kurzgesagt-weeks",
+      "phrasing": "verbatim",
+      "question": "How many weeks do you have at your disposal if you are lucky enough to live to one hundred?",
+      "rank": 1,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Optimistic Nihilism (Kurzgesagt)",
+          "locator": "1:38 to 2:09",
+          "similarity": 0.7523,
+          "snippet": "The universe is too big. There is too much of it. But size is not the most troubling concept we have to deal with. It's "
+        },
+        {
+          "rank": 2,
+          "source": "Optimistic Nihilism (Kurzgesagt)",
+          "locator": "5:20 to 5:51",
+          "similarity": 0.6227,
+          "snippet": "people to help, happy feelings to be experienced, and video games to finish. There is so much to do. So, wrapping up, yo"
+        },
+        {
+          "rank": 3,
+          "source": "Optimistic Nihilism (Kurzgesagt)",
+          "locator": "2:09 to 2:43",
+          "similarity": 0.5874,
+          "snippet": "And then what? Your biological processes will break down, and the dynamic pattern that is you will stop beinge dynamic. "
+        }
+      ]
+    },
+    {
+      "id": "kurzgesagt-weeks-reworded",
+      "fact": "kurzgesagt-weeks",
+      "phrasing": "reworded",
+      "question": "If a person reaches a century of age, how much time is that when counted out in seven-day stretches?",
+      "rank": 1,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Optimistic Nihilism (Kurzgesagt)",
+          "locator": "1:38 to 2:09",
+          "similarity": 0.6914,
+          "snippet": "The universe is too big. There is too much of it. But size is not the most troubling concept we have to deal with. It's "
+        },
+        {
+          "rank": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "36:28 to 36:59",
+          "similarity": 0.6363,
+          "snippet": "And the guy repeated every word perfectly. This guy truly had photographic memory. And kind of interestingly, when they "
+        },
+        {
+          "rank": 3,
+          "source": "Optimistic Nihilism (Kurzgesagt)",
+          "locator": "2:09 to 2:43",
+          "similarity": 0.612,
+          "snippet": "And then what? Your biological processes will break down, and the dynamic pattern that is you will stop beinge dynamic. "
+        }
+      ]
+    },
+    {
+      "id": "gabrieli-chess-verbatim",
+      "fact": "gabrieli-chess",
+      "phrasing": "verbatim",
+      "question": "Why do chess masters do worse than beginners when the pieces are placed randomly?",
+      "rank": 3,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "9:21 to 9:53",
+          "similarity": 0.8007,
+          "snippet": "of chess and people who have played very little chess. It's better to be high, the number of correct pieces. And there's"
+        },
+        {
+          "rank": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "10:57 to 11:27",
+          "similarity": 0.7962,
+          "snippet": "were randomly located. If you're a chess player, you don't like that random board. It doesn't feel right. But they're tr"
+        },
+        {
+          "rank": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "9:53 to 10:25",
+          "similarity": 0.7581,
+          "snippet": "normal chess configuration. Here are the players who are beginners. And look at the worst performances, the chess master"
+        }
+      ]
+    },
+    {
+      "id": "gabrieli-chess-reworded",
+      "fact": "gabrieli-chess",
+      "phrasing": "reworded",
+      "question": "When does an expert knowledge of a board game start hurting recall instead of helping it?",
+      "rank": 4,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "8:20 to 8:51",
+          "similarity": 0.7372,
+          "snippet": "It's because background prior knowledge, things you know before you have to learn something, has a very powerful effect."
+        },
+        {
+          "rank": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "10:57 to 11:27",
+          "similarity": 0.7069,
+          "snippet": "were randomly located. If you're a chess player, you don't like that random board. It doesn't feel right. But they're tr"
+        },
+        {
+          "rank": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "29:44 to 30:15",
+          "similarity": 0.6861,
+          "snippet": "So we said, typically, background knowledge helps. But here's the way it can get weirdly not helpful. So here's the perf"
+        }
+      ]
+    },
+    {
+      "id": "gabrieli-encoding-verbatim",
+      "fact": "gabrieli-encoding",
+      "phrasing": "verbatim",
+      "question": "What is shallow encoding, and what kind of memory does it lead to?",
+      "rank": 1,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "21:56 to 22:28",
+          "similarity": 0.7556,
+          "snippet": "Ready? You did awesome. Thanks. Here we go. OK. Does it feel like you would remember the words better? Does it feel like"
+        },
+        {
+          "rank": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "22:28 to 22:58",
+          "similarity": 0.6712,
+          "snippet": "optimizes memory. People would call it deep encoding. And it leads to better memory. And in a well-controlled experiment"
+        },
+        {
+          "rank": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "11:27 to 11:58",
+          "similarity": 0.6461,
+          "snippet": "Background knowledge lets you escape the bounds of limited short-term memory but at a cost of sometimes substituting in "
+        }
+      ]
+    },
+    {
+      "id": "gabrieli-encoding-reworded",
+      "fact": "gabrieli-encoding",
+      "phrasing": "reworded",
+      "question": "Why does judging how a word looks leave you remembering it worse than judging what it means?",
+      "rank": 1,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "21:56 to 22:28",
+          "similarity": 0.7734,
+          "snippet": "Ready? You did awesome. Thanks. Here we go. OK. Does it feel like you would remember the words better? Does it feel like"
+        },
+        {
+          "rank": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "21:25 to 21:56",
+          "similarity": 0.7201,
+          "snippet": "they were right in front of you, and even though you were looking whether they were upper and lowercase case so you real"
+        },
+        {
+          "rank": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "31:48 to 32:18",
+          "similarity": 0.7178,
+          "snippet": "What's the point? If they weren't unwarned, they read the sentence. Then you're tested. It's much better for meaning tha"
+        }
+      ]
+    },
+    {
+      "id": "gabrieli-loftus-verbatim",
+      "fact": "gabrieli-loftus",
+      "phrasing": "verbatim",
+      "question": "What did Elizabeth Loftus's slides of a car at an intersection show about eyewitness testimony?",
+      "rank": 1,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "43:50 to 44:23",
+          "similarity": 0.7318,
+          "snippet": "So how accurate is eyewitness testimony? Of course it has to be somewhat accurate. We're not living in a crazy world whe"
+        },
+        {
+          "rank": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "43:18 to 43:50",
+          "similarity": 0.5747,
+          "snippet": "And they'll be saying, where were you? What were you doing? What were you feeling? Because we need that to be able to ve"
+        },
+        {
+          "rank": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "49:35 to 50:05",
+          "similarity": 0.5497,
+          "snippet": "what's she mixing up? Her memory for the photo array versus for memory for the original event. Those two have gotten ble"
+        }
+      ]
+    },
+    {
+      "id": "gabrieli-loftus-reworded",
+      "fact": "gabrieli-loftus",
+      "phrasing": "reworded",
+      "question": "How did slipping one different word into a later question change what people said they had seen?",
+      "rank": null,
+      "top3": [
+        {
+          "rank": 1,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "22:58 to 23:29",
+          "similarity": 0.7246,
+          "snippet": "Yeah, question? AUDIENCE: So if you're forced to think about-- get confused by the uppercase and the lowercase and the l"
+        },
+        {
+          "rank": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "locator": "4:11 to 4:43",
+          "similarity": 0.6792,
+          "snippet": "And then just as it disappeared did we get a tone, a high, medium, or low tone. And that would tell them which row to re"
+        },
+        {
+          "rank": 3,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "locator": "page 5",
+          "similarity": 0.6713,
+          "snippet": "786 | Nature | Vol 618 | 22 June 2023Article people adapt to changes in traffic or morality, then people in different de"
+        }
+      ]
+    }
+  ]
+}

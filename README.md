@@ -51,6 +51,25 @@ notebooks (1) ──< sources (many) ──< chunks (many, with embedding vector
 4. Response streams as `citations` event first, then `token` events, then `done`.
 5. Clicking a citation opens the source viewer, jumping to the right page/timestamp/chunk.
 
+### Retrieval quality
+
+Retrieval is measured, not assumed. `eval/` holds 40 hand written questions
+against the demo notebook, 20 facts each asked twice: once in the source's own
+wording and once reworded to avoid it. Gold labels are a source plus a quote or
+a time window rather than a chunk ID, so they stay valid when chunking changes.
+
+| | questions | hit@1 | hit@5 | hit@8 | MRR@10 |
+| --- | --- | --- | --- | --- | --- |
+| Overall | 40 | 0.35 | 0.72 | 0.75 | 0.500 |
+| Word for word | 20 | 0.45 | 0.85 | 0.85 | 0.599 |
+| Reworded | 20 | 0.25 | 0.60 | 0.65 | 0.400 |
+
+Run with `npm run eval`. It uses the same embedding call and the same
+`match_chunks` function as `/api/query`, makes no Groq request, and writes a
+dated file to `eval/results/` holding every question's rank and the chunks that
+came back, failures included. See [eval/README.md](eval/README.md) for method,
+what the misses show, and the limits of a 40 question set.
+
 ### Multi-turn chat
 
 Each question is sent with the prior conversation. A lightweight LLM call rewrites the question into standalone form for retrieval; the answer call sees the last 3 exchanges verbatim but is still instructed to answer only from retrieved context.

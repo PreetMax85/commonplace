@@ -1,7 +1,12 @@
 // Measures retrieval quality on the labelled question set.
 //
-// This calls the same embedding function and the same match_chunks RPC that
-// /api/query calls, with the notebook's questions asked one at a time. It stops
+// Every question is asked of two searches: match_chunks, the vector-only search
+// the app shipped with, and match_chunks_hybrid, which adds keyword search.
+// Both see the same embedding and the same data in the same run, so a
+// difference between them comes from the search and nothing else.
+//
+// It calls the same embedding function as /api/query, with the notebook's
+// questions asked one at a time. It stops
 // before the answer is written, because generating prose does not change which
 // chunks were retrieved. No Groq request is made and no API route is touched,
 // so a run costs nothing and spends none of the public demo's daily budget.
@@ -37,48 +42,76 @@ const { count: chunkCount } = await supabaseAdmin
   .select("id", { count: "exact", head: true })
   .eq("notebook_id", set.notebook_id);
 
+const SEARCHES = ["vector", "hybrid"] as const;
+type Search = (typeof SEARCHES)[number];
+
+function search(name: Search, question: string, embedding: number[]) {
+  const common = {
+    query_embedding: embedding,
+    match_notebook_id: set.notebook_id,
+    match_count: set.match_count,
+  };
+  return name === "vector"
+    ? supabaseAdmin.rpc("match_chunks", common)
+    : supabaseAdmin.rpc("match_chunks_hybrid", { query_text: question, ...common });
+}
+
+type Row = Chunk & { similarity: number; semantic_rank?: number | null; keyword_rank?: number | null };
+
 interface Result {
   id: string;
   fact: string;
   phrasing: string;
   question: string;
   rank: number | null;
-  returned: { rank: number; source: string; locator: string; similarity: number; snippet: string }[];
+  returned: {
+    rank: number;
+    source: string;
+    locator: string;
+    similarity: number;
+    // Hybrid only: where the chunk placed in each list before merging, null
+    // when that list did not return it.
+    semantic_rank?: number | null;
+    keyword_rank?: number | null;
+    snippet: string;
+  }[];
 }
 
-const results: Result[] = [];
+const results: Record<Search, Result[]> = { vector: [], hybrid: [] };
 
 for (const q of set.questions) {
   const fact = set.facts[q.fact];
   const embedding = await embedText(q.question);
-  const { data: matches, error } = await supabaseAdmin.rpc("match_chunks", {
-    query_embedding: embedding,
-    match_notebook_id: set.notebook_id,
-    match_count: set.match_count,
-  });
-  if (error) throw error;
-
   const wantedSource = byTitle.get(fact.source)!;
-  const rows = (matches ?? []) as (Chunk & { similarity: number })[];
-  const index = rows.findIndex(
-    (m) => m.source_id === wantedSource && matchingChunks(fact, m)
-  );
 
-  results.push({
-    id: q.id,
-    fact: q.fact,
-    phrasing: q.phrasing,
-    question: q.question,
-    rank: index === -1 ? null : index + 1,
-    returned: rows.map((m, i) => ({
-      rank: i + 1,
-      source: titleById.get(m.source_id) ?? m.source_id,
-      locator: describe(m.metadata),
-      similarity: Number(m.similarity.toFixed(4)),
-      snippet: m.content.slice(0, 120),
-    })),
-  });
-  process.stdout.write(index === -1 ? "x" : index + 1 === 10 ? "+" : String(index + 1));
+  for (const name of SEARCHES) {
+    const { data: matches, error } = await search(name, q.question, embedding);
+    if (error) {
+      throw new Error(`${name} search failed: ${error.message}. Has migration 0006 been run?`);
+    }
+
+    const rows = (matches ?? []) as Row[];
+    const index = rows.findIndex(
+      (m) => m.source_id === wantedSource && matchingChunks(fact, m)
+    );
+
+    results[name].push({
+      id: q.id,
+      fact: q.fact,
+      phrasing: q.phrasing,
+      question: q.question,
+      rank: index === -1 ? null : index + 1,
+      returned: rows.map((m, i) => ({
+        rank: i + 1,
+        source: titleById.get(m.source_id) ?? m.source_id,
+        locator: describe(m.metadata),
+        similarity: Number(m.similarity.toFixed(4)),
+        ...(name === "hybrid" && { semantic_rank: m.semantic_rank, keyword_rank: m.keyword_rank }),
+        snippet: m.content.slice(0, 120),
+      })),
+    });
+  }
+  process.stdout.write(".");
 }
 process.stdout.write("\n\n");
 
@@ -111,11 +144,31 @@ function score(rows: Result[]) {
 // Computed rather than worked out by hand for the write-up: the per-source
 // split is where a scanned book drags the average down, and arithmetic done in
 // prose is arithmetic that goes wrong.
-const bySource: Record<string, ReturnType<typeof score>> = {};
-for (const title of new Set(Object.values(set.facts).map((f) => f.source))) {
-  const rows = results.filter((r) => set.facts[r.fact].source === title);
-  bySource[title] = score(rows);
+const titles = [...new Set(Object.values(set.facts).map((f) => f.source))];
+
+function summarize(rows: Result[]) {
+  const bySource: Record<string, ReturnType<typeof score>> = {};
+  for (const title of titles) {
+    bySource[title] = score(rows.filter((r) => set.facts[r.fact].source === title));
+  }
+  return {
+    overall: score(rows),
+    verbatim: score(rows.filter((r) => r.phrasing === "verbatim")),
+    reworded: score(rows.filter((r) => r.phrasing === "reworded")),
+    by_source: bySource,
+  };
 }
+
+const summary = { vector: summarize(results.vector), hybrid: summarize(results.hybrid) };
+
+// Every question whose rank moved, so a better average cannot hide a question
+// that got worse.
+const changes = results.vector.flatMap((before, i) => {
+  const after = results.hybrid[i];
+  return before.rank === after.rank
+    ? []
+    : [{ id: before.id, phrasing: before.phrasing, question: before.question, vector: before.rank, hybrid: after.rank }];
+});
 
 const report = {
   run_at: new Date().toISOString(),
@@ -125,10 +178,8 @@ const report = {
   chunks: chunkCount ?? 0,
   embedding_model: EMBED_MODEL,
   match_count: set.match_count,
-  overall: score(results),
-  verbatim: score(results.filter((r) => r.phrasing === "verbatim")),
-  reworded: score(results.filter((r) => r.phrasing === "reworded")),
-  by_source: bySource,
+  searches: summary,
+  changes,
   results,
 };
 
@@ -138,20 +189,32 @@ const stamp = report.run_at.slice(0, 16).replace(/[:T]/g, "-");
 const out = join(import.meta.dirname, "results", `${stamp}.json`);
 writeFileSync(out, JSON.stringify(report, null, 2) + "\n");
 
-for (const [label, s] of [["overall", report.overall], ["verbatim", report.verbatim], ["reworded", report.reworded]] as const) {
-  console.log(
-    `${label.padEnd(9)} n=${s.questions}  hit@1 ${s["hit@1"].toFixed(2)}  hit@5 ${s["hit@5"].toFixed(2)}  hit@8 ${s["hit@8"].toFixed(2)}  MRR@10 ${s["mrr@10"].toFixed(3)}`
-  );
+const { vector, hybrid } = summary;
+const fixed = (x: number) => x.toFixed(2);
+const metrics = ["hit@1", "hit@5", "hit@8", "mrr@10"] as const;
+
+console.log("vector -> hybrid");
+for (const label of ["overall", "verbatim", "reworded"] as const) {
+  const cells = metrics.map((m) => `${m} ${fixed(vector[label][m])} -> ${fixed(hybrid[label][m])}`);
+  console.log(`${label.padEnd(9)} n=${vector[label].questions}  ${cells.join("  ")}`);
 }
 
 console.log("\nhit@5 by source:");
-for (const [title, s] of Object.entries(bySource)) {
-  console.log(`  ${String(Math.round(s["hit@5"] * s.questions)).padStart(2)}/${s.questions}  ${title}`);
+for (const title of titles) {
+  const found = (s: ReturnType<typeof score>) => String(Math.round(s["hit@5"] * s.questions)).padStart(2);
+  const n = vector.by_source[title].questions;
+  console.log(`  ${found(vector.by_source[title])}/${n} -> ${found(hybrid.by_source[title])}/${n}  ${title}`);
 }
 
-const misses = results.filter((r) => r.rank === null);
+const place = (rank: number | null) => (rank === null ? "miss" : String(rank)).padStart(4);
+if (changes.length) {
+  console.log("\nrank changes (vector -> hybrid):");
+  for (const c of changes) console.log(`  ${place(c.vector)} -> ${place(c.hybrid)}  ${c.phrasing.padEnd(8)} ${c.question}`);
+}
+
+const misses = results.hybrid.filter((r) => r.rank === null);
 if (misses.length) {
-  console.log(`\nnot found in the top ${set.match_count}:`);
+  console.log(`\nhybrid, not found in the top ${set.match_count}:`);
   for (const m of misses) console.log(`  ${m.phrasing.padEnd(8)} ${m.question}`);
 }
 console.log(`\nwritten to ${out}`);

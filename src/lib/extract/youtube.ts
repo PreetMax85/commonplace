@@ -1,6 +1,6 @@
 import { YoutubeTranscript, YoutubeTranscriptNotAvailableLanguageError } from "youtube-transcript";
-import { RawChunk } from "../chunking";
-import { fetchSupadataTranscript, supadataConfigured, TranscriptEntry } from "./supadata";
+import { RawChunk, TranscriptEntry } from "../chunking";
+import { fetchSupadataTranscript, supadataConfigured } from "./supadata";
 
 export function extractYoutubeId(url: string): string {
   // A YouTube source stores only its video id as raw_ref, and re-index passes
@@ -39,6 +39,9 @@ async function fetchTranscript(videoId: string): Promise<TranscriptEntry[]> {
     return await fetchPreferringEnglish(videoId);
   } catch (directError) {
     if (!supadataConfigured()) {
+      // The only environment without a key is local development, which is also
+      // where the real reason is worth seeing.
+      console.error(`YouTube transcript failed for ${videoId}:`, directError);
       throw new Error(
         "YouTube would not return this transcript to the server. Upload the video's captions as a VTT or SRT file instead."
       );

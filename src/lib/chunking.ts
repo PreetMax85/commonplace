@@ -39,3 +39,7 @@ export function chunkText(
 
   return chunks;
 }
+
+// One caption cue, as both the direct YouTube fetch and the fallback provider
+// return it. Offsets and durations are milliseconds.
+export type TranscriptEntry = { text: string; offset: number; duration: number };

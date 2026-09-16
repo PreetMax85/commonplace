@@ -34,7 +34,15 @@ class EmbeddingPipeline {
 
   static getInstance(): Promise<FeatureExtractor> {
     if (this.instance === null) {
-      this.instance = pipeline("feature-extraction", EMBED_MODEL) as Promise<FeatureExtractor>;
+      this.instance = (pipeline("feature-extraction", EMBED_MODEL) as Promise<FeatureExtractor>).catch(
+        (err) => {
+          // Caching the promise also caches a rejection. A single failed model
+          // download would then break embedding for the life of the instance,
+          // so the cache is cleared and the next request downloads again.
+          this.instance = null;
+          throw err;
+        }
+      );
     }
     return this.instance;
   }

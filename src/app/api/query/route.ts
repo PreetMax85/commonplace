@@ -60,7 +60,11 @@ export async function POST(req: NextRequest) {
 
   // Notebook isolation enforced here via match_notebook_id filter — a
   // chunk from another notebook can never surface in this search.
-  const { data: matches, error } = await supabaseAdmin.rpc("match_chunks", {
+  // Hybrid search: vector and keyword results merged by rank (migration 0006).
+  // On the eval set it found every answer match_chunks found in the top 8, plus
+  // two more, and put three more answers first.
+  const { data: matches, error } = await supabaseAdmin.rpc("match_chunks_hybrid", {
+    query_text: retrievalQuestion,
     query_embedding: queryEmbedding,
     match_notebook_id: notebookId,
     match_count: 8,

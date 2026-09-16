@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // next dev writes an AGENTS.md file for coding assistants on every run. This
+  // project does not use it, and it reappears as an uncommitted change.
+  agentRules: false,
+
   // Transformers.js loads onnxruntime-node, which is a native addon the bundler
   // cannot process, so it is required at runtime instead.
   serverExternalPackages: ["@xenova/transformers"],

@@ -59,16 +59,19 @@ wording and once reworded to avoid it. Gold labels are a source plus a quote or
 a time window rather than a chunk ID, so they stay valid when chunking changes.
 
 `/api/query` uses hybrid search (migration `0006`): keyword search and vector
-search, merged by rank. Both were run on the same 40 questions in one run:
+search, merged by rank. Both were run on the same 40 questions in one run
+(9 sources, 543 chunks):
 
 | | vector hit@1 | hybrid hit@1 | vector hit@8 | hybrid hit@8 | vector MRR@10 | hybrid MRR@10 |
 | --- | --- | --- | --- | --- | --- | --- |
-| Overall | 0.35 | 0.425 | 0.725 | 0.75 | 0.495 | 0.552 |
-| Word for word | 0.45 | 0.60 | 0.80 | 0.85 | 0.589 | 0.722 |
-| Reworded | 0.25 | 0.25 | 0.65 | 0.65 | 0.400 | 0.383 |
+| Overall | 0.45 | 0.55 | 0.85 | 0.90 | 0.612 | 0.678 |
+| Word for word | 0.60 | 0.75 | 1.00 | 1.00 | 0.752 | 0.867 |
+| Reworded | 0.30 | 0.35 | 0.70 | 0.80 | 0.472 | 0.489 |
 
-Hybrid search puts the answer first more often. How many answers it finds at
-all barely changes, which is within noise on 40 questions.
+Hybrid search puts the answer first more often and finds slightly more answers,
+though both are small moves on 40 questions. An earlier version of the demo held
+a scanned PDF that scored far lower; replacing it raised the scores of both searches,
+and eval/README.md keeps both sets of numbers apart.
 
 Run with `npm run eval`. It uses the same embedding call as `/api/query`, runs
 both `match_chunks` and `match_chunks_hybrid`, makes no Groq request, and writes a

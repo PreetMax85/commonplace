@@ -5,7 +5,11 @@ that reads well can still be built on the wrong passage. This directory measures
 how often the search step actually returns the passage that answers the
 question, on a fixed set of questions with known answers.
 
-## The numbers, as of 2026-09-16
+## The first numbers, 2026-09-16
+
+These are the first baseline, before hybrid search and before the Meditations
+PDF was replaced. The current numbers are under
+[Current numbers](#current-numbers-after-replacing-meditations).
 
 40 questions against the demo notebook: 9 sources, 903 chunks, commit `977b8cc`.
 
@@ -92,6 +96,40 @@ Two follow-ups were tried on a local copy of the same 903 chunks and dropped:
 `/api/query` now calls `match_chunks_hybrid`. `match_chunks` is kept so the
 comparison can be rerun.
 
+## Current numbers, after replacing Meditations
+
+The scanned Meditations PDF was removed from the demo notebook and replaced with
+chapter IV, "Habit", of William James's *The Principles of Psychology*, saved as
+a clean text PDF. Its four facts were replaced with four new ones on the James
+chapter, written from the chapter text before any search was run on it, so the
+set is still 20 facts and 40 questions. The notebook is now 9 sources and 543
+chunks. Run: commit `3536ff5`, file `results/2026-09-16-13-21.json`.
+
+| | vector hit@1 | hybrid hit@1 | vector hit@8 | hybrid hit@8 | vector MRR@10 | hybrid MRR@10 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Overall | 0.45 | 0.55 | 0.85 | 0.90 | 0.612 | 0.678 |
+| Word for word | 0.60 | 0.75 | 1.00 | 1.00 | 0.752 | 0.867 |
+| Reworded | 0.30 | 0.35 | 0.70 | 0.80 | 0.472 | 0.489 |
+
+Read this carefully:
+
+- **These numbers are not comparable with the ones above.** Vector search went
+  from 0.70 to 0.85 at hit@5 without any change to search. The hardest source
+  left, and 441 of its chunks stopped competing with everything else. That is a
+  change of dataset, not an improvement.
+- **The comparison that means something is vector against hybrid within one
+  run.** Hybrid puts the answer first for four more questions (hit@1 0.45 to
+  0.55) and finds two more within the 8 chunks the app uses (hit@8 0.85 to
+  0.90). Both are small moves on 40 questions. Hybrid also moved some answers
+  down: 7 questions ranked lower, all of them reworded, and the Enchiridion
+  control question dropped out of the top 5.
+- **The set no longer has a scanned document.** Real uploads will include messy
+  scans, so these numbers are kinder than what those would get.
+- The first run after deleting the Meditations chunks disagreed with the three
+  runs after it on one question. The HNSW index is approximate and was still
+  settling after the delete. The three later runs were identical, and the last
+  one is the one recorded.
+
 ## How the questions were built
 
 20 facts, each asked twice:
@@ -133,8 +171,7 @@ Each label also records a human-readable locator, such as `page 72, Book IV.3`
 or `43:51 to 44:53`, so any question can be checked against the original.
 
 `npm run eval:check` verifies that every label still matches real text and
-prints how many chunks each one resolves to. All 20 resolve to between 1 and 3
-chunks.
+prints how many chunks each one resolves to. All 20 resolve to 1 or 2 chunks.
 
 ## Reproducing it
 

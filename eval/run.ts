@@ -14,6 +14,16 @@ import { loadSet, resolveSources, matchingChunks, type Chunk } from "./lib.ts";
 
 const set = loadSet();
 
+// Read before the run: forty embeddings take a while, and a git failure
+// afterwards would throw the whole thing away.
+const commit = execSync("git rev-parse --short HEAD").toString().trim();
+
+// The metric names below are written out, so a changed window would silently
+// mislabel them.
+if (set.match_count !== 10) {
+  throw new Error(`match_count must be 10 for hit@8 and MRR@10 to mean what they say, got ${set.match_count}`);
+}
+
 const { data: sources, error: srcErr } = await supabaseAdmin
   .from("sources")
   .select("id,title")
@@ -33,7 +43,7 @@ interface Result {
   phrasing: string;
   question: string;
   rank: number | null;
-  top3: { rank: number; source: string; locator: string; similarity: number; snippet: string }[];
+  returned: { rank: number; source: string; locator: string; similarity: number; snippet: string }[];
 }
 
 const results: Result[] = [];
@@ -60,7 +70,7 @@ for (const q of set.questions) {
     phrasing: q.phrasing,
     question: q.question,
     rank: index === -1 ? null : index + 1,
-    top3: rows.slice(0, 3).map((m, i) => ({
+    returned: rows.map((m, i) => ({
       rank: i + 1,
       source: titleById.get(m.source_id) ?? m.source_id,
       locator: describe(m.metadata),
@@ -68,7 +78,7 @@ for (const q of set.questions) {
       snippet: m.content.slice(0, 120),
     })),
   });
-  process.stdout.write(index === -1 ? "x" : String(index + 1));
+  process.stdout.write(index === -1 ? "x" : index + 1 === 10 ? "+" : String(index + 1));
 }
 process.stdout.write("\n\n");
 
@@ -98,9 +108,18 @@ function score(rows: Result[]) {
   };
 }
 
+// Computed rather than worked out by hand for the write-up: the per-source
+// split is where a scanned book drags the average down, and arithmetic done in
+// prose is arithmetic that goes wrong.
+const bySource: Record<string, ReturnType<typeof score>> = {};
+for (const title of new Set(Object.values(set.facts).map((f) => f.source))) {
+  const rows = results.filter((r) => set.facts[r.fact].source === title);
+  bySource[title] = score(rows);
+}
+
 const report = {
   run_at: new Date().toISOString(),
-  commit: execSync("git rev-parse --short HEAD").toString().trim(),
+  commit,
   notebook_id: set.notebook_id,
   sources: sources?.length ?? 0,
   chunks: chunkCount ?? 0,
@@ -109,16 +128,25 @@ const report = {
   overall: score(results),
   verbatim: score(results.filter((r) => r.phrasing === "verbatim")),
   reworded: score(results.filter((r) => r.phrasing === "reworded")),
+  by_source: bySource,
   results,
 };
 
-const out = join(import.meta.dirname, "results", `${report.run_at.slice(0, 10)}.json`);
+// Minute-stamped rather than dated, so a second run never quietly replaces the
+// first and two runs can be compared in the repo.
+const stamp = report.run_at.slice(0, 16).replace(/[:T]/g, "-");
+const out = join(import.meta.dirname, "results", `${stamp}.json`);
 writeFileSync(out, JSON.stringify(report, null, 2) + "\n");
 
 for (const [label, s] of [["overall", report.overall], ["verbatim", report.verbatim], ["reworded", report.reworded]] as const) {
   console.log(
     `${label.padEnd(9)} n=${s.questions}  hit@1 ${s["hit@1"].toFixed(2)}  hit@5 ${s["hit@5"].toFixed(2)}  hit@8 ${s["hit@8"].toFixed(2)}  MRR@10 ${s["mrr@10"].toFixed(3)}`
   );
+}
+
+console.log("\nhit@5 by source:");
+for (const [title, s] of Object.entries(bySource)) {
+  console.log(`  ${String(Math.round(s["hit@5"] * s.questions)).padStart(2)}/${s.questions}  ${title}`);
 }
 
 const misses = results.filter((r) => r.rank === null);

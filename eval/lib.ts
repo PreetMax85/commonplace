@@ -40,9 +40,11 @@ export function loadSet(): QuestionSet {
   return JSON.parse(readFileSync(join(here, "questions.json"), "utf8"));
 }
 
-// Curly quotes, hyphenation and run-together whitespace all differ between the
-// PDF text layer and a hand-typed quote, so both sides are flattened before
-// they are compared.
+// Curly quotes and run-together whitespace differ between a PDF text layer and
+// a hand-typed quote, so both sides are flattened before they are compared.
+// Line-break hyphens are deliberately left alone: the scanned Meditations layer
+// holds forms like "pup- pets", and a quote crossing one would be rejected, so
+// labelled passages are chosen to avoid them.
 export function normalize(text: string): string {
   return text
     .replace(/[‘’]/g, "'")
@@ -69,9 +71,11 @@ export function resolveSources(
 
 // A chunk answers a question when it carries the labelled passage. Quotes are
 // kept under the chunker's 150-character overlap, so any quote is guaranteed to
-// sit whole inside at least one chunk however the boundaries move. Transcripts
-// are split by time rather than by character, so those labels are a time window
-// and any chunk overlapping it counts.
+// sit whole inside at least one chunk however the boundaries move within a
+// page. Transcripts are split by time rather than by character, so those labels
+// are a time window and any chunk overlapping it counts. The comparison is
+// strict at both ends, so two windows that meet at a point cannot both be
+// credited for the same chunk.
 export function matchingChunks(fact: Fact, chunk: Chunk): boolean {
   if (fact.anchor.kind === "quote") {
     const haystack = normalize(chunk.content);

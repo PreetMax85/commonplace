@@ -5,7 +5,7 @@ from scratch. Everything here is public domain or open access.
 
 | Kind | Source | Where it came from |
 | --- | --- | --- |
-| PDF | Meditations (Marcus Aurelius, tr. George Long) | Scanned Red Letter Library edition, public domain |
+| PDF | Habit (William James, The Principles of Psychology, 1890) | Chapter IV from psychclassics.yorku.ca/James/Principles/prin4.htm, saved as a PDF from the browser with headers and footers off, public domain |
 | PDF | The illusion of moral decline (Mastroianni and Gilbert, Nature 2023) | Open access, doi 10.1038/s41586-023-06137-x |
 | Web page | Keep Your Identity Small (Paul Graham) | http://www.paulgraham.com/identity.html |
 | Web page | The rise and fall of peer review (Adam Mastroianni) | https://www.experimental-history.com/p/the-rise-and-fall-of-peer-review |

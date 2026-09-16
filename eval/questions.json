@@ -2,43 +2,46 @@
   "notebook_id": "df22a1d0-431f-4667-a846-d5fa726a1799",
   "match_count": 10,
   "facts": {
-    "med-retreat": {
-      "source": "Meditations (Marcus Aurelius, tr. George Long)",
-      "locator": "page 72, Book IV.3",
+    "james-plasticity": {
+      "source": "Habit (William James, The Principles of Psychology, 1890)",
+      "locator": "page 1",
       "anchor": {
         "kind": "quote",
         "accept": [
-          "for it is in thy power whenever thou shalt choose to retire into thyself"
+          "a structure weak enough to yield to an influence, but strong enough not to yield all at once"
         ]
       }
     },
-    "med-hindrance": {
-      "source": "Meditations (Marcus Aurelius, tr. George Long)",
-      "locator": "page 100, Book V.20",
+    "james-flywheel": {
+      "source": "Habit (William James, The Principles of Psychology, 1890)",
+      "locator": "pages 8 and 9",
       "anchor": {
         "kind": "quote",
         "accept": [
-          "that which is a hindrance is made a furtherance to an act"
+          "Habit is thus the enormous fly-wheel of society, its most precious conservative agent",
+          "It keeps the fisherman and the deck-hand at sea through the winter"
         ]
       }
     },
-    "med-death": {
-      "source": "Meditations (Marcus Aurelius, tr. George Long)",
-      "locator": "page 156, Book IV.58 as quoted in the appendix",
+    "james-exception": {
+      "source": "Habit (William James, The Principles of Psychology, 1890)",
+      "locator": "page 9, second maxim",
       "anchor": {
         "kind": "quote",
         "accept": [
-          "He who fears death either fears the loss of sensation or a different kind of sensation"
+          "Never suffer an exception to occur till the new habit is securely rooted",
+          "Each lapse is like the letting fall of a ball of string"
         ]
       }
     },
-    "med-cooperation": {
-      "source": "Meditations (Marcus Aurelius, tr. George Long)",
-      "locator": "pages 36 and 52, Book II.1",
+    "james-rip": {
+      "source": "Habit (William James, The Principles of Psychology, 1890)",
+      "locator": "page 11",
       "anchor": {
         "kind": "quote",
         "accept": [
-          "we are made for co-operation, like feet, like hands, like eyelids"
+          "excuses himself for every fresh dereliction by saying",
+          "We are spinning our own fates, good or evil, and never to be undone"
         ]
       }
     },
@@ -227,52 +230,52 @@
   },
   "questions": [
     {
-      "id": "med-retreat-verbatim",
-      "fact": "med-retreat",
+      "id": "james-plasticity-verbatim",
+      "fact": "james-plasticity",
       "phrasing": "verbatim",
-      "question": "Where does Marcus Aurelius say men seek retreats for themselves, and what retreat does he say is always in your own power?"
+      "question": "How does William James define plasticity, as a structure weak enough to yield but strong enough not to?"
     },
     {
-      "id": "med-retreat-reworded",
-      "fact": "med-retreat",
+      "id": "james-plasticity-reworded",
+      "fact": "james-plasticity",
       "phrasing": "reworded",
-      "question": "Why does the emperor argue that you never have to travel anywhere to find calm?"
+      "question": "What balance between giving way and holding firm must a material have before it can pick up new habits?"
     },
     {
-      "id": "med-hindrance-verbatim",
-      "fact": "med-hindrance",
+      "id": "james-flywheel-verbatim",
+      "fact": "james-flywheel",
       "phrasing": "verbatim",
-      "question": "What does Marcus Aurelius say the mind does with every hindrance to its activity?"
+      "question": "Why does James call habit the enormous fly-wheel of society?"
     },
     {
-      "id": "med-hindrance-reworded",
-      "fact": "med-hindrance",
+      "id": "james-flywheel-reworded",
+      "fact": "james-flywheel",
       "phrasing": "reworded",
-      "question": "How can something that blocks your path end up pushing you further along it?"
+      "question": "What does the author say keeps a society stable and keeps people in hard jobs they were raised into?"
     },
     {
-      "id": "med-death-verbatim",
-      "fact": "med-death",
+      "id": "james-exception-verbatim",
+      "fact": "james-exception",
       "phrasing": "verbatim",
-      "question": "What does Marcus Aurelius say a man who fears death actually fears?"
+      "question": "What is James's maxim about never suffering an exception until a new habit is securely rooted?"
     },
     {
-      "id": "med-death-reworded",
-      "fact": "med-death",
+      "id": "james-exception-reworded",
+      "fact": "james-exception",
       "phrasing": "reworded",
-      "question": "The dread of dying is split into two possibilities. What are they?"
+      "question": "When building a new routine, why is a single slip so costly, and what is it compared to?"
     },
     {
-      "id": "med-cooperation-verbatim",
-      "fact": "med-cooperation",
+      "id": "james-rip-verbatim",
+      "fact": "james-rip",
       "phrasing": "verbatim",
-      "question": "What does Marcus Aurelius compare our being made for co-operation to?"
+      "question": "What does the drunken Rip Van Winkle say to excuse himself, and does James think it is counted?"
     },
     {
-      "id": "med-cooperation-reworded",
-      "fact": "med-cooperation",
+      "id": "james-rip-reworded",
+      "fact": "james-rip",
       "phrasing": "reworded",
-      "question": "What natural example shows that turning against another person goes against the way we are built?"
+      "question": "Can one small indulgence really go unrecorded, according to the warning about a drinker who says this one does not matter?"
     },
     {
       "id": "moral-84-percent-verbatim",

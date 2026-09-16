@@ -144,8 +144,8 @@ npm run eval         # run the 40 questions, write a timestamped file to results
 npm run typecheck    # typechecks the app and these scripts separately
 ```
 
-The runner calls the same `embedText` and the same `match_chunks` database
-function that `/api/query` calls. It stops before the answer is generated,
+The runner calls the same `embedText` as `/api/query`, then both `match_chunks`
+(vector only) and `match_chunks_hybrid` (what `/api/query` now calls). It stops before the answer is generated,
 because writing prose does not change which chunks were retrieved. No language
 model request is made and no API route is touched, so a run spends none of the
 public demo's daily budget. The first run on a machine does download the

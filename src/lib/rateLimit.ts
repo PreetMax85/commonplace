@@ -18,6 +18,11 @@ const DAY = 24 * 60 * MINUTE;
 
 const GROQ_PER_MINUTE: Rule = { name: "groq:minute", scope: "site", windowSeconds: MINUTE, limit: 2 };
 
+const SOURCE_RULES: Rule[] = [
+  { name: "source:day", scope: "ip", windowSeconds: DAY, limit: 8 },
+  { name: "source:day", scope: "site", windowSeconds: DAY, limit: 40 },
+];
+
 const RULES = {
   query: [
     { name: "query:10min", scope: "ip", windowSeconds: 10 * MINUTE, limit: 4 },
@@ -35,13 +40,13 @@ const RULES = {
     { name: "notebook:day", scope: "ip", windowSeconds: DAY, limit: 2 },
     { name: "notebook:day", scope: "site", windowSeconds: DAY, limit: 20 },
   ],
-  source: [
-    { name: "source:day", scope: "ip", windowSeconds: DAY, limit: 8 },
-    { name: "source:day", scope: "site", windowSeconds: DAY, limit: 40 },
-  ],
-  // Checked on top of the source limits, because a YouTube source that falls
-  // back to the transcript service spends one of 100 free credits a month.
+  source: SOURCE_RULES,
+  // A YouTube source also spends one of the transcript service's 100 free
+  // credits a month. These rules include the source ones so that one call
+  // counts everything: the counter only refunds keys it was given together, so
+  // a second call for the same request could not undo the first.
   youtube: [
+    ...SOURCE_RULES,
     { name: "youtube:day", scope: "ip", windowSeconds: DAY, limit: 2 },
     { name: "youtube:day", scope: "site", windowSeconds: DAY, limit: 3 },
   ],

@@ -32,16 +32,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (!source) return NextResponse.json({ error: "Source not found" }, { status: 404 });
 
   // Checked before the status claim below, so a refused request never leaves
-  // the source reading "indexing".
-  const limited = await enforceRateLimit(req, "source");
+  // the source reading "indexing". Re-indexing a video re-fetches its
+  // transcript, so it costs the same as adding one.
+  const limited = await enforceRateLimit(req, source.type === "youtube" ? "youtube" : "source");
   if (limited) return limited;
-
-  // Re-indexing a video re-fetches its transcript, so it costs the same as
-  // adding one.
-  if (source.type === "youtube") {
-    const youtubeLimited = await enforceRateLimit(req, "youtube");
-    if (youtubeLimited) return youtubeLimited;
-  }
 
   // Flip the status before responding. The client reloads its list as soon as
   // this returns and only keeps polling while something is in flight, so a

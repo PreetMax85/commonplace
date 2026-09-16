@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse, after } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ingestSource, SourceType } from "@/lib/ingest";
+import { extractYoutubeId } from "@/lib/extract/youtube";
 import { isDemoNotebook, demoReadOnlyResponse } from "@/lib/demo";
 import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB, MAX_SOURCES_PER_NOTEBOOK } from "@/lib/limits";
 import { enforceRateLimit } from "@/lib/rateLimit";
@@ -72,9 +73,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     );
   }
 
-  const limited = await enforceRateLimit(req, "source");
-  if (limited) return limited;
-
   const contentType = req.headers.get("content-type") || "";
 
   let type: SourceType;
@@ -82,6 +80,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   let fileBuffer: Buffer | undefined;
   let rawText: string | undefined;
   let url: string | undefined;
+  let pendingUpload: { path: string; contentType: string } | undefined;
 
   if (contentType.includes("multipart/form-data")) {
     const form = await req.formData();
@@ -95,16 +94,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       rawText = fileBuffer.toString("utf-8"); // vtt/srt as text
     }
 
-    // Store the original file so the source viewer can open it later
-    // (PDF.js needs the actual bytes to jump to a page).
-    const storagePath = `${notebookId}/${Date.now()}-${file.name}`;
-    const { error: storageErr } = await supabaseAdmin.storage
-      .from("sources")
-      .upload(storagePath, fileBuffer, { contentType: file.type });
-    if (storageErr) {
-      return NextResponse.json({ error: storageErr.message }, { status: 500 });
-    }
-    url = storagePath; // reuse `url` var as the raw_ref for file-based sources too
+    // The file is stored only once the request is past the limits below, so a
+    // refused upload cannot leave an orphan behind in the bucket.
+    pendingUpload = { path: `${notebookId}/${Date.now()}-${file.name}`, contentType: file.type };
   } else {
     const body = await req.json();
     type = body.type;
@@ -115,9 +107,29 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   if (rawText && Buffer.byteLength(rawText) > MAX_UPLOAD_BYTES) return tooLarge();
 
+  // An unparseable link would otherwise fail later, inside the background
+  // ingest, having already spent one of the few daily video slots.
   if (type === "youtube") {
-    const youtubeLimited = await enforceRateLimit(req, "youtube");
-    if (youtubeLimited) return youtubeLimited;
+    try {
+      extractYoutubeId(url ?? "");
+    } catch {
+      return NextResponse.json({ error: "That does not look like a YouTube video link." }, { status: 400 });
+    }
+  }
+
+  // Videos count against the transcript service's credits as well, so they are
+  // counted under their own rules, which include these same source limits.
+  const limited = await enforceRateLimit(req, type === "youtube" ? "youtube" : "source");
+  if (limited) return limited;
+
+  if (pendingUpload && fileBuffer) {
+    const { error: storageErr } = await supabaseAdmin.storage
+      .from("sources")
+      .upload(pendingUpload.path, fileBuffer, { contentType: pendingUpload.contentType });
+    if (storageErr) {
+      return NextResponse.json({ error: storageErr.message }, { status: 500 });
+    }
+    url = pendingUpload.path; // the raw_ref for file-based sources
   }
 
   // Create the source row first so the UI can show "uploading" -> "indexing" immediately.

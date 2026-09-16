@@ -40,9 +40,9 @@ chance of being answered by luck in a top 10 of 903 chunks. These numbers are
 well clear of that, which is the least that should be true and is worth stating
 once rather than assuming.
 
-One source is responsible for most of the failures. The scanned Meditations
-edition is 441 of the 903 chunks and scores 2 of 8 at hit@5, while the other
-eight sources together score 27 of 32. Looking at what came back instead, the
+One source was responsible for most of the failures. The scanned Meditations
+edition was 441 of the 903 chunks and scored 2 of 8 at hit@5, while the other
+eight sources together scored 27 of 32. Looking at what came back instead, the
 losing chunks are usually the translator's introduction or a page carrying
 little more than the running header, which are close to the query in a general
 "stoicism" sense without answering anything. Each results file holds the
@@ -114,15 +114,27 @@ chunks. Run: commit `3536ff5`, file `results/2026-09-16-13-21.json`.
 Read this carefully:
 
 - **These numbers are not comparable with the ones above.** Vector search went
-  from 0.70 to 0.85 at hit@5 without any change to search. The hardest source
-  left, and 441 of its chunks stopped competing with everything else. That is a
-  change of dataset, not an improvement.
+  from 0.70 to 0.85 at hit@5 (28 to 34 questions) without any change to search.
+  Four of those six came from swapping the source and its questions: Meditations
+  scored 2 of 8 and the easier James chapter scores 6 of 8. The other two came
+  from Crony Beliefs and the Enchiridion, once 441 chunks stopped competing with
+  them. That is a change of dataset, not an improvement.
 - **The comparison that means something is vector against hybrid within one
-  run.** Hybrid puts the answer first for four more questions (hit@1 0.45 to
-  0.55) and finds two more within the 8 chunks the app uses (hit@8 0.85 to
-  0.90). Both are small moves on 40 questions. Hybrid also moved some answers
-  down: 7 questions ranked lower, all of them reworded, and the Enchiridion
-  control question dropped out of the top 5.
+  run.** Hybrid gives 8 questions the answer in first place and takes it from
+  4, a net gain of four (hit@1 0.45 to 0.55). Within the 8 chunks the app uses
+  it finds two more and loses none (hit@8 0.85 to 0.90). hit@5 is unchanged at
+  0.85: two questions moved into the top 5 and two moved out. Hybrid moved 7
+  questions lower, all of them reworded. These are small moves on 40 questions.
+- **Two of the new word-for-word questions are easy.** The plasticity and
+  exception questions restate most of the answer, and both are ranked first by
+  hybrid search. Two reworded questions also reuse a word or two from the
+  passage ("single slip", "society"). The questions were written before any
+  search was run, and changing them after seeing the results would be fitting
+  the set to the scores, so they stay as written and this note stands instead.
+- **The reworded Rip Van Winkle question misses in both searches**, but a chunk
+  from the same page that partly answers it ("Nothing we ever do is ... wiped
+  out") comes back at rank 4 for vector and rank 8 for hybrid. It holds neither
+  accepted quote, so it counts as a miss. The label was not widened afterwards.
 - **The set no longer has a scanned document.** Real uploads will include messy
   scans, so these numbers are kinder than what those would get.
 - The first run after deleting the Meditations chunks disagreed with the three
@@ -154,7 +166,7 @@ when chunk boundaries move.
   consecutive chunks by 150 characters, so any quote shorter than that is
   guaranteed to sit whole inside at least one chunk wherever the boundaries
   fall within a page. PDFs are chunked a page at a time, so a quote must not
-  straddle a page break. The longest quote used here is 88 characters. A chunk
+  straddle a page break. The longest quote used here is 92 characters. A chunk
   counts as correct when its text contains the quote.
 - **Transcripts** use a time window, because they are split by time rather than
   by character count. A chunk counts as correct when its window overlaps the
@@ -167,7 +179,7 @@ expressed in seconds. The label form survives re-chunking, because an overlap
 test does not care where the boundaries are, but the specific numbers were not
 arrived at independently of them.
 
-Each label also records a human-readable locator, such as `page 72, Book IV.3`
+Each label also records a human-readable locator, such as `page 9, second maxim`
 or `43:51 to 44:53`, so any question can be checked against the original.
 
 `npm run eval:check` verifies that every label still matches real text and
@@ -192,8 +204,9 @@ Two deliberate differences from the live route, neither of which affects the
 figures above:
 
 - The route asks `match_chunks` for 8 chunks and the eval asks for 10, so that
-  MRR@10 has a full window to work with. hit@10 is 0.75, the same as hit@8, so
-  no question is rescued by the two extra places.
+  MRR@10 has a full window to work with. In the current run hybrid hit@10 and
+  hit@8 are both 0.90, so no hybrid answer is rescued by the two extra places.
+  Vector search has one at rank 9 (hit@10 0.875 against hit@8 0.85).
 - The route rewrites a question into standalone form before embedding it when
   there is a prior conversation. Every question here is asked on its own, and
   that step is skipped on an empty history, so first-turn retrieval really is
@@ -205,8 +218,9 @@ back. The failures are committed along with the successes, so the misses above
 can be inspected rather than taken on trust.
 
 Repeated runs of the same 40 questions against the same index returned the same
-rank for every question, so a change in these numbers means a change in the
-system rather than run to run noise. That holds while the demo is the only
+rank for every question once the index had settled after a bulk delete, so a
+change in these numbers means a change in the system rather than run to run
+noise. That holds while the demo is the only
 notebook in the database. `match_chunks` filters by notebook after searching a
 shared vector index, so once other notebooks hold enough chunks, the same query
 can return a different top 10 with no change to this code.
@@ -229,6 +243,8 @@ can return a different top 10 with no change to this code.
 
 ## Why it exists now
 
-The next two changes to this repo are a swap of the embedding library and the
-addition of keyword search alongside vector search. Both could change retrieval
-quality without anything visibly breaking. These numbers are the before.
+It was built before two changes that could alter retrieval quality without
+anything visibly breaking: adding keyword search alongside vector search, and
+swapping the embedding library. Keyword search has shipped and is measured
+above. The embedding library swap is still to come, and a rerun should show
+identical ranks.

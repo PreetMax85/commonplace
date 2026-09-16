@@ -46,7 +46,7 @@ notebooks (1) ──< sources (many) ──< chunks (many, with embedding vector
 ### Retrieval + answer flow
 
 1. Embed the question.
-2. `match_chunks(query_embedding, match_notebook_id, match_count)` via pgvector cosine distance, filtered per notebook.
+2. `match_chunks_hybrid(query_text, query_embedding, match_notebook_id, match_count)`: pgvector cosine search and Postgres full-text search, filtered per notebook, merged by reciprocal rank fusion.
 3. Top-8 chunks sent to Groq with a prompt to answer only from context, citing every claim with `[n]`.
 4. Response streams as `citations` event first, then `token` events, then `done`.
 5. Clicking a citation opens the source viewer, jumping to the right page/timestamp/chunk.
@@ -58,17 +58,17 @@ against the demo notebook, 20 facts each asked twice: once in the source's own
 wording and once reworded to avoid it. Gold labels are a source plus a quote or
 a time window rather than a chunk ID, so they stay valid when chunking changes.
 
-| | questions | hit@1 | hit@5 | hit@8 | MRR@10 |
-| --- | --- | --- | --- | --- | --- |
-| Overall | 40 | 0.35 | 0.72 | 0.75 | 0.500 |
-| Word for word | 20 | 0.45 | 0.85 | 0.85 | 0.599 |
-| Reworded | 20 | 0.25 | 0.60 | 0.65 | 0.400 |
+`/api/query` uses hybrid search (migration `0006`): keyword search and vector
+search, merged by rank. Both were run on the same 40 questions in one run:
 
-Those are the numbers for vector search alone. `/api/query` now uses hybrid
-search (migration `0006`): keyword search and vector search, merged by rank.
-On the same 40 questions it puts the answer first more often (hit@1 0.35 to
-0.425, MRR@10 0.495 to 0.552) and finds about as many answers overall (hit@8
-0.725 to 0.75, within noise on 40 questions).
+| | vector hit@1 | hybrid hit@1 | vector hit@8 | hybrid hit@8 | vector MRR@10 | hybrid MRR@10 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Overall | 0.35 | 0.425 | 0.725 | 0.75 | 0.495 | 0.552 |
+| Word for word | 0.45 | 0.60 | 0.80 | 0.85 | 0.589 | 0.722 |
+| Reworded | 0.25 | 0.25 | 0.65 | 0.65 | 0.400 | 0.383 |
+
+Hybrid search puts the answer first more often. How many answers it finds at
+all barely changes, which is within noise on 40 questions.
 
 Run with `npm run eval`. It uses the same embedding call as `/api/query`, runs
 both `match_chunks` and `match_chunks_hybrid`, makes no Groq request, and writes a

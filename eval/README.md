@@ -64,16 +64,19 @@ searches were run on the same 40 questions in one run, commit `ade1358`, file
 
 What this does and does not show:
 
-- The real gain is ranking: three more questions get the answer in first place,
-  all of them worded like the source. Reworded questions are unchanged, which is
-  expected, since keyword search needs shared words.
+- The real gain is ranking: three more word-for-word questions get the answer
+  in first place, with none losing it. Reworded questions gained three first
+  places and lost three, and their MRR got slightly worse (0.400 to 0.383).
+  Keyword search needs shared words, so this is expected.
 - The gain in how many answers are found at all is one or two questions, which
-  is within noise on a set this size. Asking for 8 chunks, as the live app
-  does, hybrid found every answer vector search found plus two more.
-- Vector search alone scores 0.70 at hit@5 here, not the 0.72 above. Adding the
-  keyword column rewrote the table and rebuilt the HNSW index, which is
-  approximate, and the rebuilt index misses one passage. An exact search over
-  the same chunks scores 0.725.
+  is within noise on a set this size. In a separate check that asked for 8
+  chunks, as the live app does, rather than 10, hybrid found every answer
+  vector search found plus two more. That check is not in the results file.
+- Vector search alone scores lower here than in the table above (hit@5 0.70
+  not 0.72, hit@8 0.725 not 0.75, MRR@10 0.495 not 0.500). Adding the keyword
+  column rewrote the table and rebuilt the HNSW index, which is approximate,
+  and the rebuilt index misses one passage. An exact search over the same
+  chunks scores 0.725 at hit@5.
 - Meditations went from 2 of 8 to 1 of 8 at hit@5. Its running header ("MARCUS
   AURELIUS") shares words with most questions about it, and its 1000 character
   chunks each hold several unrelated numbered passages, so the answering chunk

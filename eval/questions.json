@@ -135,12 +135,12 @@
     },
     "sapolsky-four-circumstances": {
       "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
-      "locator": "3:10 to 4:47",
+      "locator": "3:42 to 4:47",
       "anchor": {
         "kind": "time",
         "accept": [
           [
-            190,
+            222,
             287
           ]
         ]
@@ -153,8 +153,8 @@
         "kind": "time",
         "accept": [
           [
-            319,
-            379
+            320,
+            378
           ]
         ]
       }
@@ -166,8 +166,8 @@
         "kind": "time",
         "accept": [
           [
-            379,
-            443
+            380,
+            442
           ]
         ]
       }

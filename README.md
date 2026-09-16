@@ -12,6 +12,7 @@ Upload PDFs, text, URLs, YouTube videos, and transcripts into isolated notebooks
 1. Create a Supabase project. Run `supabase/schema.sql` in the SQL editor. For a project created from an older schema, run the files in `supabase/migrations/` in order instead.
 2. Create a private **Storage** bucket named `sources` in Supabase. The app hands out short-lived signed URLs, so the files never need to be publicly listable.
 3. Copy `.env.example` to `.env.local` and fill in `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `GROQ_API_KEY`.
+   `SUPADATA_API_KEY` is optional and only used as a fallback for YouTube transcripts (see below). Without it, YouTube ingestion still works wherever the direct fetch does.
 4. `npm install`
 5. `npm run dev`
 6. Optional: to make a notebook the read-only public demo, run `update notebooks set is_demo = true where id = '<notebook id>';` in the SQL editor.
@@ -66,6 +67,7 @@ The deployed demo has no accounts, so one visitor could spend the whole Groq bud
 | Roadmaps | 2 per day | 8 per day |
 | New notebooks | 2 per day | 20 per day |
 | Adding or re-indexing sources | 8 per day | 40 per day |
+| Adding or re-indexing a YouTube video | 2 per day | 3 per day |
 
 Questions and roadmaps also share a site-wide limit of 2 per minute, matching the 8k tokens a minute, with a roadmap counting as two. Because the limits count requests rather than tokens, questions are capped at 1,000 characters, history at the last 6 turns of 1,500 characters each, and answers at 2,000 completion tokens. IPv6 clients are grouped by /64. A refused request is not counted, and if the counter itself cannot be reached the request is allowed rather than failing the demo. IPs are stored only as hashes, and the daily health cron deletes old windows.
 
@@ -74,4 +76,4 @@ Questions and roadmaps also share a site-wide limit of 2 per minute, matching th
 - No auth or multi-user layer yet. The public deployment is protected instead: demo notebooks are read-only, uploads and pasted text are capped at 4 MB (Vercel rejects function request bodies over 4.5 MB), and a notebook holds up to 15 sources.
 - Podcast/voice-over bonus deprioritized in favor of the roadmap bonus (YouTube sources → ordered concept list grounded in transcript timestamps).
 - PDF source viewer jumps to the cited page but doesn't highlight the exact passage (text/VTT/URL sources do highlight).
-- Adding a new YouTube source works locally but not on the deployed site, because YouTube refuses transcript requests from cloud IPs. The demo notebook's videos were indexed locally. Uploading a VTT or SRT transcript works everywhere.
+- YouTube serves caption tracks to home connections but refuses them to cloud ones, so the direct fetch works locally and never on the deployment. When it fails and `SUPADATA_API_KEY` is set, the transcript is fetched through Supadata instead, which reads the same published captions. Its free plan covers 100 transcripts a month, so adding a video is capped at 3 a day across the site. If both paths fail, the error says so and points at the VTT or SRT upload, which works everywhere.

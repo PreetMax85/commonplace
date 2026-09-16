@@ -1,5 +1,6 @@
 import { YoutubeTranscript, YoutubeTranscriptNotAvailableLanguageError } from "youtube-transcript";
 import { RawChunk } from "../chunking";
+import { fetchSupadataTranscript, supadataConfigured, TranscriptEntry } from "./supadata";
 
 export function extractYoutubeId(url: string): string {
   // A YouTube source stores only its video id as raw_ref, and re-index passes
@@ -28,9 +29,34 @@ async function fetchPreferringEnglish(videoId: string) {
 // Groups raw transcript entries into ~30s windows so each chunk carries a
 // tight timestamp range — this is what lets the source viewer jump to the
 // exact moment a cited answer came from.
+// YouTube answers a cloud address differently from a home one: the caption
+// tracks are simply missing from the player response, which the library reports
+// as "transcript is disabled" even for a video that plainly has captions. So a
+// direct failure is not taken at face value. Locally the direct fetch works and
+// costs nothing; on the deployment it always fails and the fallback answers.
+async function fetchTranscript(videoId: string): Promise<TranscriptEntry[]> {
+  try {
+    return await fetchPreferringEnglish(videoId);
+  } catch (directError) {
+    if (!supadataConfigured()) {
+      throw new Error(
+        "YouTube would not return this transcript to the server. Upload the video's captions as a VTT or SRT file instead."
+      );
+    }
+    try {
+      return await fetchSupadataTranscript(videoId);
+    } catch (fallbackError) {
+      console.error(`YouTube transcript failed for ${videoId}:`, directError, fallbackError);
+      throw new Error(
+        `${(fallbackError as Error).message} You can upload the video's captions as a VTT or SRT file instead.`
+      );
+    }
+  }
+}
+
 export async function extractYoutube(url: string): Promise<{ chunks: RawChunk[]; videoId: string }> {
   const videoId = extractYoutubeId(url);
-  const entries = await fetchPreferringEnglish(videoId);
+  const entries = await fetchTranscript(videoId);
 
   const WINDOW_SECONDS = 30;
   const chunks: RawChunk[] = [];

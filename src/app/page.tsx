@@ -6,6 +6,7 @@ import { ArrowRight, BookOpen, Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import ThemeToggle from "@/components/ThemeToggle";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -103,6 +104,9 @@ export default function Home() {
       <div className="flex items-center gap-2 text-ink">
         <BookOpen className="size-5 text-brand" strokeWidth={2} aria-hidden />
         <span className="font-display text-base font-bold tracking-tight">Commonplace</span>
+        <span className="ml-auto">
+          <ThemeToggle />
+        </span>
       </div>
       <h1 className="mt-5 max-w-[19ch] font-display text-3xl font-bold leading-[1.15] tracking-tight text-ink sm:text-4xl">
         Keep what you read, and ask it questions

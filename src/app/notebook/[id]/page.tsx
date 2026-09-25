@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ThemeToggle from "@/components/ThemeToggle";
 
 // One value drives both layouts. On a wide screen the three columns are always
 // visible and this only picks the middle tab; on a phone it picks which single
@@ -148,6 +149,10 @@ export default function NotebookPage() {
             Demo, read-only
           </Badge>
         )}
+
+        <span className="ml-auto shrink-0">
+          <ThemeToggle />
+        </span>
       </header>
 
       <div className="flex min-h-0 flex-1">

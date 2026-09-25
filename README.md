@@ -20,6 +20,7 @@ Upload PDFs, text, URLs, YouTube videos, and transcripts into isolated notebooks
 ## Stack
 
 - **Next.js (App Router)**: single deploy, API routes and frontend together
+- **Tailwind CSS + shadcn/ui**: a hand-written token layer (paper, ink, one brand hue) that shadcn's components are mapped onto, so they arrive wearing this app's palette. Light and dark are the same hues at different values, switched with `next-themes`
 - **Supabase Postgres + pgvector**: notebook, source, and chunk metadata plus vector search
 - **Supabase Storage**: original PDF/VTT files for the source viewer
 - **Groq**: `openai/gpt-oss-120b` for grounded streamed answers and the roadmap, `openai/gpt-oss-20b` for question rewriting

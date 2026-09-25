@@ -76,14 +76,14 @@ export default function Home() {
 
       <div className="flex gap-2 mb-10">
         <input
-          className="border border-line rounded-lg px-4 py-2.5 flex-1 bg-paper-raised text-ink placeholder:text-ink-faint outline-none focus:border-accent focus:ring-2 focus:ring-accent-wash transition-colors"
+          className="border border-line rounded-lg px-4 py-2.5 flex-1 bg-paper-raised text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-wash transition-colors"
           placeholder="New notebook name..."
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && createNotebook()}
         />
         <button
-          className="bg-accent hover:bg-accent-hover text-accent-ink font-semibold px-5 py-2.5 rounded-lg transition-colors"
+          className="bg-brand hover:bg-brand-hover text-brand-ink font-semibold px-5 py-2.5 rounded-lg transition-colors"
           onClick={createNotebook}
         >
           Create
@@ -113,14 +113,14 @@ export default function Home() {
               {renamingId === nb.id ? (
                 <input
                   autoFocus
-                  className="border border-accent rounded-md px-2 py-1 flex-1 mr-2 bg-paper outline-none"
+                  className="border border-brand rounded-md px-2 py-1 flex-1 mr-2 bg-paper outline-none"
                   value={renameValue}
                   onChange={(e) => setRenameValue(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && submitRename(nb.id)}
                   onBlur={() => submitRename(nb.id)}
                 />
               ) : (
-                <Link href={`/notebook/${nb.id}`} className="font-medium text-ink hover:text-accent transition-colors">
+                <Link href={`/notebook/${nb.id}`} className="font-medium text-ink hover:text-brand transition-colors">
                   {nb.name}
                 </Link>
               )}

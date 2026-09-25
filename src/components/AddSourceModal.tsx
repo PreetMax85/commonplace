@@ -107,7 +107,7 @@ export default function AddSourceModal({
               <button
                 key={t.key}
                 onClick={() => setKind(t.key)}
-                className="border border-line rounded-md py-6 font-medium text-ink hover:border-accent hover:bg-accent-wash transition-colors"
+                className="border border-line rounded-md py-6 font-medium text-ink hover:border-brand hover:bg-brand-wash transition-colors"
               >
                 {t.label}
               </button>
@@ -128,7 +128,7 @@ export default function AddSourceModal({
             {error && <p className="text-sm text-status-error">{error}</p>}
 
             <input
-              className="border border-line rounded-md px-3 py-2 w-full bg-paper text-ink placeholder:text-ink-faint outline-none focus:border-accent focus:ring-2 focus:ring-accent-wash transition-colors"
+              className="border border-line rounded-md px-3 py-2 w-full bg-paper text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-wash transition-colors"
               placeholder="Title (optional)"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -139,13 +139,13 @@ export default function AddSourceModal({
                 type="file"
                 accept={kind === "pdf" ? ".pdf" : ".vtt,.srt"}
                 onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                className="text-sm text-ink-muted file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:bg-accent-wash file:text-ink file:font-medium"
+                className="text-sm text-ink-muted file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:bg-brand-wash file:text-ink file:font-medium"
               />
             )}
 
             {kind === "text" && (
               <textarea
-                className="border border-line rounded-md px-3 py-2 w-full h-32 bg-paper text-ink placeholder:text-ink-faint outline-none focus:border-accent focus:ring-2 focus:ring-accent-wash transition-colors"
+                className="border border-line rounded-md px-3 py-2 w-full h-32 bg-paper text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-wash transition-colors"
                 placeholder="Paste text..."
                 value={textValue}
                 onChange={(e) => setTextValue(e.target.value)}
@@ -154,7 +154,7 @@ export default function AddSourceModal({
 
             {(kind === "url" || kind === "youtube") && (
               <input
-                className="border border-line rounded-md px-3 py-2 w-full bg-paper text-ink placeholder:text-ink-faint outline-none focus:border-accent focus:ring-2 focus:ring-accent-wash transition-colors"
+                className="border border-line rounded-md px-3 py-2 w-full bg-paper text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-wash transition-colors"
                 placeholder={kind === "youtube" ? "https://youtube.com/watch?v=..." : "https://..."}
                 value={urlValue}
                 onChange={(e) => setUrlValue(e.target.value)}
@@ -164,7 +164,7 @@ export default function AddSourceModal({
             <button
               disabled={submitting}
               onClick={submit}
-              className="bg-accent hover:bg-accent-hover text-accent-ink font-semibold px-4 py-2.5 rounded-md w-full disabled:opacity-50 transition-colors"
+              className="bg-brand hover:bg-brand-hover text-brand-ink font-semibold px-4 py-2.5 rounded-md w-full disabled:opacity-50 transition-colors"
             >
               {submitting ? "Uploading..." : "Add Source"}
             </button>

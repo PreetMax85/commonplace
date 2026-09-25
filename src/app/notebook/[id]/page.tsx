@@ -84,7 +84,7 @@ export default function NotebookPage() {
     <div className="h-screen flex flex-col bg-paper">
       {/* Header */}
       <header className="border-b border-line px-5 py-3 flex items-center gap-4 shrink-0 bg-paper-raised/80 backdrop-blur-sm sticky top-0 z-10">
-        <Link href="/" className="text-ink-faint hover:text-accent text-sm transition-colors">
+        <Link href="/" className="text-ink-faint hover:text-brand text-sm transition-colors">
           ← Notebooks
         </Link>
         {isDemo !== false ? (
@@ -92,7 +92,7 @@ export default function NotebookPage() {
         ) : renaming ? (
           <input
             autoFocus
-            className="border border-accent rounded-md px-2 py-1 text-sm font-display font-semibold bg-paper outline-none"
+            className="border border-brand rounded-md px-2 py-1 text-sm font-display font-semibold bg-paper outline-none"
             value={renameValue}
             onChange={(e) => setRenameValue(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && submitRename()}
@@ -100,7 +100,7 @@ export default function NotebookPage() {
           />
         ) : (
           <button
-            className="font-display font-semibold text-sm text-ink hover:text-accent transition-colors"
+            className="font-display font-semibold text-sm text-ink hover:text-brand transition-colors"
             onClick={() => {
               setRenameValue(notebookName ?? "");
               setRenaming(true);
@@ -127,7 +127,7 @@ export default function NotebookPage() {
               </p>
             ) : (
               <button
-                className="border border-line rounded-full py-2.5 mb-4 w-full text-sm font-semibold text-ink hover:border-accent hover:bg-accent-wash transition-colors"
+                className="border border-line rounded-full py-2.5 mb-4 w-full text-sm font-semibold text-ink hover:border-brand hover:bg-brand-wash transition-colors"
                 onClick={() => setShowAdd(true)}
               >
                 + Add Source

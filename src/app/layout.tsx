@@ -17,8 +17,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Notebook RAG",
-  description: "Multi-source RAG research assistant",
+  title: "Commonplace",
+  description:
+    "Ask questions across your PDFs, web pages and videos, and get answers that cite the exact page or timestamp they came from.",
 };
 
 export default function RootLayout({

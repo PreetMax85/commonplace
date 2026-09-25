@@ -127,7 +127,7 @@ export default function ChatPanel({
             <div
               className={`inline-block rounded-lg px-4 py-2.5 max-w-[80%] text-sm leading-relaxed text-left ${
                 m.role === "user"
-                  ? "bg-accent text-accent-ink"
+                  ? "bg-brand text-brand-ink"
                   : "bg-paper-raised text-ink border border-line"
               }`}
             >
@@ -151,14 +151,14 @@ export default function ChatPanel({
 
       <div className="border-t border-line p-3.5 flex gap-2 bg-paper-raised/80 backdrop-blur-sm sticky bottom-0">
         <input
-          className="border border-line rounded-full px-4 py-2.5 flex-1 text-sm bg-paper text-ink placeholder:text-ink-faint outline-none focus:border-accent focus:ring-2 focus:ring-accent-wash transition-colors"
+          className="border border-line rounded-full px-4 py-2.5 flex-1 text-sm bg-paper text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-wash transition-colors"
           placeholder="Type a Query here....."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && ask()}
         />
         <button
-          className="bg-accent hover:bg-accent-hover text-accent-ink font-semibold px-5 py-2.5 rounded-full text-sm disabled:opacity-50 transition-colors"
+          className="bg-brand hover:bg-brand-hover text-brand-ink font-semibold px-5 py-2.5 rounded-full text-sm disabled:opacity-50 transition-colors"
           disabled={streaming}
           onClick={ask}
         >
@@ -206,7 +206,7 @@ function MarkdownAnswer({
               if (!citation) return <>{children}</>;
               return (
                 <button
-                  className="text-accent underline decoration-accent/40 hover:decoration-accent font-semibold"
+                  className="text-brand underline decoration-brand/40 hover:decoration-brand font-semibold"
                   onClick={() => onCitationClick(citation)}
                 >
                   {children}
@@ -214,7 +214,7 @@ function MarkdownAnswer({
               );
             }
             return (
-              <a href={href} target="_blank" rel="noopener noreferrer" className="text-accent underline">
+              <a href={href} target="_blank" rel="noopener noreferrer" className="text-brand underline">
                 {children}
               </a>
             );

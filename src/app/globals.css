@@ -1,45 +1,103 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 /*
- * Hum-inspired token layer (Hallmark playful genre: warm, organic,
- * humanist-rounded). One anchor hue (coral), everything else is a
- * chroma-tinted neutral — no pure #000/#fff, no default Tailwind gray.
+ * The palette comes from the subject: a commonplace book. Warm paper, warm
+ * ink, and one ink-stamp coral. No pure #000 or #fff, no default Tailwind
+ * gray. Panels are told apart by their paper value, so the three columns
+ * read as separate surfaces rather than one flat field.
  */
 :root {
-  /* Paper (surfaces) — warm off-white, never pure white */
-  --color-paper: oklch(98.2% 0.008 70);
-  --color-paper-raised: oklch(96.5% 0.012 70);
-  --color-paper-sunken: oklch(94% 0.014 70);
+  /* Paper. The chat column is the brightest page; the sidebar sits a step
+     back; the source viewer sits a step further back again. */
+  --color-paper: oklch(99% 0.006 70);
+  --color-paper-raised: oklch(97% 0.01 70);
+  --color-paper-sunken: oklch(94.5% 0.014 68);
 
-  /* Ink (text) — warm near-black, never pure black */
-  --color-ink: oklch(23% 0.02 55);
-  --color-ink-muted: oklch(48% 0.02 55);
-  --color-ink-faint: oklch(68% 0.015 65);
+  /* Ink. ink-faint is still body text, so it is kept dark enough to read
+     rather than dropped to a decorative gray. */
+  --color-ink: oklch(24% 0.02 50);
+  --color-ink-muted: oklch(46% 0.02 50);
+  --color-ink-faint: oklch(58% 0.018 60);
 
-  /* Line (borders) */
-  --color-line: oklch(89% 0.012 70);
-  --color-line-strong: oklch(80% 0.015 70);
+  /* Rules */
+  --color-line: oklch(90% 0.012 70);
+  --color-line-strong: oklch(82% 0.016 70);
 
-  /* Accent — single anchor hue, coral. Used sparingly: primary actions,
-     active states, links. Never a background fill for large areas. */
-  --color-accent: oklch(64% 0.19 38);
-  --color-accent-hover: oklch(58% 0.19 38);
-  --color-accent-ink: oklch(99% 0.005 70); /* text on accent fill (L>50 → light-on-dark-ish coral) */
-  --color-accent-wash: oklch(95% 0.03 38); /* faint accent tint for selected rows */
+  /* Brand. One anchor hue, deep enough that white text on it and the colour
+     itself on paper both clear 4.5:1. Primary actions, citations, active
+     states. Never a large background fill. */
+  --color-brand: oklch(55% 0.2 32);
+  --color-brand-hover: oklch(48% 0.19 32);
+  --color-brand-ink: oklch(99% 0.005 70);
+  --color-brand-wash: oklch(95.5% 0.028 34);
+  --color-brand-line: oklch(86% 0.08 34);
 
-  /* Semantic status (functional, not decorative — kept distinct from accent) */
-  --color-status-indexing: oklch(78% 0.15 85);
-  --color-status-ready: oklch(64% 0.14 145);
-  --color-status-error: oklch(58% 0.19 25);
+  /* Status. Functional, deliberately outside the brand hue. */
+  --color-status-indexing: oklch(72% 0.15 78);
+  --color-status-ready: oklch(58% 0.14 148);
+  --color-status-error: oklch(55% 0.19 25);
 
-  /* Radius scale — generous, humanist-rounded (Hum genre) */
+  --radius: 0.75rem;
   --radius-sm: 0.5rem;
-  --radius-md: 0.875rem;
-  --radius-lg: 1.25rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
   --radius-pill: 999px;
 
-  /* Motion — exponential ease-out per Hallmark's motion rule */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* shadcn's semantic names, pointed at the palette above so its components
+     arrive already wearing this design rather than neutral gray. */
+  --background: var(--color-paper);
+  --foreground: var(--color-ink);
+  --card: var(--color-paper-raised);
+  --card-foreground: var(--color-ink);
+  --popover: var(--color-paper-raised);
+  --popover-foreground: var(--color-ink);
+  --primary: var(--color-brand);
+  --primary-foreground: var(--color-brand-ink);
+  --secondary: var(--color-paper-sunken);
+  --secondary-foreground: var(--color-ink);
+  --muted: var(--color-paper-sunken);
+  --muted-foreground: var(--color-ink-muted);
+  --accent: var(--color-paper-sunken);
+  --accent-foreground: var(--color-ink);
+  --destructive: var(--color-status-error);
+  --border: var(--color-line);
+  --input: var(--color-line);
+  --ring: var(--color-brand);
+  --sidebar: var(--color-paper-raised);
+  --sidebar-foreground: var(--color-ink);
+  --sidebar-primary: var(--color-brand);
+  --sidebar-primary-foreground: var(--color-brand-ink);
+  --sidebar-accent: var(--color-brand-wash);
+  --sidebar-accent-foreground: var(--color-ink);
+  --sidebar-border: var(--color-line);
+  --sidebar-ring: var(--color-brand);
+}
+
+/* Lamplight rather than an inverted photocopy: the same warm hue, turned
+   down. Nothing switches to it yet, but every token has an answer ready. */
+.dark {
+  --color-paper: oklch(21% 0.012 60);
+  --color-paper-raised: oklch(24.5% 0.013 60);
+  --color-paper-sunken: oklch(17.5% 0.011 60);
+  --color-ink: oklch(94% 0.008 70);
+  --color-ink-muted: oklch(74% 0.012 65);
+  --color-ink-faint: oklch(62% 0.014 65);
+  --color-line: oklch(31% 0.012 60);
+  --color-line-strong: oklch(40% 0.014 60);
+  --color-brand: oklch(68% 0.17 34);
+  --color-brand-hover: oklch(74% 0.16 34);
+  --color-brand-ink: oklch(18% 0.03 40);
+  --color-brand-wash: oklch(30% 0.05 34);
+  --color-brand-line: oklch(40% 0.09 34);
+  --color-status-indexing: oklch(78% 0.14 78);
+  --color-status-ready: oklch(70% 0.14 148);
+  --color-status-error: oklch(68% 0.17 25);
 }
 
 @theme inline {
@@ -51,31 +109,66 @@
   --color-ink-faint: var(--color-ink-faint);
   --color-line: var(--color-line);
   --color-line-strong: var(--color-line-strong);
-  --color-accent: var(--color-accent);
-  --color-accent-hover: var(--color-accent-hover);
-  --color-accent-ink: var(--color-accent-ink);
-  --color-accent-wash: var(--color-accent-wash);
+  --color-brand: var(--color-brand);
+  --color-brand-hover: var(--color-brand-hover);
+  --color-brand-ink: var(--color-brand-ink);
+  --color-brand-wash: var(--color-brand-wash);
+  --color-brand-line: var(--color-brand-line);
   --color-status-indexing: var(--color-status-indexing);
   --color-status-ready: var(--color-status-ready);
   --color-status-error: var(--color-status-error);
 
   --font-display: var(--font-jakarta);
   --font-body: var(--font-inter);
+  --font-sans: var(--font-inter);
 
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
   --radius-lg: var(--radius-lg);
   --radius-pill: var(--radius-pill);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 }
 
-body {
-  background: var(--color-paper);
-  color: var(--color-ink);
-  font-family: var(--font-body);
-}
-
-h1, h2, h3, .font-display {
-  font-family: var(--font-display);
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-inter);
+  }
+  h1, h2, h3, .font-display {
+    font-family: var(--font-jakarta);
+  }
 }
 
 * {
@@ -85,13 +178,13 @@ h1, h2, h3, .font-display {
 /* Minimal prose rules for rendered markdown chat answers — hand-written
    instead of pulling in @tailwindcss/typography for five selectors. */
 .prose-chat p {
-  margin: 0 0 0.5em 0;
+  margin: 0 0 0.7em 0;
 }
 .prose-chat p:last-child {
   margin-bottom: 0;
 }
 .prose-chat ul, .prose-chat ol {
-  margin: 0.4em 0 0.6em 1.25em;
+  margin: 0.5em 0 0.7em 1.25em;
 }
 .prose-chat ul {
   list-style: disc;
@@ -100,7 +193,7 @@ h1, h2, h3, .font-display {
   list-style: decimal;
 }
 .prose-chat li {
-  margin: 0.15em 0;
+  margin: 0.25em 0;
 }
 .prose-chat strong {
   font-weight: 600;
@@ -113,12 +206,12 @@ h1, h2, h3, .font-display {
 }
 .prose-chat table {
   border-collapse: collapse;
-  margin: 0.5em 0;
+  margin: 0.6em 0;
   font-size: 0.9em;
 }
 .prose-chat th, .prose-chat td {
   border: 1px solid var(--color-line);
-  padding: 0.3em 0.6em;
+  padding: 0.35em 0.65em;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -62,7 +62,7 @@ export default function SourceList({
         <li key={s.id}>
           <div
             className={`group flex items-center justify-between px-2.5 py-2 rounded-md cursor-pointer text-sm transition-colors ${
-              selectedId === s.id ? "bg-accent-wash" : "hover:bg-paper-sunken"
+              selectedId === s.id ? "bg-brand-wash" : "hover:bg-paper-sunken"
             }`}
             onClick={() => onSelect(s.id)}
           >
@@ -79,7 +79,7 @@ export default function SourceList({
                   {(s.type === "url" || s.type === "youtube") && (
                     <button
                       title="Re-index"
-                      className="text-xs text-ink-faint hover:text-accent transition-colors"
+                      className="text-xs text-ink-faint hover:text-brand transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleReindex(s.id);

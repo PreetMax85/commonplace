@@ -55,7 +55,7 @@ export default function RoadmapPanel({
   return (
     <div className="border-t border-line p-3.5 bg-paper-raised">
       <button
-        className="text-sm font-semibold text-ink border border-line rounded-full px-4 py-2 w-full hover:border-accent hover:bg-accent-wash disabled:opacity-50 transition-colors"
+        className="text-sm font-semibold text-ink border border-line rounded-full px-4 py-2 w-full hover:border-brand hover:bg-brand-wash disabled:opacity-50 transition-colors"
         onClick={generate}
         disabled={loading}
       >
@@ -73,7 +73,7 @@ export default function RoadmapPanel({
                   {i + 1}. {step.concept}
                 </span>
                 <button
-                  className="text-xs text-accent font-semibold whitespace-nowrap"
+                  className="text-xs text-brand font-semibold whitespace-nowrap"
                   onClick={() =>
                     onOpenStep(step.source_id, {
                       timestamp_start: step.timestamp_start,

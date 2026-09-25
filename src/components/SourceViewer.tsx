@@ -90,7 +90,7 @@ export default function SourceViewer({
                 ref={isCited ? highlightRef : undefined}
                 className={
                   isCited
-                    ? "bg-accent-wash text-ink rounded-md px-2.5 py-1.5 -mx-2.5"
+                    ? "bg-brand-wash text-ink rounded-md px-2.5 py-1.5 -mx-2.5"
                     : ""
                 }
               >

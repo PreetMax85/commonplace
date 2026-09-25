@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { BookOpen } from "lucide-react";
+import SourceIcon, { sourceLabel } from "./SourceIcon";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ViewData {
   source: { id: string; type: string; title: string; raw_ref: string };
@@ -40,66 +43,86 @@ export default function SourceViewer({
 
   if (!sourceId) {
     return (
-      <div className="h-full flex items-center justify-center text-ink-faint text-sm p-8 text-center bg-paper-sunken">
-        Ask a question, then click a citation to view its source here.
+      <div className="flex h-full flex-col items-center justify-center bg-paper-sunken px-8 py-10 text-center">
+        <BookOpen className="size-6 text-ink-faint" strokeWidth={1.75} aria-hidden />
+        <p className="mt-3 text-sm font-medium text-ink">The source, side by side</p>
+        <p className="mt-1 max-w-[16rem] text-sm leading-relaxed text-ink-muted">
+          Pick a source, or click a citation in an answer, and it opens here at
+          the exact page, moment or passage.
+        </p>
       </div>
     );
   }
 
-  if (!data)
+  if (!data) {
     return (
-      <div className="p-5 space-y-3">
-        <div className="h-5 w-2/3 rounded bg-paper-raised animate-pulse" />
-        <div className="h-40 rounded-lg bg-paper-raised animate-pulse" />
+      <div className="h-full space-y-3 bg-paper-sunken p-5">
+        <Skeleton className="h-5 w-2/3" />
+        <Skeleton className="h-64 w-full rounded-lg" />
       </div>
     );
+  }
 
   const { source, chunks, fileUrl } = data;
 
   return (
-    <div className="h-full overflow-y-auto p-5 bg-paper-sunken">
-      <h3 className="font-display font-semibold text-ink mb-4 truncate">{source.title}</h3>
-
-      {source.type === "pdf" && fileUrl && (
-        <iframe
-          src={`${fileUrl}#page=${metadata?.page ?? 1}`}
-          className="w-full h-[70vh] border border-line rounded-lg"
-        />
-      )}
-
-      {source.type === "youtube" && (
-        <iframe
-          className="w-full aspect-video rounded-lg"
-          src={`https://www.youtube.com/embed/${source.raw_ref}?start=${metadata?.timestamp_start ?? 0}`}
-          allow="autoplay; encrypted-media"
-          allowFullScreen
-        />
-      )}
-
-      {(source.type === "text" || source.type === "vtt" || source.type === "url") && (
-        <div className="space-y-3 text-sm leading-relaxed text-ink-muted">
-          {chunks.map((c) => {
-            const isCited = chunkId
-              ? c.id === chunkId
-              : metadata !== undefined &&
-                metadata.timestamp_start !== undefined &&
-                c.metadata.timestamp_start === metadata.timestamp_start;
-            return (
-              <p
-                key={c.id}
-                ref={isCited ? highlightRef : undefined}
-                className={
-                  isCited
-                    ? "bg-brand-wash text-ink rounded-md px-2.5 py-1.5 -mx-2.5"
-                    : ""
-                }
-              >
-                {c.content}
-              </p>
-            );
-          })}
+    <div className="flex h-full flex-col bg-paper-sunken">
+      <header className="flex items-start gap-2.5 border-b border-line px-5 py-3.5">
+        <span className="mt-0.5 text-ink-faint">
+          <SourceIcon type={source.type} />
+        </span>
+        <div className="min-w-0">
+          <h2 className="truncate font-display text-sm font-semibold text-ink" title={source.title}>
+            {source.title}
+          </h2>
+          <p className="text-xs text-ink-faint">{sourceLabel(source.type)}</p>
         </div>
-      )}
+      </header>
+
+      <div className="min-h-0 flex-1 overflow-y-auto p-5">
+        {source.type === "pdf" && fileUrl && (
+          <iframe
+            title={source.title}
+            src={`${fileUrl}#page=${metadata?.page ?? 1}`}
+            className="h-[calc(100vh-11rem)] w-full rounded-lg border border-line bg-paper"
+          />
+        )}
+
+        {source.type === "youtube" && (
+          <iframe
+            title={source.title}
+            className="aspect-video w-full rounded-lg border border-line"
+            src={`https://www.youtube.com/embed/${source.raw_ref}?start=${metadata?.timestamp_start ?? 0}`}
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+          />
+        )}
+
+        {(source.type === "text" || source.type === "vtt" || source.type === "url") && (
+          <div className="space-y-3 text-sm leading-relaxed text-ink-muted">
+            {chunks.map((c) => {
+              const isCited = chunkId
+                ? c.id === chunkId
+                : metadata !== undefined &&
+                  metadata.timestamp_start !== undefined &&
+                  c.metadata.timestamp_start === metadata.timestamp_start;
+              return (
+                <p
+                  key={c.id}
+                  ref={isCited ? highlightRef : undefined}
+                  className={
+                    isCited
+                      ? "-mx-2.5 rounded-md border-l-[3px] border-brand bg-brand-wash px-2.5 py-1.5 text-ink"
+                      : ""
+                  }
+                >
+                  {c.content}
+                </p>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,16 +1,30 @@
 "use client";
 
 import { useState } from "react";
+import { ArrowLeft, Loader2, Upload } from "lucide-react";
 import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from "@/lib/limits";
+import SourceIcon, { sourceLabel } from "./SourceIcon";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 type SourceKind = "pdf" | "text" | "url" | "youtube" | "vtt";
 
-const TYPES: { key: SourceKind; label: string }[] = [
-  { key: "pdf", label: "PDF" },
-  { key: "youtube", label: "YT Link" },
-  { key: "text", label: "Text" },
-  { key: "vtt", label: "VTT" },
-  { key: "url", label: "Web Link" },
+// The hint says what the app will do with it, which is the thing people are
+// actually choosing between.
+const TYPES: { key: SourceKind; hint: string }[] = [
+  { key: "pdf", hint: "Cited by page" },
+  { key: "youtube", hint: "Cited by timestamp" },
+  { key: "url", hint: "Article text only" },
+  { key: "text", hint: "Paste anything" },
+  { key: "vtt", hint: "VTT or SRT file" },
 ];
 
 export default function AddSourceModal({
@@ -37,7 +51,7 @@ export default function AddSourceModal({
       return;
     }
     if ((kind === "url" || kind === "youtube") && !urlValue.trim()) {
-      setError("Enter a URL first.");
+      setError("Enter a link first.");
       return;
     }
     if (kind === "text" && !textValue.trim()) {
@@ -77,100 +91,115 @@ export default function AddSourceModal({
       }
 
       if (!res.ok) {
-        const body = await res.json().catch(() => ({ error: "Upload failed" }));
-        setError(body.error ?? "Upload failed");
+        const body = await res.json().catch(() => ({}));
+        setError(body.error ?? "That source could not be added.");
         return;
       }
 
       onAdded();
       onClose();
     } catch {
-      setError("Network error — check your connection and try again.");
+      setError("No response from the server. Check your connection and try again.");
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <div className="fixed inset-0 bg-ink/30 backdrop-blur-[2px] flex items-center justify-center z-50 p-4">
-      <div className="bg-paper-raised rounded-lg p-6 w-full max-w-md shadow-2xl shadow-ink/10 border border-line">
-        <div className="flex justify-between items-center mb-5">
-          <h2 className="font-display font-semibold text-lg text-ink">Add Source</h2>
-          <button onClick={onClose} className="text-ink-faint hover:text-ink transition-colors">
-            ✕
-          </button>
-        </div>
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="font-display">
+            {kind ? `Add ${sourceLabel(kind).toLowerCase()}` : "Add a source"}
+          </DialogTitle>
+          <DialogDescription>
+            {kind
+              ? "It will be indexed in the background, and searchable as soon as that finishes."
+              : "Anything you add here becomes searchable, and answers can cite it."}
+          </DialogDescription>
+        </DialogHeader>
 
         {!kind ? (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             {TYPES.map((t) => (
               <button
                 key={t.key}
                 onClick={() => setKind(t.key)}
-                className="border border-line rounded-md py-6 font-medium text-ink hover:border-brand hover:bg-brand-wash transition-colors"
+                className="flex flex-col gap-1.5 rounded-lg border border-line bg-paper p-3 text-left transition-colors hover:border-brand-line hover:bg-brand-wash focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand last:odd:col-span-2"
               >
-                {t.label}
+                <span className="text-brand">
+                  <SourceIcon type={t.key} className="size-[1.125rem]" />
+                </span>
+                <span className="text-sm font-medium text-ink">{sourceLabel(t.key)}</span>
+                <span className="text-xs text-ink-faint">{t.hint}</span>
               </button>
             ))}
           </div>
         ) : (
           <div className="space-y-3">
-            <button
-              className="text-sm text-ink-faint hover:text-ink transition-colors"
+            <Button
+              variant="ghost"
+              size="sm"
+              className="-ml-2 text-ink-muted"
               onClick={() => {
                 setKind(null);
                 setError(null);
               }}
             >
-              ← back
-            </button>
+              <ArrowLeft />
+              All types
+            </Button>
 
-            {error && <p className="text-sm text-status-error">{error}</p>}
-
-            <input
-              className="border border-line rounded-md px-3 py-2 w-full bg-paper text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-wash transition-colors"
+            <Input
               placeholder="Title (optional)"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
 
             {(kind === "pdf" || kind === "vtt") && (
-              <input
-                type="file"
-                accept={kind === "pdf" ? ".pdf" : ".vtt,.srt"}
-                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                className="text-sm text-ink-muted file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:bg-brand-wash file:text-ink file:font-medium"
-              />
+              <label className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-dashed border-line-strong px-3 py-4 text-sm transition-colors hover:border-brand-line hover:bg-brand-wash">
+                <Upload className="size-4 shrink-0 text-ink-faint" aria-hidden />
+                <span className="min-w-0 flex-1 truncate text-ink-muted">
+                  {file ? file.name : `Choose a ${kind === "pdf" ? "PDF" : "VTT or SRT"} file`}
+                </span>
+                <input
+                  type="file"
+                  className="sr-only"
+                  accept={kind === "pdf" ? ".pdf" : ".vtt,.srt"}
+                  onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                />
+              </label>
             )}
 
             {kind === "text" && (
-              <textarea
-                className="border border-line rounded-md px-3 py-2 w-full h-32 bg-paper text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-wash transition-colors"
-                placeholder="Paste text..."
+              <Textarea
+                className="h-32"
+                placeholder="Paste the text here"
                 value={textValue}
                 onChange={(e) => setTextValue(e.target.value)}
               />
             )}
 
             {(kind === "url" || kind === "youtube") && (
-              <input
-                className="border border-line rounded-md px-3 py-2 w-full bg-paper text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-wash transition-colors"
-                placeholder={kind === "youtube" ? "https://youtube.com/watch?v=..." : "https://..."}
+              <Input
+                placeholder={
+                  kind === "youtube" ? "https://youtube.com/watch?v=..." : "https://..."
+                }
                 value={urlValue}
                 onChange={(e) => setUrlValue(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && submit()}
               />
             )}
 
-            <button
-              disabled={submitting}
-              onClick={submit}
-              className="bg-brand hover:bg-brand-hover text-brand-ink font-semibold px-4 py-2.5 rounded-md w-full disabled:opacity-50 transition-colors"
-            >
-              {submitting ? "Uploading..." : "Add Source"}
-            </button>
+            {error && <p className="text-sm text-status-error">{error}</p>}
+
+            <Button className="w-full" size="lg" disabled={submitting} onClick={submit}>
+              {submitting && <Loader2 className="animate-spin" />}
+              {submitting ? "Adding" : "Add source"}
+            </Button>
           </div>
         )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

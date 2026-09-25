@@ -5,7 +5,9 @@ import { enforceRateLimit } from "@/lib/rateLimit";
 export async function GET() {
   const { data, error } = await supabaseAdmin
     .from("notebooks")
-    .select("*")
+    // sources(count) rides along on the same query, so the list can show how
+    // much is in each notebook without a request per row.
+    .select("*, sources(count)")
     // The demo leads the list so a first-time visitor opens it before anything else.
     .order("is_demo", { ascending: false })
     .order("created_at", { ascending: false });

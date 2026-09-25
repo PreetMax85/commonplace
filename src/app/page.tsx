@@ -2,21 +2,49 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ArrowRight, BookOpen, Loader2, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Notebook {
   id: string;
   name: string;
   is_demo: boolean;
   created_at: string;
+  // PostgREST returns an embedded count as a one-row array.
+  sources: { count: number }[];
 }
+
+function sourceCount(nb: Notebook): number {
+  return nb.sources?.[0]?.count ?? 0;
+}
+
+const dateFormat = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+});
 
 export default function Home() {
   const [notebooks, setNotebooks] = useState<Notebook[]>([]);
   const [newName, setNewName] = useState("");
   const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [createError, setCreateError] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState<Notebook | null>(null);
 
   async function load() {
     const res = await fetch("/api/notebooks");
@@ -29,31 +57,30 @@ export default function Home() {
   }, []);
 
   async function createNotebook() {
-    if (!newName.trim()) return;
+    if (!newName.trim() || creating) return;
     setCreateError(null);
-    const res = await fetch("/api/notebooks", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: newName }),
-    });
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      setCreateError(body.error ?? "Could not create the notebook.");
-      return;
+    setCreating(true);
+    try {
+      const res = await fetch("/api/notebooks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newName }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setCreateError(body.error ?? "That notebook could not be created.");
+        return;
+      }
+      setNewName("");
+      await load();
+    } finally {
+      setCreating(false);
     }
-    setNewName("");
-    load();
   }
 
   async function deleteNotebook(id: string) {
-    if (!confirm("Delete this notebook and all its sources?")) return;
     await fetch(`/api/notebooks/${id}`, { method: "DELETE" });
     load();
-  }
-
-  function startRename(nb: Notebook) {
-    setRenamingId(nb.id);
-    setRenameValue(nb.name);
   }
 
   async function submitRename(id: string) {
@@ -68,85 +95,168 @@ export default function Home() {
     load();
   }
 
-  return (
-    <main className="max-w-2xl mx-auto px-6 py-16">
-      <h1 className="font-display text-3xl font-bold text-ink mb-8 tracking-tight">
-        Notebooks
-      </h1>
+  const demo = notebooks.find((nb) => nb.is_demo);
+  const mine = notebooks.filter((nb) => !nb.is_demo);
 
-      <div className="flex gap-2 mb-10">
-        <input
-          className="border border-line rounded-lg px-4 py-2.5 flex-1 bg-paper-raised text-ink placeholder:text-ink-faint outline-none focus:border-brand focus:ring-2 focus:ring-brand-wash transition-colors"
-          placeholder="New notebook name..."
+  return (
+    <main className="mx-auto w-full max-w-2xl px-6 py-14 sm:py-20">
+      <div className="flex items-center gap-2 text-ink">
+        <BookOpen className="size-5 text-brand" strokeWidth={2} aria-hidden />
+        <span className="font-display text-base font-bold tracking-tight">Commonplace</span>
+      </div>
+      <h1 className="mt-5 max-w-[19ch] font-display text-3xl font-bold leading-[1.15] tracking-tight text-ink sm:text-4xl">
+        Keep what you read, and ask it questions
+      </h1>
+      <p className="mt-3 max-w-prose leading-relaxed text-ink-muted">
+        Put PDFs, web pages, videos and transcripts into a notebook. Ask across all
+        of them at once and get an answer that cites the page, the timestamp or the
+        passage it came from.
+      </p>
+
+      {demo && (
+        <Link
+          href={`/notebook/${demo.id}`}
+          className="group mt-9 flex items-center gap-4 rounded-lg border border-brand-line bg-brand-wash px-4 py-3.5 transition-colors hover:border-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+        >
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-semibold text-ink">
+              Start with the demo notebook
+            </span>
+            <span className="mt-0.5 block truncate text-sm text-ink-muted">
+              {demo.name} &middot; {sourceCount(demo)} sources, nothing to upload
+            </span>
+          </span>
+          <ArrowRight
+            className="size-4 shrink-0 text-brand transition-transform group-hover:translate-x-0.5"
+            aria-hidden
+          />
+        </Link>
+      )}
+
+      <h2 className="mt-12 font-display text-sm font-semibold text-ink">Your notebooks</h2>
+
+      <div className="mt-3 flex gap-2">
+        <Input
+          className="h-10 flex-1"
+          placeholder="Name a new notebook"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && createNotebook()}
         />
-        <button
-          className="bg-brand hover:bg-brand-hover text-brand-ink font-semibold px-5 py-2.5 rounded-lg transition-colors"
-          onClick={createNotebook}
-        >
+        <Button size="lg" disabled={creating || newName.trim() === ""} onClick={createNotebook}>
+          {creating ? <Loader2 className="animate-spin" /> : <Plus />}
           Create
-        </button>
+        </Button>
       </div>
-      {createError && <p className="text-sm text-status-error -mt-8 mb-10">{createError}</p>}
+      {createError && <p className="mt-2 text-sm text-status-error">{createError}</p>}
 
       {loading ? (
-        <ul className="space-y-2.5">
-          {[0, 1, 2].map((i) => (
-            <li key={i} className="border border-line rounded-lg px-4 py-3.5 h-[52px] bg-paper-raised animate-pulse" />
+        <ul className="mt-4 space-y-2">
+          {[0, 1].map((i) => (
+            <li key={i} className="rounded-lg border border-line bg-paper-raised px-4 py-3.5">
+              <Skeleton className="h-4 w-40" />
+              <Skeleton className="mt-2 h-3 w-24" />
+            </li>
           ))}
         </ul>
-      ) : notebooks.length === 0 ? (
-        <div className="border border-dashed border-line rounded-lg py-10 text-center text-ink-muted text-sm">
-          No notebooks yet.
-          <br />
-          Create one above to get started.
-        </div>
+      ) : mine.length === 0 ? (
+        <p className="mt-4 rounded-lg border border-dashed border-line-strong px-4 py-8 text-center text-sm text-ink-muted">
+          No notebooks of your own yet. Name one above and add your first source.
+        </p>
       ) : (
-        <ul className="space-y-2.5">
-          {notebooks.map((nb) => (
+        <ul className="mt-4 space-y-2">
+          {mine.map((nb) => (
             <li
               key={nb.id}
-              className="bg-paper-raised border border-line rounded-lg px-4 py-3.5 flex justify-between items-center hover:border-line-strong transition-colors"
+              className="flex items-center gap-3 rounded-lg border border-line bg-paper-raised px-4 py-3 transition-colors hover:border-line-strong"
             >
               {renamingId === nb.id ? (
-                <input
+                <Input
                   autoFocus
-                  className="border border-brand rounded-md px-2 py-1 flex-1 mr-2 bg-paper outline-none"
+                  aria-label="Notebook name"
+                  className="h-8 flex-1"
                   value={renameValue}
                   onChange={(e) => setRenameValue(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && submitRename(nb.id)}
                   onBlur={() => submitRename(nb.id)}
                 />
               ) : (
-                <Link href={`/notebook/${nb.id}`} className="font-medium text-ink hover:text-brand transition-colors">
-                  {nb.name}
+                <Link href={`/notebook/${nb.id}`} className="min-w-0 flex-1 group">
+                  <span className="block truncate font-medium text-ink transition-colors group-hover:text-brand">
+                    {nb.name}
+                  </span>
+                  <span className="mt-0.5 block text-xs text-ink-faint">
+                    {sourceCount(nb) === 1 ? "1 source" : `${sourceCount(nb)} sources`}
+                    {" · "}
+                    {dateFormat.format(new Date(nb.created_at))}
+                  </span>
                 </Link>
               )}
-              {nb.is_demo ? (
-                <span className="text-xs text-ink-faint border border-line rounded-full px-2 py-0.5">
-                  Demo, try me
-                </span>
-              ) : (
-                <span className="flex gap-4 text-sm">
-                  {renamingId !== nb.id && (
-                    <button className="text-ink-faint hover:text-ink transition-colors" onClick={() => startRename(nb)}>
-                      Rename
-                    </button>
-                  )}
-                  <button
-                    className="text-ink-faint hover:text-status-error transition-colors"
-                    onClick={() => deleteNotebook(nb.id)}
+
+              {renamingId !== nb.id && (
+                <span className="flex shrink-0 gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-ink-muted"
+                    onClick={() => {
+                      setRenamingId(nb.id);
+                      setRenameValue(nb.name);
+                    }}
+                  >
+                    Rename
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-ink-muted hover:text-status-error"
+                    onClick={() => setConfirming(nb)}
                   >
                     Delete
-                  </button>
+                  </Button>
                 </span>
               )}
             </li>
           ))}
         </ul>
       )}
+
+      <footer className="mt-14 border-t border-line pt-5 text-sm text-ink-muted">
+        Search quality here is measured rather than assumed: 40 hand written
+        questions, answered by keyword and vector search together.{" "}
+        <a
+          href="https://github.com/PreetMax85/commonplace"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-brand underline decoration-brand/40 underline-offset-2 hover:decoration-brand"
+        >
+          Source and numbers on GitHub
+        </a>
+      </footer>
+
+      <AlertDialog open={confirming !== null} onOpenChange={(open) => !open && setConfirming(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this notebook?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirming?.name} and its {sourceCount(confirming ?? ({} as Notebook))} sources
+              will be deleted. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep it</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                const target = confirming;
+                setConfirming(null);
+                if (target) deleteNotebook(target.id);
+              }}
+            >
+              Delete notebook
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 }

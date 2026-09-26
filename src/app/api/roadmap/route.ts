@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { getGroq, LLM_MODEL, describeGroqError } from "@/lib/llm";
 import { enforceRateLimit } from "@/lib/rateLimit";
+import { checkNotebook } from "@/lib/access";
 
 // Roughly four characters per token. The free tier allows 8k tokens a minute
 // across prompt and completion, so the transcripts are trimmed to leave room
@@ -14,6 +15,11 @@ const TRANSCRIPT_CHAR_BUDGET = 12000;
 export async function POST(req: NextRequest) {
   try {
     const { notebookId } = await req.json();
+    if (typeof notebookId !== "string") {
+      return NextResponse.json({ error: "notebookId required" }, { status: 400 });
+    }
+    const refused = await checkNotebook(notebookId, "read");
+    if (refused) return refused;
 
     const { data: youtubeSources, error } = await supabaseAdmin
       .from("sources")

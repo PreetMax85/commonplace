@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse, after } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { reindexSource, recordFailure } from "@/lib/ingest";
-import { isDemoSource, demoReadOnlyResponse } from "@/lib/demo";
+import { checkSource } from "@/lib/access";
 import { enforceRateLimit } from "@/lib/rateLimit";
 
 // Re-extracting and re-embedding a source takes as long as the original
@@ -10,7 +10,8 @@ export const maxDuration = 300;
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  if (await isDemoSource(id)) return demoReadOnlyResponse();
+  const refused = await checkSource(id, "write");
+  if (refused) return refused;
   // Cascades to chunks via FK on delete cascade.
   const { error } = await supabaseAdmin.from("sources").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -22,7 +23,8 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 // Storage, text from the raw text saved as raw_ref on first ingest.
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  if (await isDemoSource(id)) return demoReadOnlyResponse();
+  const refused = await checkSource(id, "write");
+  if (refused) return refused;
 
   const { data: source } = await supabaseAdmin
     .from("sources")

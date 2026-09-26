@@ -2,7 +2,7 @@ import { NextRequest, NextResponse, after } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { ingestSource, SourceType } from "@/lib/ingest";
 import { extractYoutubeId } from "@/lib/extract/youtube";
-import { isDemoNotebook, demoReadOnlyResponse } from "@/lib/demo";
+import { checkNotebook } from "@/lib/access";
 import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB, MAX_SOURCES_PER_NOTEBOOK } from "@/lib/limits";
 import { enforceRateLimit } from "@/lib/rateLimit";
 
@@ -39,6 +39,8 @@ async function failStalledSources(notebookId: string) {
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const refused = await checkNotebook(id, "read");
+  if (refused) return refused;
   await failStalledSources(id);
   const { data, error } = await supabaseAdmin
     .from("sources")
@@ -52,7 +54,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 // Accepts multipart/form-data for pdf uploads, JSON for text/url/youtube/vtt.
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: notebookId } = await params;
-  if (await isDemoNotebook(notebookId)) return demoReadOnlyResponse();
+  const refused = await checkNotebook(notebookId, "write");
+  if (refused) return refused;
 
   // Refuse an oversized body before parsing it into memory, allowing a little
   // room for the multipart envelope while staying under Vercel's 4.5 MB body

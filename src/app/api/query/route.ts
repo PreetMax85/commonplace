@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { embedText, streamAnswer, condenseQuestion, describeGroqError, ChatTurn } from "@/lib/llm";
 import { enforceRateLimit } from "@/lib/rateLimit";
+import { checkNotebook } from "@/lib/access";
 
 const MAX_QUESTION_CHARS = 1000;
 const MAX_HISTORY_TURNS = 6;
@@ -21,6 +22,9 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
+
+  const refused = await checkNotebook(notebookId, "read");
+  if (refused) return refused;
 
   // Checked before the rate limit so asking a notebook that is still indexing
   // does not use up a question.

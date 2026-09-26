@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { checkSource } from "@/lib/access";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const refused = await checkSource(id, "read");
+  if (refused) return refused;
   const { data: source, error } = await supabaseAdmin
     .from("sources")
     .select("*")

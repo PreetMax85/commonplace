@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import ThemeToggle from "@/components/ThemeToggle";
+import { ensureVisitor } from "@/lib/visitorClient";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -77,6 +78,14 @@ export default function Home() {
     setCreateError(null);
     setCreating(true);
     try {
+      // A visitor gets their private, anonymous account only now, so reading
+      // the demo never creates one.
+      try {
+        await ensureVisitor();
+      } catch {
+        setCreateError("Could not start a private session. Try again in a moment.");
+        return;
+      }
       const res = await fetch("/api/notebooks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -89,6 +98,8 @@ export default function Home() {
       }
       setNewName("");
       await load();
+    } catch {
+      setCreateError("No response from the server. Check your connection and try again.");
     } finally {
       setCreating(false);
     }

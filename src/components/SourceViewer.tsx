@@ -79,19 +79,21 @@ export default function SourceViewer({
         </div>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto p-5">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-5">
         {source.type === "pdf" && fileUrl && (
           <iframe
             title={source.title}
             src={`${fileUrl}#page=${metadata?.page ?? 1}`}
-            className="h-[calc(100vh-11rem)] w-full rounded-lg border border-line bg-paper"
+            // Fills whatever height the pane has, rather than guessing from
+            // the viewport, which was wrong on a phone with the bottom bar.
+            className="min-h-[22rem] w-full flex-1 rounded-lg border border-line bg-paper"
           />
         )}
 
         {source.type === "youtube" && (
           <iframe
             title={source.title}
-            className="aspect-video w-full rounded-lg border border-line"
+            className="aspect-video w-full shrink-0 rounded-lg border border-line"
             src={`https://www.youtube.com/embed/${source.raw_ref}?start=${metadata?.timestamp_start ?? 0}`}
             allow="autoplay; encrypted-media"
             allowFullScreen

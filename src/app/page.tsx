@@ -45,12 +45,23 @@ export default function Home() {
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [createError, setCreateError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
   const [confirming, setConfirming] = useState<Notebook | null>(null);
 
   async function load() {
-    const res = await fetch("/api/notebooks");
-    setNotebooks(await res.json());
-    setLoading(false);
+    try {
+      const res = await fetch("/api/notebooks");
+      const body = await res.json();
+      // A failed request returns { error }, which would crash the page if it
+      // were treated as the list.
+      if (!res.ok || !Array.isArray(body)) throw new Error();
+      setNotebooks(body);
+      setLoadError(false);
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -163,6 +174,10 @@ export default function Home() {
             </li>
           ))}
         </ul>
+      ) : loadError ? (
+        <p className="mt-4 rounded-lg border border-dashed border-line-strong px-4 py-8 text-center text-sm text-status-error">
+          Your notebooks could not be loaded. Refresh the page to try again.
+        </p>
       ) : mine.length === 0 ? (
         <p className="mt-4 rounded-lg border border-dashed border-line-strong px-4 py-8 text-center text-sm text-ink-muted">
           No notebooks of your own yet. Name one above and add your first source.

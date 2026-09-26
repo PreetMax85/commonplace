@@ -164,8 +164,11 @@ export default function Home() {
       )}
 
       <h2 className="mt-12 font-display text-sm font-semibold text-ink">Your notebooks</h2>
+      <p className="mt-1 text-sm text-ink-muted">
+        Private to this browser, with no sign-up. Kept for 30 days from your first notebook.
+      </p>
 
-      <div className="mt-3 flex gap-2">
+      <div className="mt-4 flex gap-2">
         <Input
           className="h-10 flex-1"
           placeholder="Name a new notebook"

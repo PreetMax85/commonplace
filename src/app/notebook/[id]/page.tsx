@@ -29,6 +29,8 @@ export default function NotebookPage() {
   // Unknown until the notebook loads. Treated as read-only meanwhile, so the
   // demo never flashes controls that would only answer with a 403.
   const [isDemo, setIsDemo] = useState<boolean | null>(null);
+  // Someone else's notebook answers 404 exactly like a deleted one.
+  const [missing, setMissing] = useState(false);
   const [renaming, setRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState("");
   const [sources, setSources] = useState<SourceItem[]>([]);
@@ -42,17 +44,23 @@ export default function NotebookPage() {
 
   const loadSources = useCallback(async () => {
     const res = await fetch(`/api/notebooks/${id}/sources`);
-    setSources(await res.json());
+    // An error body stored as the list would crash every render that maps it.
+    if (res.ok) setSources(await res.json());
     setSourcesLoading(false);
   }, [id]);
 
   useEffect(() => {
     fetch(`/api/notebooks/${id}`)
-      .then((r) => r.json())
-      .then((nb) => {
+      .then(async (r) => {
+        if (!r.ok) {
+          setMissing(true);
+          return;
+        }
+        const nb = await r.json();
         setNotebookName(nb.name ?? "Untitled");
         setIsDemo(nb.is_demo === true);
-      });
+      })
+      .catch(() => setMissing(true));
   }, [id]);
 
   useEffect(() => {
@@ -111,6 +119,24 @@ export default function NotebookPage() {
   function showCentre(tab: CentreTab) {
     setCentreTab(tab);
     setPane("centre");
+  }
+
+  if (missing) {
+    return (
+      <main className="flex min-h-dvh flex-col items-center justify-center bg-paper px-6 text-center">
+        <BookOpen className="size-7 text-brand" strokeWidth={1.75} aria-hidden />
+        <h1 className="mt-4 font-display text-2xl font-bold tracking-tight text-ink">
+          This notebook could not be opened
+        </h1>
+        <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-muted">
+          It may have been deleted, or it was made in a different browser. Notebooks are private
+          to the browser that created them.
+        </p>
+        <Button className="mt-6" render={<Link href="/" />} nativeButton={false}>
+          Back to your notebooks
+        </Button>
+      </main>
+    );
   }
 
   return (

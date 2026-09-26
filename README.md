@@ -11,11 +11,12 @@ Upload PDFs, text, URLs, YouTube videos, and transcripts into isolated notebooks
 
 1. Create a Supabase project. Run `supabase/schema.sql` in the SQL editor. For a project created from an older schema, run the files in `supabase/migrations/` in order instead.
 2. Create a private **Storage** bucket named `sources` in Supabase. The app hands out short-lived signed URLs, so the files never need to be publicly listable.
-3. Copy `.env.example` to `.env.local` and fill in `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `GROQ_API_KEY`.
+3. In Supabase, turn on **Allow anonymous sign-ins** (Authentication, Sign In / Providers).
+4. Copy `.env.example` to `.env.local` and fill in `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `GROQ_API_KEY`.
    `SUPADATA_API_KEY` is optional and only used as a fallback for YouTube transcripts (see below). Without it, YouTube ingestion still works wherever the direct fetch does.
-4. `npm install`
-5. `npm run dev`
-6. Optional: to make a notebook the read-only public demo, run `update notebooks set is_demo = true where id = '<notebook id>';` in the SQL editor.
+5. `npm install`
+6. `npm run dev`
+7. Optional: to make a notebook the read-only public demo, run `update notebooks set is_demo = true where id = '<notebook id>';` in the SQL editor.
 
 ## Stack
 
@@ -23,6 +24,7 @@ Upload PDFs, text, URLs, YouTube videos, and transcripts into isolated notebooks
 - **Tailwind CSS + shadcn/ui**: a hand-written token layer (paper, ink, one brand hue) that shadcn's components are mapped onto, so they arrive wearing this app's palette. Light and dark are the same hues at different values, switched with `next-themes`. `npm run check:contrast` reads the palette out of the stylesheet and fails if any text pair the UI actually uses falls below 4.5:1, in either theme
 - **Supabase Postgres + pgvector**: notebook, source, and chunk metadata plus vector search
 - **Supabase Storage**: original PDF/VTT files for the source viewer
+- **Supabase Auth (anonymous sign-ins)**: each visitor gets a private account without a sign-up form
 - **Groq**: `openai/gpt-oss-120b` for grounded streamed answers and the roadmap, `openai/gpt-oss-20b` for question rewriting
 - **Transformers.js** (`@xenova/transformers`): `bge-small-en-v1.5` embeddings computed in-process, no embedding API
 
@@ -33,6 +35,7 @@ notebooks (1) ──< sources (many) ──< chunks (many, with embedding vector
 ```
 
 - Every chunk carries `notebook_id` for per-notebook vector search isolation.
+- Every notebook carries `owner_id`, an anonymous Supabase user. A visitor is signed in only when they create their first notebook, so reading the demo never makes an account. Every API route checks ownership in one place (`src/lib/access.ts`): the demo is readable by everyone and writable by no one, and anyone else's notebook answers 404, the same as a missing one. The browser holds only the publishable key, and row level security with no policies blocks it from reading any table directly; the API uses the service-role key. A daily cron removes visitors 30 days after they start, along with their files.
 - `metadata` (jsonb) on each chunk anchors citations: PDF → `page`; YouTube/VTT → `timestamp_start`/`timestamp_end`; text/URL → `chunk_index` + `section`.
 
 ### Ingestion flow
@@ -102,7 +105,7 @@ Questions and roadmaps also share a site-wide limit of 2 per minute, matching th
 
 ## Known scope cuts
 
-- No auth or multi-user layer yet. The public deployment is protected instead: demo notebooks are read-only, uploads and pasted text are capped at 4 MB (Vercel rejects function request bodies over 4.5 MB), and a notebook holds up to 15 sources.
+- Accounts are anonymous only, so notebooks live in one browser and cannot move to another device. Demo notebooks are read-only, uploads and pasted text are capped at 4 MB (Vercel rejects function request bodies over 4.5 MB), and a notebook holds up to 15 sources.
 - Podcast/voice-over bonus deprioritized in favor of the roadmap bonus (YouTube sources → ordered concept list grounded in transcript timestamps).
 - PDF source viewer jumps to the cited page but doesn't highlight the exact passage (text/VTT/URL sources do highlight).
 - YouTube serves caption tracks to home connections but refuses them to cloud ones, so the direct fetch works locally and never on the deployment. When it fails and `SUPADATA_API_KEY` is set, the transcript is fetched through Supadata instead, which reads the same published captions. Its free plan covers 100 transcripts a month, so adding a video is capped at 3 a day across the site. If both paths fail, the error says so and points at the VTT or SRT upload, which works everywhere.

@@ -18,8 +18,10 @@ import ThemeToggle from "@/components/ThemeToggle";
 
 // One value drives both layouts. On a wide screen the three columns are always
 // visible and this only picks the middle tab; on a phone it picks which single
-// pane is on screen.
-type Pane = "sources" | "chat" | "roadmap" | "source";
+// pane is on screen. The middle tab is held separately, so opening a source
+// from a roadmap step does not also throw the middle column back to the chat.
+type Pane = "sources" | "centre" | "source";
+type CentreTab = "chat" | "roadmap";
 
 export default function NotebookPage() {
   const { id } = useParams<{ id: string }>();
@@ -32,7 +34,8 @@ export default function NotebookPage() {
   const [sources, setSources] = useState<SourceItem[]>([]);
   const [sourcesLoading, setSourcesLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
-  const [pane, setPane] = useState<Pane>("chat");
+  const [pane, setPane] = useState<Pane>("centre");
+  const [centreTab, setCentreTab] = useState<CentreTab>("chat");
   const [viewerSourceId, setViewerSourceId] = useState<string | null>(null);
   const [viewerChunkId, setViewerChunkId] = useState<string | null>(null);
   const [viewerMetadata, setViewerMetadata] = useState<Record<string, any> | undefined>();
@@ -102,7 +105,11 @@ export default function NotebookPage() {
   }
 
   const readOnly = isDemo !== false;
-  const centreTab = pane === "roadmap" ? "roadmap" : "chat";
+
+  function showCentre(tab: CentreTab) {
+    setCentreTab(tab);
+    setPane("centre");
+  }
 
   return (
     <div className="flex h-dvh flex-col bg-paper">
@@ -216,8 +223,8 @@ export default function NotebookPage() {
         {/* Chat and roadmap share the widest column: both are things you read. */}
         <Tabs
           value={centreTab}
-          onValueChange={(value) => setPane(value as Pane)}
-          className={`${pane === "chat" || pane === "roadmap" ? "flex" : "hidden"} min-w-0 flex-1 flex-col gap-0 border-r border-line lg:flex`}
+          onValueChange={(value) => setCentreTab(value as CentreTab)}
+          className={`${pane === "centre" ? "flex" : "hidden"} min-w-0 flex-1 flex-col gap-0 border-r border-line lg:flex`}
         >
           <TabsList
             variant="line"
@@ -279,24 +286,28 @@ export default function NotebookPage() {
       >
         {(
           [
-            ["sources", "Sources", Library],
-            ["chat", "Chat", MessageSquare],
-            ["roadmap", "Roadmap", Route],
-            ["source", "Source", BookOpen],
+            ["sources", "Sources", Library, () => setPane("sources")],
+            ["chat", "Chat", MessageSquare, () => showCentre("chat")],
+            ["roadmap", "Roadmap", Route, () => showCentre("roadmap")],
+            ["source", "Source", BookOpen, () => setPane("source")],
           ] as const
-        ).map(([value, label, Icon]) => (
+        ).map(([value, label, Icon, go]) => {
+          const active =
+            pane === "centre" ? centreTab === value : pane === value;
+          return (
           <button
             key={value}
-            onClick={() => setPane(value)}
-            aria-current={pane === value}
+            onClick={go}
+            aria-current={active}
             className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-[0.6875rem] font-medium transition-colors ${
-              pane === value ? "text-brand" : "text-ink-faint hover:text-ink"
+              active ? "text-brand" : "text-ink-faint hover:text-ink"
             }`}
           >
             <Icon className="size-[1.125rem]" strokeWidth={1.75} aria-hidden />
             {label}
           </button>
-        ))}
+          );
+        })}
       </nav>
 
       {showAdd && (

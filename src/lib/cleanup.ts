@@ -31,7 +31,10 @@ export async function removeExpiredVisitors(): Promise<void> {
       console.error(`Listing notebooks for visitor ${userId} failed:`, listError);
       continue;
     }
-    for (const { id } of notebooks ?? []) await removeNotebookFiles(id);
+    let filesRemoved = true;
+    for (const { id } of notebooks ?? []) filesRemoved = (await removeNotebookFiles(id)) && filesRemoved;
+    // Same reason: the user is the only link back to these files. Try again tomorrow.
+    if (!filesRemoved) continue;
 
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
     if (deleteError) console.error(`Deleting visitor ${userId} failed:`, deleteError);

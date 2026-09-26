@@ -51,7 +51,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   return NextResponse.json(data);
 }
 
-// Accepts multipart/form-data for pdf uploads, JSON for text/url/youtube/vtt.
+// Accepts multipart/form-data for pdf and vtt uploads, JSON for text/url/youtube.
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: notebookId } = await params;
   const refused = await checkNotebook(notebookId, "write");
@@ -88,6 +88,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (contentType.includes("multipart/form-data")) {
     const form = await req.formData();
     type = form.get("type") as SourceType; // "pdf" or "vtt" (file-based)
+    if (type !== "pdf" && type !== "vtt") {
+      return NextResponse.json({ error: "Only PDF and transcript files are uploaded." }, { status: 400 });
+    }
     const file = form.get("file") as File | null;
     if (!file) return NextResponse.json({ error: "File required" }, { status: 400 });
     if (file.size > MAX_UPLOAD_BYTES) return tooLarge();
@@ -99,10 +102,18 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     // The file is stored only once the request is past the limits below, so a
     // refused upload cannot leave an orphan behind in the bucket.
-    pendingUpload = { path: `${notebookId}/${Date.now()}-${file.name}`, contentType: file.type };
+    // A slash in the name would nest the file below the notebook's folder,
+    // where deleting the notebook, which lists one level, would not find it.
+    const safeName = file.name.replace(/[/\\]/g, "_");
+    pendingUpload = { path: `${notebookId}/${Date.now()}-${safeName}`, contentType: file.type };
   } else {
     const body = await req.json();
     type = body.type;
+    // Files arrive as uploads. Over JSON, a pdf or vtt would store the caller's
+    // url as the file's Storage path, which viewing and re-indexing then read.
+    if (type !== "text" && type !== "url" && type !== "youtube") {
+      return NextResponse.json({ error: "Upload PDF and transcript files as files." }, { status: 400 });
+    }
     title = body.title || body.url || "Untitled";
     rawText = body.text;
     url = body.url;

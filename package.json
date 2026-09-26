@@ -8,7 +8,8 @@
     "start": "next start",
     "eval": "node --env-file=.env.local eval/run.ts",
     "eval:check": "node --env-file=.env.local eval/check-labels.ts",
-    "typecheck": "tsc --noEmit -p . && tsc --noEmit -p eval"
+    "typecheck": "tsc --noEmit -p . && tsc --noEmit -p eval",
+    "check:contrast": "node scripts/check-contrast.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

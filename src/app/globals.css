@@ -20,8 +20,8 @@
   /* Ink. ink-faint is still body text, so it is kept dark enough to read
      rather than dropped to a decorative gray. */
   --color-ink: oklch(24% 0.02 50);
-  --color-ink-muted: oklch(46% 0.02 50);
-  --color-ink-faint: oklch(58% 0.018 60);
+  --color-ink-muted: oklch(42% 0.02 50);
+  --color-ink-faint: oklch(53% 0.018 60);
 
   /* Rules */
   --color-line: oklch(90% 0.012 70);
@@ -87,13 +87,13 @@
   --color-paper-sunken: oklch(17.5% 0.011 60);
   --color-ink: oklch(94% 0.008 70);
   --color-ink-muted: oklch(74% 0.012 65);
-  --color-ink-faint: oklch(62% 0.014 65);
+  --color-ink-faint: oklch(64% 0.014 65);
   --color-line: oklch(31% 0.012 60);
   --color-line-strong: oklch(40% 0.014 60);
   --color-brand: oklch(68% 0.17 34);
   --color-brand-hover: oklch(74% 0.16 34);
   --color-brand-ink: oklch(18% 0.03 40);
-  --color-brand-wash: oklch(30% 0.05 34);
+  --color-brand-wash: oklch(27% 0.05 34);
   --color-brand-line: oklch(40% 0.09 34);
   --color-status-indexing: oklch(78% 0.14 78);
   --color-status-ready: oklch(70% 0.14 148);

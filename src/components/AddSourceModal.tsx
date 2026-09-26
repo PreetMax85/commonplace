@@ -106,7 +106,9 @@ export default function AddSourceModal({
   }
 
   return (
-    <Dialog open onOpenChange={(open) => !open && onClose()}>
+    // Closing cannot cancel a request already sent, and a failure reported
+    // after closing would go nowhere, so the dialog stays until it answers.
+    <Dialog open onOpenChange={(open) => !open && !submitting && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-display">

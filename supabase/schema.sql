@@ -5,6 +5,7 @@ create table if not exists notebooks (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   is_demo boolean not null default false, -- public demo, protected from delete and re-index
+  owner_id uuid references auth.users(id) on delete cascade, -- null only for the demo
   created_at timestamptz default now()
 );
 
@@ -41,6 +42,14 @@ create index if not exists chunks_embedding_idx on chunks
 create index if not exists chunks_notebook_idx on chunks(notebook_id);
 create index if not exists chunks_source_ordinal_idx on chunks(source_id, ordinal);
 create index if not exists sources_notebook_idx on sources(notebook_id);
+create index if not exists notebooks_owner_idx on notebooks(owner_id);
+
+-- The browser holds the publishable key, which anyone can use to query the
+-- database directly. The API uses the service-role key, which bypasses RLS, so
+-- RLS with no policies closes the direct path without affecting the app.
+alter table notebooks enable row level security;
+alter table sources enable row level security;
+alter table chunks enable row level security;
 
 -- RPC for filtered vector search (notebook isolation happens here)
 create or replace function match_chunks(
@@ -210,3 +219,25 @@ $$;
 
 revoke execute on function hit_rate_limits(text[], integer[], integer[]) from public, anon, authenticated;
 grant execute on function hit_rate_limits(text[], integer[], integer[]) to service_role;
+
+-- Search functions are for the server only.
+revoke execute on function match_chunks(vector, uuid, int) from public, anon, authenticated;
+grant execute on function match_chunks(vector, uuid, int) to service_role;
+revoke execute on function match_chunks_hybrid(text, vector, uuid, int, int) from public, anon, authenticated;
+grant execute on function match_chunks_hybrid(text, vector, uuid, int, int) to service_role;
+
+-- Anonymous visitors past the retention window. Supabase never removes
+-- anonymous users itself, so the daily cron deletes their files and then the
+-- users, which cascades to their notebooks.
+create or replace function expired_anonymous_users(max_age interval)
+returns setof uuid
+language sql
+security definer
+set search_path = ''
+as $$
+  select id from auth.users
+  where is_anonymous is true and created_at < now() - max_age;
+$$;
+
+revoke execute on function expired_anonymous_users(interval) from public, anon, authenticated;
+grant execute on function expired_anonymous_users(interval) to service_role;

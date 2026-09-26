@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { removeExpiredVisitors } from "@/lib/cleanup";
 
 // Hit daily by a Vercel cron. A free Supabase project pauses after a week
 // without activity, which is how an earlier deployment went dark, so this
@@ -23,6 +24,11 @@ export async function GET() {
     .delete()
     .or(`window_start.lt.${cutoff},count.lte.0`);
   if (pruneError) console.error("Rate limit prune failed:", pruneError);
+
+  // And removes visitors past the 30 days the home page promises. It only
+  // touches accounts already past that window, so a stranger calling this
+  // public endpoint can do no more than run tomorrow's cleanup early.
+  await removeExpiredVisitors();
 
   return NextResponse.json({ ok: true });
 }

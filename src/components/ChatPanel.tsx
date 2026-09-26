@@ -5,6 +5,7 @@ import ReactMarkdown, { defaultUrlTransform } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ArrowUp, Quote, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { formatTimestamp } from "@/lib/format";
 import SourceIcon from "./SourceIcon";
 import type { SourceItem } from "./SourceList";
 
@@ -29,10 +30,7 @@ interface Message {
 function locatorLabel(metadata: Record<string, any> | undefined): string | null {
   if (!metadata) return null;
   if (metadata.page !== undefined) return `page ${metadata.page}`;
-  if (metadata.timestamp_start !== undefined) {
-    const total = Math.floor(metadata.timestamp_start);
-    return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}`;
-  }
+  if (metadata.timestamp_start !== undefined) return formatTimestamp(metadata.timestamp_start);
   if (metadata.section) return String(metadata.section);
   return null;
 }

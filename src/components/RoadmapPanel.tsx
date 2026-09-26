@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Loader2, Play, Route, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatTimestamp } from "@/lib/format";
 import SourceIcon from "./SourceIcon";
 import type { SourceItem } from "./SourceList";
 
@@ -13,11 +14,6 @@ interface RoadmapStep {
   source_id: string;
   timestamp_start: number;
   timestamp_end: number;
-}
-
-function formatTime(seconds: number) {
-  const total = Math.floor(seconds);
-  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}`;
 }
 
 export default function RoadmapPanel({
@@ -157,7 +153,7 @@ export default function RoadmapPanel({
                       <Play className="size-3 shrink-0 fill-current" aria-hidden />
                       <span className="truncate">{source?.title ?? "Source"}</span>
                       <span className="shrink-0 text-ink-faint">
-                        {formatTime(step.timestamp_start)}
+                        {formatTimestamp(step.timestamp_start)}
                       </span>
                     </button>
                   </div>

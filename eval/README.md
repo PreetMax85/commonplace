@@ -15,7 +15,7 @@ PDF was replaced. The current numbers are under
 
 | | questions | hit@1 | hit@5 | hit@8 | MRR@10 |
 | --- | --- | --- | --- | --- | --- |
-| Overall | 40 | 0.35 | 0.72 | 0.75 | 0.500 |
+| Overall | 40 | 0.35 | 0.725 | 0.75 | 0.500 |
 | Word for word | 20 | 0.45 | 0.85 | 0.85 | 0.599 |
 | Reworded | 20 | 0.25 | 0.60 | 0.65 | 0.400 |
 
@@ -77,7 +77,7 @@ What this does and does not show:
   chunks, as the live app does, rather than 10, hybrid found every answer
   vector search found plus two more. That check is not in the results file.
 - Vector search alone scores lower here than in the table above (hit@5 0.70
-  not 0.72, hit@8 0.725 not 0.75, MRR@10 0.495 not 0.500). Adding the keyword
+  not 0.725, hit@8 0.725 not 0.75, MRR@10 0.495 not 0.500). Adding the keyword
   column rewrote the table and rebuilt the HNSW index, which is approximate,
   and the rebuilt index misses one passage. An exact search over the same
   chunks scores 0.725 at hit@5.
@@ -115,10 +115,15 @@ Read this carefully:
 
 - **These numbers are not comparable with the ones above.** Vector search went
   from 0.70 to 0.85 at hit@5 (28 to 34 questions) without any change to search.
-  Four of those six came from swapping the source and its questions: Meditations
-  scored 2 of 8 and the easier James chapter scores 6 of 8. The other two came
-  from Crony Beliefs and the Enchiridion, once 441 chunks stopped competing with
-  them. That is a change of dataset, not an improvement.
+  Measured against the exact-search figure for the same chunks, 0.725 or 29
+  questions, the gain is five. Four of those five came from swapping the source
+  and its questions: Meditations scored 2 of 8 and the easier James chapter
+  scores 6 of 8. The fifth is one Enchiridion question, which went from a miss
+  to rank 3 once 441 chunks stopped competing with it. The sixth question,
+  a Crony Beliefs one, was a hit@5 in the first baseline too; it was lost only
+  by the rebuilt index described above and has now come back, so it is a
+  recovery rather than a gain. All of that is a change of dataset, not an
+  improvement in search.
 - **The comparison that means something is vector against hybrid within one
   run.** Hybrid gives 8 questions the answer in first place and takes it from
   4, a net gain of four (hit@1 0.45 to 0.55). Within the 8 chunks the app uses
@@ -200,13 +205,15 @@ model request is made and no API route is touched, so a run spends none of the
 public demo's daily budget. The first run on a machine does download the
 embedding model, so it needs a network connection even though it costs nothing.
 
-Two deliberate differences from the live route, neither of which affects the
-figures above:
+Two deliberate differences from the live route, neither of which changes any
+hit@8 figure above:
 
 - The route asks `match_chunks` for 8 chunks and the eval asks for 10, so that
   MRR@10 has a full window to work with. In the current run hybrid hit@10 and
   hit@8 are both 0.90, so no hybrid answer is rescued by the two extra places.
-  Vector search has one at rank 9 (hit@10 0.875 against hit@8 0.85).
+  Vector search has one at rank 9 (hit@10 0.875 against hit@8 0.85). That one
+  does move vector MRR@10, which would be 0.609 rather than 0.612 in a window
+  of 8.
 - The route rewrites a question into standalone form before embedding it when
   there is a prior conversation. Every question here is asked on its own, and
   that step is skipped on an empty history, so first-turn retrieval really is
@@ -220,8 +227,8 @@ can be inspected rather than taken on trust.
 Repeated runs of the same 40 questions against the same index returned the same
 rank for every question once the index had settled after a bulk delete, so a
 change in these numbers means a change in the system rather than run to run
-noise. That holds while the demo is the only
-notebook in the database. `match_chunks` filters by notebook after searching a
+noise. That holds while the demo is the only notebook in the database.
+`match_chunks` filters by notebook after searching a
 shared vector index, so once other notebooks hold enough chunks, the same query
 can return a different top 10 with no change to this code.
 
@@ -246,5 +253,7 @@ can return a different top 10 with no change to this code.
 It was built before two changes that could alter retrieval quality without
 anything visibly breaking: adding keyword search alongside vector search, and
 swapping the embedding library. Keyword search has shipped and is measured
-above. The embedding library swap is still to come, and a rerun should show
-identical ranks.
+above. The embedding library swap is still to come. A rerun should show
+essentially the same ranks, but not necessarily identical ones: re-embedding
+every chunk rebuilds the HNSW index, and this file records twice that a rebuild
+can move a question by itself.

@@ -45,7 +45,9 @@ export default function AddSourceModal({
   const [error, setError] = useState<string | null>(null);
 
   async function submit() {
-    if (!kind) return;
+    // Enter in the link field reaches here without going through the
+    // disabled button, so a second press would add the source twice.
+    if (!kind || submitting) return;
     if ((kind === "pdf" || kind === "vtt") && !file) {
       setError("Choose a file first.");
       return;
@@ -143,6 +145,7 @@ export default function AddSourceModal({
               variant="ghost"
               size="sm"
               className="-ml-2 text-ink-muted"
+              disabled={submitting}
               onClick={() => {
                 setKind(null);
                 setError(null);

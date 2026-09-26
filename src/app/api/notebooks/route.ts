@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { enforceRateLimit } from "@/lib/rateLimit";
-import { getVisitorId } from "@/lib/visitor";
+import { getVisitorId, persistVisitorCookies } from "@/lib/visitor";
 
 export async function GET() {
   const visitorId = await getVisitorId();
@@ -41,5 +41,6 @@ export async function POST(req: NextRequest) {
     .select()
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  await persistVisitorCookies();
   return NextResponse.json(data);
 }

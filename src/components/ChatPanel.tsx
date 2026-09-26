@@ -79,6 +79,14 @@ export default function ChatPanel({
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // An answer streams for several seconds, and the parent's handler decides
+  // from its own state whether to fill the viewer. Calling the handler from
+  // the render that sent the question would miss a source opened meanwhile.
+  const onAnswerCompleteRef = useRef(onAnswerComplete);
+  useEffect(() => {
+    onAnswerCompleteRef.current = onAnswerComplete;
+  });
+
   // Auto-scroll to the latest message, including mid-stream as tokens arrive.
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -157,7 +165,7 @@ export default function ChatPanel({
     }
 
     setStreaming(false);
-    if (citations.length > 0) onAnswerComplete(citations[0]);
+    if (citations.length > 0) onAnswerCompleteRef.current(citations[0]);
     inputRef.current?.focus();
   }
 

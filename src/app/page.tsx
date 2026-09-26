@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Loader2, Plus } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -58,7 +59,10 @@ export default function Home() {
       setNotebooks(body);
       setLoadError(false);
     } catch {
-      setLoadError(true);
+      // After a create, rename or delete the list on screen is still worth
+      // keeping, so only the first load replaces it with the error.
+      if (loading) setLoadError(true);
+      else toast.error("The notebook list could not be refreshed.");
     } finally {
       setLoading(false);
     }

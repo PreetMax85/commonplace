@@ -102,69 +102,89 @@ export default function ChatPanel({
     setMessages((m) => [...m, { role: "user", content: question }]);
     setStreaming(true);
 
-    const res = await fetch("/api/query", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ notebookId, question, history }),
-    });
-
-    if (!res.ok || !res.body) {
-      const err = await res.json().catch(() => ({ error: "Something went wrong. Try again." }));
-      setMessages((m) => [...m, { role: "assistant", content: err.error, error: true }]);
-      setStreaming(false);
-      return;
-    }
-
     let citations: Citation[] = [];
     let answer = "";
-    setMessages((m) => [...m, { role: "assistant", content: "", citations: [] }]);
+    // Whether the empty answer bubble is on screen yet, so a failure knows
+    // whether to fill that bubble or add its own.
+    let started = false;
+    try {
+      const res = await fetch("/api/query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notebookId, question, history }),
+      });
 
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
+      if (!res.ok || !res.body) {
+        const err = await res.json().catch(() => ({ error: "Something went wrong. Try again." }));
+        setMessages((m) => [...m, { role: "assistant", content: err.error, error: true }]);
+        return;
+      }
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
+      setMessages((m) => [...m, { role: "assistant", content: "", citations: [] }]);
+      started = true;
 
-      const events = buffer.split("\n\n");
-      buffer = events.pop() ?? "";
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
 
-      for (const evt of events) {
-        const eventMatch = evt.match(/^event: (\w+)/m);
-        const dataMatch = evt.match(/^data: (.*)$/m);
-        if (!eventMatch || !dataMatch) continue;
-        const type = eventMatch[1];
-        const data = JSON.parse(dataMatch[1]);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
 
-        if (type === "citations") {
-          citations = data;
-        } else if (type === "token") {
-          answer += data;
-          setMessages((m) => {
-            const copy = [...m];
-            copy[copy.length - 1] = { role: "assistant", content: answer, citations };
-            return copy;
-          });
-        } else if (type === "error") {
-          // Failures after the response headers are sent can only arrive as a
-          // stream event. Without this the bubble just stops, and rate limiting
-          // is the expected failure on a free tier, so silence is the wrong
-          // thing to show. Anything already streamed is kept above the notice.
-          answer += `${answer ? "\n\n" : ""}${data.error}`;
-          setMessages((m) => {
-            const copy = [...m];
-            copy[copy.length - 1] = { role: "assistant", content: answer, citations, error: true };
-            return copy;
-          });
+        const events = buffer.split("\n\n");
+        buffer = events.pop() ?? "";
+
+        for (const evt of events) {
+          const eventMatch = evt.match(/^event: (\w+)/m);
+          const dataMatch = evt.match(/^data: (.*)$/m);
+          if (!eventMatch || !dataMatch) continue;
+          const type = eventMatch[1];
+          const data = JSON.parse(dataMatch[1]);
+
+          if (type === "citations") {
+            citations = data;
+          } else if (type === "token") {
+            answer += data;
+            setMessages((m) => {
+              const copy = [...m];
+              copy[copy.length - 1] = { role: "assistant", content: answer, citations };
+              return copy;
+            });
+          } else if (type === "error") {
+            // Failures after the response headers are sent can only arrive as a
+            // stream event. Without this the bubble just stops, and rate limiting
+            // is the expected failure on a free tier, so silence is the wrong
+            // thing to show. Anything already streamed is kept above the notice.
+            answer += `${answer ? "\n\n" : ""}${data.error}`;
+            setMessages((m) => {
+              const copy = [...m];
+              copy[copy.length - 1] = { role: "assistant", content: answer, citations, error: true };
+              return copy;
+            });
+          }
         }
       }
-    }
 
-    setStreaming(false);
-    if (citations.length > 0) onAnswerCompleteRef.current(citations[0]);
-    inputRef.current?.focus();
+      if (citations.length > 0) onAnswerCompleteRef.current(citations[0]);
+    } catch {
+      // A dropped connection or a malformed event would otherwise leave
+      // streaming stuck on, and the chat unusable until a reload.
+      const notice = "The connection dropped before the answer finished. Try again.";
+      if (started) {
+        answer += `${answer ? "\n\n" : ""}${notice}`;
+        setMessages((m) => {
+          const copy = [...m];
+          copy[copy.length - 1] = { role: "assistant", content: answer, citations, error: true };
+          return copy;
+        });
+      } else {
+        setMessages((m) => [...m, { role: "assistant", content: notice, error: true }]);
+      }
+    } finally {
+      setStreaming(false);
+      inputRef.current?.focus();
+    }
   }
 
   const starters = starterQuestions(sources);

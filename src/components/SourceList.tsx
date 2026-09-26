@@ -76,6 +76,9 @@ export default function SourceList({
                 aria-current={selected}
                 onClick={() => onSelect(s.id)}
                 onKeyDown={(e) => {
+                  // Keys pressed on the Remove and Re-index buttons bubble up
+                  // here too, and preventDefault would cancel their own action.
+                  if (e.target !== e.currentTarget) return;
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
                     onSelect(s.id);

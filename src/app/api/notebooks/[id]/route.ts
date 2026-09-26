@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { checkNotebook } from "@/lib/access";
+import { removeNotebookFiles } from "@/lib/storage";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -33,5 +34,6 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   // Cascades to sources + chunks via FK on delete cascade.
   const { error } = await supabaseAdmin.from("notebooks").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  await removeNotebookFiles(id);
   return NextResponse.json({ ok: true });
 }

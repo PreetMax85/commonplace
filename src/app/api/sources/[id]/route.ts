@@ -2,6 +2,7 @@ import { NextRequest, NextResponse, after } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { reindexSource, recordFailure } from "@/lib/ingest";
 import { checkSource } from "@/lib/access";
+import { removeSourceFile } from "@/lib/storage";
 import { enforceRateLimit } from "@/lib/rateLimit";
 
 // Re-extracting and re-embedding a source takes as long as the original
@@ -12,9 +13,24 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   const { id } = await params;
   const refused = await checkSource(id, "write");
   if (refused) return refused;
-  // Cascades to chunks via FK on delete cascade.
-  const { error } = await supabaseAdmin.from("sources").delete().eq("id", id);
+  // Cascades to chunks via FK on delete cascade. The row comes back so the
+  // uploaded file, if there is one, can be removed after it.
+  const { data: deleted, error } = await supabaseAdmin
+    .from("sources")
+    .delete()
+    .eq("id", id)
+    .select("notebook_id, type, raw_ref")
+    .maybeSingle();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  // raw_ref holds a Storage path only for uploads. For text it is the text
+  // itself, so the notebook prefix is checked before anything is removed.
+  if (
+    deleted &&
+    (deleted.type === "pdf" || deleted.type === "vtt") &&
+    deleted.raw_ref?.startsWith(`${deleted.notebook_id}/`)
+  ) {
+    await removeSourceFile(deleted.raw_ref);
+  }
   return NextResponse.json({ ok: true });
 }
 

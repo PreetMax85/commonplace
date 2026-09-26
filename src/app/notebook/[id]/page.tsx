@@ -84,7 +84,9 @@ export default function NotebookPage() {
 
   async function deleteSource(sourceId: string) {
     await fetch(`/api/sources/${sourceId}`, { method: "DELETE" });
-    if (viewerSourceId === sourceId) setViewerSourceId(null);
+    // Read the current value: the reader may have opened another source
+    // while the delete was running.
+    setViewerSourceId((cur) => (cur === sourceId ? null : cur));
     loadSources();
   }
 

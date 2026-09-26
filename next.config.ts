@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
   // project does not use it, and it reappears as an uncommitted change.
   agentRules: false,
 
+  // The browser needs the project URL to start an anonymous session. The server
+  // already has it, so it is passed through rather than set a second time.
+  env: { NEXT_PUBLIC_SUPABASE_URL: process.env.SUPABASE_URL },
+
   // Transformers.js loads onnxruntime-node, which is a native addon the bundler
   // cannot process, so it is required at runtime instead.
   serverExternalPackages: ["@xenova/transformers"],

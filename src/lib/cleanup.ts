@@ -8,9 +8,10 @@ import { removeNotebookFiles } from "./storage";
 // this window, so change the copy there if this changes.
 const RETENTION = "30 days";
 
-// Enough to keep up with a busy day, small enough to finish well inside the
-// function's time limit. Anything left over is picked up the next day.
-const MAX_PER_RUN = 50;
+// Each visitor takes a few round trips, so this finishes well inside the
+// function's time limit while staying ahead of a day of bot sign-ups, which
+// Supabase caps at 30 an hour per address. Anything left over waits a day.
+const MAX_PER_RUN = 200;
 
 export async function removeExpiredVisitors(): Promise<void> {
   const { data: expired, error } = await supabaseAdmin.rpc("expired_anonymous_users", {

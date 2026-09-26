@@ -16,7 +16,8 @@ Upload PDFs, text, URLs, YouTube videos, and transcripts into isolated notebooks
    `SUPADATA_API_KEY` is optional and only used as a fallback for YouTube transcripts (see below). Without it, YouTube ingestion still works wherever the direct fetch does.
 5. `npm install`
 6. `npm run dev`
-7. Optional: to make a notebook the read-only public demo, run `update notebooks set is_demo = true where id = '<notebook id>';` in the SQL editor.
+7. On Vercel, set `CRON_SECRET` to a long random string. Vercel sends it with the daily cron call, and the cleanup of expired visitors only runs when it matches.
+8. Optional: to make a notebook the read-only public demo, run `update notebooks set is_demo = true where id = '<notebook id>';` in the SQL editor.
 
 ## Stack
 

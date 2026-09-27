@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { checkNotebook } from "@/lib/access";
@@ -34,9 +35,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const limited = await enforceRateLimit(req, "source");
   if (limited) return limited;
 
-  // A slash in the name would nest the file below the notebook's folder,
-  // where deleting the notebook, which lists one level, would not find it.
-  const path = `${notebookId}/${Date.now()}-${name.replace(/[/\\]/g, "_")}`;
+  // The browser's file name never becomes part of the path. Storage's client
+  // puts the path into the URL unescaped, so a name holding "..", a backslash,
+  // "#" or "?" would point at a different file than it says, and Storage
+  // refuses some names outright. The real name travels as the title instead.
+  const ext = type === "pdf" ? "pdf" : name.toLowerCase().endsWith(".srt") ? "srt" : "vtt";
+  const path = `${notebookId}/${Date.now()}-${randomUUID()}.${ext}`;
   const { data, error } = await supabaseAdmin.storage.from("sources").createSignedUploadUrl(path);
   if (error) {
     console.error(`Creating an upload link for ${path} failed:`, error);

@@ -99,7 +99,12 @@ export default function AddSourceModal({
           setError("The file did not upload. Check your connection and try again.");
           return;
         }
-        res = await post(`/api/notebooks/${notebookId}/sources`, { type: kind, title, path });
+        res = await post(`/api/notebooks/${notebookId}/sources`, {
+          type: kind,
+          // The stored file has a generated name, so its own name is sent here.
+          title: title || file!.name,
+          path,
+        });
       } else {
         res = await post(`/api/notebooks/${notebookId}/sources`, {
           type: kind,

@@ -20,6 +20,9 @@ export const maxDuration = 300;
 // slow ingest is never mistaken for a dead one.
 const STALE_INDEXING_MS = 10 * 60 * 1000;
 
+// The names /uploads gives files: a timestamp, a random id and the type.
+const UPLOAD_NAME = /^\d+-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(pdf|vtt|srt)$/;
+
 function tooLarge(mb: number) {
   return NextResponse.json({ error: `Sources can be up to ${mb} MB.` }, { status: 413 });
 }
@@ -98,10 +101,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   if (type === "pdf" || type === "vtt") {
     const path = typeof body.path === "string" ? body.path : "";
-    // Only a file directly in this notebook's folder, as /uploads names them.
-    // Anything else would let one visitor's source read another's file.
+    // Only a name /uploads could have made, in this notebook's own folder.
+    // Storage's client does not escape paths, so anything looser, such as a
+    // backslash or "..", could reach another notebook's file.
     const name = path.startsWith(`${notebookId}/`) ? path.slice(notebookId.length + 1) : "";
-    if (!name || name.includes("/")) {
+    if (!UPLOAD_NAME.test(name)) {
       return NextResponse.json({ error: "Upload the file first." }, { status: 400 });
     }
     // Two sources on one file would lose it for both when either is removed.
@@ -121,8 +125,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     fileBuffer = Buffer.from(await file.arrayBuffer());
     if (fileBuffer.length > MAX_FILE_BYTES) return refuse(tooLarge(MAX_FILE_MB));
     if (type === "vtt") rawText = fileBuffer.toString("utf-8");
-    // Without a typed title, the file's own name, minus the prefix /uploads added.
-    title = typed || name.replace(/^\d+-/, "");
+    title = typed.slice(0, 200) || "Untitled file";
     url = path; // the raw_ref for file-based sources
   } else {
     // A page loaded before this change sends the link itself when the title

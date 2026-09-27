@@ -10,7 +10,9 @@
 // Unlike run.ts this spends Groq tokens, from the same free tier budget as the
 // live demo: roughly 3,500 per question, about 140,000 for the full set against
 // a 200,000 daily cap. Progress is written after every question, and
-// `--resume <file>` continues a run that stopped partway.
+// `--resume <file>` continues a run that stopped partway. Scores are worked out
+// from the saved answers each time the file is written, so resuming a finished
+// run recomputes them with the current citation checker at no cost.
 import { execSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -20,7 +22,7 @@ import { checkCitations } from "../src/lib/citations.ts";
 import { loadSet, resolveSources, matchingChunks, type Chunk, type Question } from "./lib.ts";
 
 const set = loadSet();
-const commit = execSync("git rev-parse --short HEAD").toString().trim();
+const head = execSync("git rev-parse --short HEAD").toString().trim();
 
 const { data: sources, error: srcErr } = await supabaseAdmin
   .from("sources")
@@ -51,6 +53,7 @@ interface Result {
 
 const resumeIndex = process.argv.indexOf("--resume");
 const resumePath = resumeIndex === -1 ? null : process.argv[resumeIndex + 1];
+if (resumeIndex !== -1 && !resumePath) throw new Error("--resume needs the results file to continue");
 if (resumePath && !existsSync(resumePath)) throw new Error(`No such file: ${resumePath}`);
 
 const previous = resumePath ? JSON.parse(readFileSync(resumePath, "utf8")) : null;
@@ -58,6 +61,9 @@ const results: Result[] = previous?.results ?? [];
 const done = new Set(results.map((r) => r.id));
 
 const runAt = previous?.run_at ?? new Date().toISOString();
+// The answers were written at the commit the run started on. A resume at a
+// later commit is recorded next to it rather than replacing it.
+const commit = previous?.commit ?? head;
 const out =
   resumePath ?? join(import.meta.dirname, "results", `answers-${runAt.slice(0, 16).replace(/[:T]/g, "-")}.json`);
 
@@ -89,19 +95,36 @@ async function answer(question: string, passages: Chunk[]): Promise<string> {
   }
 }
 
+function rescore(r: Result) {
+  const check = checkCitations(r.answer, r.passages.length);
+  r.cited = check.valid;
+  r.out_of_range = check.outOfRange;
+  r.markers = check.markers;
+  r.cites_answer = check.valid.some((n) => r.passages[n - 1].answers);
+  r.says_not_found = NOT_FOUND.test(r.answer);
+}
+
 function summarize(rows: Result[]) {
   const retrieved = rows.filter((r) => r.rank !== null);
   const rate = (k: number, n: number) => (n ? Number((k / n).toFixed(4)) : null);
   const cited = retrieved.filter((r) => r.cites_answer).length;
+  const citations = retrieved.flatMap((r) => r.cited.map((n) => r.passages[n - 1].answers));
+  const onTop = retrieved.filter((r) => r.rank === 1).length;
   return {
     questions: rows.length,
     answer_retrieved: retrieved.length,
     cited_answer: cited,
     cited_answer_rate: rate(cited, retrieved.length),
+    // Of the passages those answers cite, the share that carry the answer.
+    // Citing every passage would score perfectly above and badly here.
+    citation_precision: rate(citations.filter(Boolean).length, citations.length),
+    // What always citing the top passage would score on the same questions.
+    top_passage_rate: rate(onTop, retrieved.length),
   };
 }
 
 function report(complete: boolean) {
+  results.forEach(rescore);
   const misses = results.filter((r) => r.rank === null);
   const markers = results.reduce((sum, r) => sum + r.markers, 0);
   const summary = {
@@ -123,6 +146,7 @@ function report(complete: boolean) {
         run_at: runAt,
         complete,
         commit,
+        ...(head !== commit && { rescored_at: head }),
         notebook_id: set.notebook_id,
         embedding_model: EMBED_MODEL,
         answer_model: LLM_MODEL,
@@ -158,24 +182,27 @@ for (const q of set.questions) {
   try {
     text = await answer(q.question, rows);
   } catch (err) {
-    if (!(err instanceof DailyLimit)) throw err;
+    if (!(err instanceof DailyLimit)) {
+      console.error(`\nFailed on ${q.id}. Progress is saved; continue with --resume ${out}`);
+      throw err;
+    }
     stopped = err.message;
     break;
   }
 
-  const check = checkCitations(text, rows.length);
   const firstAnswering = answering.indexOf(true);
+  // The citation fields are filled in by rescore() when the file is written.
   results.push({
     id: q.id,
     phrasing: q.phrasing,
     question: q.question,
     rank: firstAnswering === -1 ? null : firstAnswering + 1,
     answer: text,
-    cited: check.valid,
-    out_of_range: check.outOfRange,
-    markers: check.markers,
-    cites_answer: check.valid.some((n) => answering[n - 1]),
-    says_not_found: NOT_FOUND.test(text),
+    cited: [],
+    out_of_range: [],
+    markers: 0,
+    cites_answer: false,
+    says_not_found: false,
     passages: rows.map((m, i) => ({
       n: i + 1,
       source: titleById.get(m.source_id) ?? m.source_id,
@@ -194,7 +221,8 @@ const summary = report(complete);
 for (const label of ["overall", "verbatim", "reworded"] as const) {
   const s = summary[label];
   console.log(
-    `${label.padEnd(9)} n=${s.questions}  answer retrieved ${s.answer_retrieved}, cited it ${s.cited_answer} (${s.cited_answer_rate ?? "-"})`
+    `${label.padEnd(9)} n=${s.questions}  answer retrieved ${s.answer_retrieved}, cited it ${s.cited_answer} (${s.cited_answer_rate ?? "-"}), ` +
+      `precision ${s.citation_precision ?? "-"}, top passage alone ${s.top_passage_rate ?? "-"}`
   );
 }
 console.log(`\nanswers with no citation: ${summary.no_citations}`);

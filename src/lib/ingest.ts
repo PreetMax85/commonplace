@@ -2,7 +2,7 @@ import { supabaseAdmin } from "./supabase";
 import { embedBatch } from "./llm";
 import { extractPdf } from "./extract/pdf";
 import { extractPlainText } from "./extract/text";
-import { extractYoutube } from "./extract/youtube";
+import { extractYoutube, extractYoutubeId, fetchYoutubeTitle } from "./extract/youtube";
 import { extractVtt } from "./extract/vtt";
 import { RawChunk } from "./chunking";
 
@@ -16,6 +16,16 @@ interface IngestInput {
   fileBuffer?: Buffer;
   rawText?: string;
   url?: string;
+  // Set when the visitor left the title empty, so a link can take the title
+  // its video or page gives itself. Re-index never sets it: the demo's titles
+  // are written by hand, and the eval finds its sources by them.
+  autoTitle?: boolean;
+}
+
+// Page titles have no length limit, and one this long has stopped being a name.
+function cleanTitle(title: string | null | undefined): string | undefined {
+  const cleaned = title?.replace(/\s+/g, " ").trim().slice(0, 200);
+  return cleaned || undefined;
 }
 
 async function setStatus(sourceId: string, status: string, errorMessage?: string) {
@@ -47,6 +57,7 @@ export async function ingestSource(input: IngestInput, { replacing = false }: { 
 
     let chunks: RawChunk[] = [];
     let rawRef: string | undefined;
+    let title: string | undefined;
 
     switch (type) {
       case "pdf":
@@ -73,9 +84,14 @@ export async function ingestSource(input: IngestInput, { replacing = false }: { 
       }
       case "youtube": {
         if (!input.url) throw new Error("Missing YouTube URL");
-        const result = await extractYoutube(input.url);
+        // The title lookup runs alongside the transcript so it adds no wait.
+        const [result, videoTitle] = await Promise.all([
+          extractYoutube(input.url),
+          input.autoTitle ? fetchYoutubeTitle(extractYoutubeId(input.url)) : null,
+        ]);
         chunks = result.chunks;
         rawRef = result.videoId;
+        if (input.autoTitle) title = cleanTitle(videoTitle);
         break;
       }
       case "vtt":
@@ -129,6 +145,9 @@ export async function ingestSource(input: IngestInput, { replacing = false }: { 
     // pdf/vtt already have raw_ref set to their storage path by the upload
     // route — don't clobber it here.
     if (rawRef !== undefined) updates.raw_ref = rawRef;
+    // Only on success: a source that fails keeps its link as a title, which
+    // says which link it was.
+    if (title !== undefined) updates.title = title;
     await supabaseAdmin.from("sources").update(updates).eq("id", sourceId);
   } catch (err: any) {
     console.error(`Ingestion failed for source ${sourceId}:`, err);

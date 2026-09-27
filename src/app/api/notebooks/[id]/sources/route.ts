@@ -84,6 +84,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   let rawText: string | undefined;
   let url: string | undefined;
   let pendingUpload: { path: string; contentType: string } | undefined;
+  // Whether ingest may replace the title with the one the source names itself.
+  let autoTitle = false;
 
   if (contentType.includes("multipart/form-data")) {
     const form = await req.formData();
@@ -114,7 +116,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (type !== "text" && type !== "url" && type !== "youtube") {
       return NextResponse.json({ error: "Upload PDF and transcript files as files." }, { status: 400 });
     }
-    title = body.title || body.url || "Untitled";
+    const typed = typeof body.title === "string" ? body.title.trim() : "";
+    // A page loaded before this change sends the link itself when the title
+    // box is left empty, so that counts as no title too.
+    autoTitle = !typed || typed === body.url?.trim();
+    title = typed || body.url || "Untitled";
     rawText = body.text;
     url = body.url;
   }
@@ -159,7 +165,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // guaranteed to run once the response is returned, which used to leave
   // sources stuck on "indexing" forever; after() keeps the function alive.
   after(async () => {
-    await ingestSource({ sourceId: source.id, notebookId, type, fileBuffer, rawText, url });
+    await ingestSource({ sourceId: source.id, notebookId, type, fileBuffer, rawText, url, autoTitle });
   });
 
   return NextResponse.json(source, { status: 202 });

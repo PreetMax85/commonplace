@@ -11,6 +11,24 @@ export function extractYoutubeId(url: string): string {
   return match[1];
 }
 
+// oEmbed is YouTube's public lookup for a video's title and needs no key. A
+// failure only means the source keeps its link as its title, so it is logged
+// rather than allowed to fail the ingest.
+export async function fetchYoutubeTitle(videoId: string): Promise<string | null> {
+  try {
+    const watch = encodeURIComponent(`https://www.youtube.com/watch?v=${videoId}`);
+    const res = await fetch(`https://www.youtube.com/oembed?url=${watch}&format=json`, {
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) throw new Error(`oEmbed answered ${res.status}`);
+    const body = (await res.json()) as { title?: unknown };
+    return typeof body.title === "string" ? body.title : null;
+  } catch (err) {
+    console.warn(`YouTube title lookup failed for ${videoId}:`, err);
+    return null;
+  }
+}
+
 // Without a language the library takes the first caption track, which on a
 // widely translated video can be any community translation. Kurzgesagt's
 // "Optimistic Nihilism" came back in Albanian. Ask for English first and only

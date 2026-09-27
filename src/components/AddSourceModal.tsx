@@ -85,7 +85,9 @@ export default function AddSourceModal({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             type: kind,
-            title: title || (kind === "text" ? "Pasted text" : urlValue),
+            // Left empty, a link is titled by the server with the name the
+            // video or page gives itself.
+            title: title || (kind === "text" ? "Pasted text" : undefined),
             text: kind === "text" ? textValue : undefined,
             url: kind === "url" || kind === "youtube" ? urlValue : undefined,
           }),

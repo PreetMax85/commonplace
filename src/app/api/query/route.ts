@@ -1,6 +1,13 @@
 import { NextRequest } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { embedText, streamAnswer, condenseQuestion, describeGroqError, ChatTurn } from "@/lib/llm";
+import {
+  embedText,
+  streamAnswer,
+  condenseQuestion,
+  describeGroqError,
+  ChatTurn,
+  ANSWER_PASSAGES,
+} from "@/lib/llm";
 import { enforceRateLimit } from "@/lib/rateLimit";
 import { checkNotebook } from "@/lib/access";
 
@@ -71,7 +78,7 @@ export async function POST(req: NextRequest) {
     query_text: retrievalQuestion,
     query_embedding: queryEmbedding,
     match_notebook_id: notebookId,
-    match_count: 8,
+    match_count: ANSWER_PASSAGES,
   });
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });

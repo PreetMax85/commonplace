@@ -6,7 +6,7 @@ import remarkGfm from "remark-gfm";
 import { ArrowUp, Quote, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatTimestamp } from "@/lib/format";
-import { CITATION_MARKER, checkCitations } from "@/lib/citations";
+import { checkCitations, replaceCitations } from "@/lib/citations";
 import SourceIcon from "./SourceIcon";
 import type { SourceItem } from "./SourceList";
 
@@ -353,8 +353,8 @@ function Answer({
   onCitationClick: (c: Citation) => void;
 }) {
   const withCitationLinks = citations?.length
-    ? content.replace(CITATION_MARKER, (match, n) =>
-        citations.some((c) => c.n === Number(n)) ? `[[${n}]](citation:${n})` : match
+    ? replaceCitations(content, (n, marker) =>
+        citations.some((c) => c.n === n) ? `[[${n}]](citation:${n})` : marker
       )
     : content;
 

@@ -179,8 +179,9 @@ What the columns mean:
 
 What the checker also counted:
 
-- **No citation pointed at a passage the model was not given**: 0 of 69. The
-  chat flags one if it happens, but it did not happen here.
+- **No citation pointed at a passage the model was not given**: 0 of 69
+  markers, repeats included. The chat flags one if it happens, but it did not
+  happen here.
 - **One answer had no citation**, and it was right not to: the reworded Rip
   Van Winkle question, where search missed the answer and the model said the
   passages do not cover it.
@@ -214,8 +215,9 @@ passages.
 - **The outside details** are real facts (the 1978 date and Mayor Moscone in
   the Twinkie case) that appear in none of the 8 passages. The prompt forbids
   this, and the model did it once.
-- **Precision undercounts good citations.** 13 citations point at a passage
-  without the labelled quote. Read by hand, 12 of them support the sentence
+- **Precision undercounts good citations.** Of the 52 distinct passages cited
+  by the answers whose answering passage was retrieved, 13 lack the labelled
+  quote. Read by hand, 12 of them support the sentence
   they are attached to: answers pull extra detail from neighbouring passages,
   such as the survey dates in the moral decline paper. The one that does not
   is attached to the wrong "hormones" answer.

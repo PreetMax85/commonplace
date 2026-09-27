@@ -5,23 +5,25 @@
 // a source is not a citation.
 const CITATION_MARKER = /[[【](\d{1,2})(?:†[^\]】\s]{0,32})?[\]】]/g;
 
-// Inline code and fenced blocks are skipped: in `list[1]` the brackets are an
-// index, not a citation. A fence still open at the end of the text counts as
-// code, so a code block being streamed in is not rewritten halfway through.
-const CODE = /```[\s\S]*?(?:```|$)|`[^`\n]*`/g;
-
-/** Replaces every citation marker outside code with `cite(n)`. */
-export function replaceCitations(text: string, cite: (n: number, marker: string) => string): string {
-  const inProse = (part: string) =>
-    part.replace(CITATION_MARKER, (marker, digits) => cite(Number(digits), marker));
-  let out = "";
+/** Splits text into its plain runs and the passage numbers cited between them. */
+export function splitCitations(text: string): (string | number)[] {
+  const parts: (string | number)[] = [];
   let last = 0;
-  for (const code of text.matchAll(CODE)) {
-    out += inProse(text.slice(last, code.index)) + code[0];
-    last = code.index + code[0].length;
+  for (const marker of text.matchAll(CITATION_MARKER)) {
+    if (marker.index > last) parts.push(text.slice(last, marker.index));
+    parts.push(Number(marker[1]));
+    last = marker.index + marker[0].length;
   }
-  return out + inProse(text.slice(last));
+  if (last < text.length) parts.push(text.slice(last));
+  return parts;
 }
+
+// The chat panel finds markers in the parsed markdown, which skips code of
+// every kind (remarkCitations.ts). Counting works on the raw answer instead, so
+// fenced blocks and inline code, the forms an answer actually uses, are cut out
+// first: in `list[1]` the brackets are an index, not a citation.
+const FENCED_CODE = /^ {0,3}(`{3,}|~{3,})[^\n]*\n[\s\S]*?(?:^ {0,3}\1[^\n]*$|(?![\s\S]))/gm;
+const INLINE_CODE = /`[^`\n]*`/g;
 
 export interface CitationCheck {
   // Distinct passage numbers the answer cites that were actually sent to the
@@ -38,11 +40,12 @@ export function checkCitations(answer: string, passages: number): CitationCheck 
   const valid: number[] = [];
   const outOfRange: number[] = [];
   let markers = 0;
-  replaceCitations(answer, (n, marker) => {
+  const prose = answer.replace(FENCED_CODE, "\n").replace(INLINE_CODE, " ");
+  for (const n of splitCitations(prose)) {
+    if (typeof n !== "number") continue;
     markers++;
     const list = n >= 1 && n <= passages ? valid : outOfRange;
     if (!list.includes(n)) list.push(n);
-    return marker;
-  });
+  }
   return { valid, outOfRange, markers };
 }

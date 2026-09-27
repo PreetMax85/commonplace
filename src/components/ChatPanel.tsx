@@ -6,7 +6,8 @@ import remarkGfm from "remark-gfm";
 import { ArrowUp, Quote, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatTimestamp } from "@/lib/format";
-import { checkCitations, replaceCitations } from "@/lib/citations";
+import { checkCitations } from "@/lib/citations";
+import remarkCitations from "@/lib/remarkCitations";
 import SourceIcon from "./SourceIcon";
 import type { SourceItem } from "./SourceList";
 
@@ -339,10 +340,9 @@ function CitedSources({
 }
 
 // Renders assistant markdown (bold, lists, tables via remark-gfm) while
-// keeping [n] citation markers clickable. We pre-convert "[n]" into a
-// markdown link "[n](citation:n)" before parsing, then intercept links
-// with that scheme in the `a` renderer instead of letting them navigate.
-// Markers in gpt-oss's own "【n】" format are rewritten as "[n]" on the way.
+// keeping [n] citation markers clickable. remarkCitations turns each marker
+// into a "citation:n" link, which the `a` renderer intercepts instead of
+// letting it navigate. Markers in gpt-oss's own "【n】" format come out as "[n]".
 function Answer({
   content,
   citations,
@@ -352,14 +352,10 @@ function Answer({
   citations: Citation[] | undefined;
   onCitationClick: (c: Citation) => void;
 }) {
-  const withCitationLinks = citations?.length
-    ? replaceCitations(content, (n) => `[[${n}]](citation:${n})`)
-    : content;
-
   return (
     <div className="prose-chat text-[0.9375rem] leading-7 text-ink">
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={citations?.length ? [remarkGfm, remarkCitations] : [remarkGfm]}
         // react-markdown blanks any href outside http, https, mailto and a few
         // others, which turned every citation into an empty link that opened
         // the app in a new tab. Let the citation scheme through untouched.
@@ -399,7 +395,7 @@ function Answer({
           },
         }}
       >
-        {withCitationLinks}
+        {content}
       </ReactMarkdown>
     </div>
   );

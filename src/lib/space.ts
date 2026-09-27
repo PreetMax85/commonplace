@@ -36,7 +36,7 @@ export async function checkSpace(notebookId: string, incomingBytes = 0): Promise
   ) {
     return NextResponse.json(
       {
-        error: `Your notebooks are full. They can hold ${mb(VISITOR_SPACE.fileBytes)} of files and ${VISITOR_SPACE.chunks.toLocaleString("en")} passages in all, and hold ${mb(visitor.file_bytes)} and ${visitor.chunk_count.toLocaleString("en")}. Remove a source to make room.`,
+        error: `Not enough room. Your notebooks hold ${mb(visitor.file_bytes)} of files and ${visitor.chunk_count.toLocaleString("en")} passages, out of ${mb(VISITOR_SPACE.fileBytes)} and ${VISITOR_SPACE.chunks.toLocaleString("en")}. Remove a source to make room.`,
       },
       { status: 409 }
     );

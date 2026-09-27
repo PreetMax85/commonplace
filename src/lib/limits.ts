@@ -17,6 +17,8 @@ export const MAX_CHUNKS_PER_SOURCE = 1500;
 // which turns read-only when full and would take the demo down with it. A
 // per-visitor limit alone would not protect that, since a new address makes a
 // new visitor.
+// A chunk measured 12 KB in the database, index included, so 30,000 is about
+// 370 MB of the 500.
 const MB = 1024 * 1024;
 export const VISITOR_SPACE = { fileBytes: 50 * MB, chunks: 3000 };
-export const SITE_SPACE = { fileBytes: 800 * MB, chunks: 50_000 };
+export const SITE_SPACE = { fileBytes: 800 * MB, chunks: 30_000 };

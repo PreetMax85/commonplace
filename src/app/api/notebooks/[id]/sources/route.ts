@@ -3,9 +3,10 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { ingestSource, SourceType } from "@/lib/ingest";
 import { extractYoutubeId } from "@/lib/extract/youtube";
 import { checkNotebook } from "@/lib/access";
-import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB, MAX_SOURCES_PER_NOTEBOOK } from "@/lib/limits";
+import { MAX_FILE_BYTES, MAX_FILE_MB, MAX_TEXT_BYTES, MAX_TEXT_MB } from "@/lib/limits";
 import { enforceRateLimit } from "@/lib/rateLimit";
-import { checkSpace } from "@/lib/space";
+import { checkSourceCount, checkSpace } from "@/lib/space";
+import { removeSourceFile } from "@/lib/storage";
 
 // Embedding a long PDF runs well past a default request, and after() inherits
 // this budget.
@@ -19,8 +20,8 @@ export const maxDuration = 300;
 // slow ingest is never mistaken for a dead one.
 const STALE_INDEXING_MS = 10 * 60 * 1000;
 
-function tooLarge() {
-  return NextResponse.json({ error: `Sources can be up to ${MAX_UPLOAD_MB} MB.` }, { status: 413 });
+function tooLarge(mb: number) {
+  return NextResponse.json({ error: `Sources can be up to ${mb} MB.` }, { status: 413 });
 }
 
 async function failStalledSources(notebookId: string) {
@@ -52,81 +53,86 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   return NextResponse.json(data);
 }
 
-// Accepts multipart/form-data for pdf and vtt uploads, JSON for text/url/youtube.
+// JSON for every type. A pdf or vtt has already gone straight to Storage
+// through /uploads and arrives here as its path.
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id: notebookId } = await params;
   const refused = await checkNotebook(notebookId, "write");
   if (refused) return refused;
 
   // Refuse an oversized body before parsing it into memory, allowing a little
-  // room for the multipart envelope while staying under Vercel's 4.5 MB body
-  // limit. The header can be absent, so the file and text checks below still apply.
-  if (Number(req.headers.get("content-length") ?? 0) > MAX_UPLOAD_BYTES + 256 * 1024) {
-    return tooLarge();
+  // room for the JSON around pasted text. The header can be absent, so the
+  // text check below still applies.
+  if (Number(req.headers.get("content-length") ?? 0) > MAX_TEXT_BYTES + 256 * 1024) {
+    return tooLarge(MAX_TEXT_MB);
   }
 
-  const { count, error: countError } = await supabaseAdmin
-    .from("sources")
-    .select("id", { count: "exact", head: true })
-    .eq("notebook_id", notebookId);
-  if (countError) return NextResponse.json({ error: countError.message }, { status: 500 });
-  if ((count ?? 0) >= MAX_SOURCES_PER_NOTEBOOK) {
-    return NextResponse.json(
-      { error: `A notebook can hold up to ${MAX_SOURCES_PER_NOTEBOOK} sources. Remove one to add another.` },
-      { status: 409 }
-    );
+  const full = await checkSourceCount(notebookId);
+  if (full) return full;
+
+  // Pages loaded before uploads moved to Storage still send the file here.
+  if ((req.headers.get("content-type") || "").includes("multipart/form-data")) {
+    return NextResponse.json({ error: "This page is out of date. Refresh it and add the file again." }, { status: 400 });
   }
 
-  const contentType = req.headers.get("content-type") || "";
-
-  let type: SourceType;
+  const body = await req.json();
+  const type: SourceType = body.type;
+  if (!["pdf", "vtt", "text", "url", "youtube"].includes(type)) {
+    return NextResponse.json({ error: "Unknown source type." }, { status: 400 });
+  }
+  const typed = typeof body.title === "string" ? body.title.trim() : "";
   let title: string;
   let fileBuffer: Buffer | undefined;
   let rawText: string | undefined;
   let url: string | undefined;
-  let pendingUpload: { path: string; contentType: string } | undefined;
   // Whether ingest may replace the title with the one the source names itself.
   let autoTitle = false;
+  // Set once an uploaded file is known to belong to no other source, so a
+  // refusal from then on removes it rather than leaving it to count against
+  // the visitor until the daily sweep.
+  let uploadedPath: string | undefined;
+  const refuse = async (response: NextResponse) => {
+    if (uploadedPath) await removeSourceFile(uploadedPath);
+    return response;
+  };
 
-  if (contentType.includes("multipart/form-data")) {
-    const form = await req.formData();
-    type = form.get("type") as SourceType; // "pdf" or "vtt" (file-based)
-    if (type !== "pdf" && type !== "vtt") {
-      return NextResponse.json({ error: "Only PDF and transcript files are uploaded." }, { status: 400 });
+  if (type === "pdf" || type === "vtt") {
+    const path = typeof body.path === "string" ? body.path : "";
+    // Only a file directly in this notebook's folder, as /uploads names them.
+    // Anything else would let one visitor's source read another's file.
+    const name = path.startsWith(`${notebookId}/`) ? path.slice(notebookId.length + 1) : "";
+    if (!name || name.includes("/")) {
+      return NextResponse.json({ error: "Upload the file first." }, { status: 400 });
     }
-    const file = form.get("file") as File | null;
-    if (!file) return NextResponse.json({ error: "File required" }, { status: 400 });
-    if (file.size > MAX_UPLOAD_BYTES) return tooLarge();
-    title = (form.get("title") as string) || file.name;
+    // Two sources on one file would lose it for both when either is removed.
+    const { data: used, error: usedError } = await supabaseAdmin
+      .from("sources")
+      .select("id")
+      .eq("raw_ref", path)
+      .limit(1);
+    if (usedError) throw usedError;
+    if (used.length) return NextResponse.json({ error: "That file has already been added." }, { status: 409 });
+
+    const { data: file, error: downloadError } = await supabaseAdmin.storage.from("sources").download(path);
+    if (downloadError || !file) {
+      return NextResponse.json({ error: "The file did not finish uploading. Try again." }, { status: 400 });
+    }
+    uploadedPath = path;
     fileBuffer = Buffer.from(await file.arrayBuffer());
-    if (type !== "pdf") {
-      rawText = fileBuffer.toString("utf-8"); // vtt/srt as text
-    }
-
-    // The file is stored only once the request is past the limits below, so a
-    // refused upload cannot leave an orphan behind in the bucket.
-    // A slash in the name would nest the file below the notebook's folder,
-    // where deleting the notebook, which lists one level, would not find it.
-    const safeName = file.name.replace(/[/\\]/g, "_");
-    pendingUpload = { path: `${notebookId}/${Date.now()}-${safeName}`, contentType: file.type };
+    if (fileBuffer.length > MAX_FILE_BYTES) return refuse(tooLarge(MAX_FILE_MB));
+    if (type === "vtt") rawText = fileBuffer.toString("utf-8");
+    // Without a typed title, the file's own name, minus the prefix /uploads added.
+    title = typed || name.replace(/^\d+-/, "");
+    url = path; // the raw_ref for file-based sources
   } else {
-    const body = await req.json();
-    type = body.type;
-    // Files arrive as uploads. Over JSON, a pdf or vtt would store the caller's
-    // url as the file's Storage path, which viewing and re-indexing then read.
-    if (type !== "text" && type !== "url" && type !== "youtube") {
-      return NextResponse.json({ error: "Upload PDF and transcript files as files." }, { status: 400 });
-    }
-    const typed = typeof body.title === "string" ? body.title.trim() : "";
     // A page loaded before this change sends the link itself when the title
     // box is left empty, so that counts as no title too.
     autoTitle = !typed || typed === body.url?.trim();
     title = typed || body.url || "Untitled";
     rawText = body.text;
     url = body.url;
+    if (rawText && Buffer.byteLength(rawText) > MAX_TEXT_BYTES) return tooLarge(MAX_TEXT_MB);
   }
-
-  if (rawText && Buffer.byteLength(rawText) > MAX_UPLOAD_BYTES) return tooLarge();
 
   // An unparseable link would otherwise fail later, inside the background
   // ingest, having already spent one of the few daily video slots.
@@ -138,23 +144,17 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     }
   }
 
+  // An uploaded file is already stored, so it is part of what this counts.
   // Before the rate limit, so a refusal here does not spend one of the day's slots.
-  const full = await checkSpace(notebookId, fileBuffer?.length ?? 0);
-  if (full) return full;
+  const noRoom = await checkSpace(notebookId);
+  if (noRoom) return refuse(noRoom);
 
-  // Videos count against the transcript service's credits as well, so they are
-  // counted under their own rules, which include these same source limits.
-  const limited = await enforceRateLimit(req, type === "youtube" ? "youtube" : "source");
-  if (limited) return limited;
-
-  if (pendingUpload && fileBuffer) {
-    const { error: storageErr } = await supabaseAdmin.storage
-      .from("sources")
-      .upload(pendingUpload.path, fileBuffer, { contentType: pendingUpload.contentType });
-    if (storageErr) {
-      return NextResponse.json({ error: storageErr.message }, { status: 500 });
-    }
-    url = pendingUpload.path; // the raw_ref for file-based sources
+  // A file was counted when its upload link was handed out. Videos count
+  // against the transcript service's credits as well, so they are counted
+  // under their own rules, which include these same source limits.
+  if (!uploadedPath) {
+    const limited = await enforceRateLimit(req, type === "youtube" ? "youtube" : "source");
+    if (limited) return limited;
   }
 
   // Create the source row first so the UI can show "uploading" -> "indexing" immediately.

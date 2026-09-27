@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { ArrowLeft, Loader2, Upload } from "lucide-react";
-import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from "@/lib/limits";
+import { MAX_FILE_BYTES, MAX_FILE_MB, MAX_TEXT_BYTES, MAX_TEXT_MB } from "@/lib/limits";
+import { uploadFile } from "@/lib/visitorClient";
 import SourceIcon, { sourceLabel } from "./SourceIcon";
 import {
   Dialog,
@@ -60,37 +61,53 @@ export default function AddSourceModal({
       setError("Paste some text first.");
       return;
     }
-    if ((kind === "pdf" || kind === "vtt") && file!.size > MAX_UPLOAD_BYTES) {
-      setError(`Files can be up to ${MAX_UPLOAD_MB} MB.`);
+    if ((kind === "pdf" || kind === "vtt") && file!.size > MAX_FILE_BYTES) {
+      setError(`Files can be up to ${MAX_FILE_MB} MB.`);
       return;
     }
-    if (kind === "text" && new Blob([textValue]).size > MAX_UPLOAD_BYTES) {
-      setError(`Pasted text can be up to ${MAX_UPLOAD_MB} MB.`);
+    if (kind === "text" && new Blob([textValue]).size > MAX_TEXT_BYTES) {
+      setError(`Pasted text can be up to ${MAX_TEXT_MB} MB.`);
       return;
     }
 
     setSubmitting(true);
     setError(null);
     try {
-      let res: Response;
-      if (kind === "pdf" || kind === "vtt") {
-        const form = new FormData();
-        form.append("type", kind);
-        form.append("title", title || file!.name);
-        form.append("file", file!);
-        res = await fetch(`/api/notebooks/${notebookId}/sources`, { method: "POST", body: form });
-      } else {
-        res = await fetch(`/api/notebooks/${notebookId}/sources`, {
+      const post = (url: string, body: object) =>
+        fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type: kind,
-            // Left empty, a link is titled by the server with the name the
-            // video or page gives itself.
-            title: title || (kind === "text" ? "Pasted text" : undefined),
-            text: kind === "text" ? textValue : undefined,
-            url: kind === "url" || kind === "youtube" ? urlValue : undefined,
-          }),
+          body: JSON.stringify(body),
+        });
+      let res: Response;
+      if (kind === "pdf" || kind === "vtt") {
+        // Files go straight to Storage, then the source is added by path.
+        const link = await post(`/api/notebooks/${notebookId}/uploads`, {
+          type: kind,
+          name: file!.name,
+          size: file!.size,
+        });
+        if (!link.ok) {
+          const body = await link.json().catch(() => ({}));
+          setError(body.error ?? "The upload could not be started.");
+          return;
+        }
+        const { path, token } = await link.json();
+        try {
+          await uploadFile(path, token, file!, kind === "pdf" ? "application/pdf" : "text/plain");
+        } catch {
+          setError("The file did not upload. Check your connection and try again.");
+          return;
+        }
+        res = await post(`/api/notebooks/${notebookId}/sources`, { type: kind, title, path });
+      } else {
+        res = await post(`/api/notebooks/${notebookId}/sources`, {
+          type: kind,
+          // Left empty, a link is titled by the server with the name the
+          // video or page gives itself.
+          title: title || (kind === "text" ? "Pasted text" : undefined),
+          text: kind === "text" ? textValue : undefined,
+          url: kind === "url" || kind === "youtube" ? urlValue : undefined,
         });
       }
 

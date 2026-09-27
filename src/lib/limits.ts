@@ -1,10 +1,16 @@
-// Shared by the upload route and the add-source form, so the form can refuse
-// early with the same numbers the server enforces. Embedding runs in-process,
-// so these also bound how long one upload can hold a function. Vercel rejects
-// any function request body over 4.5 MB before the route runs, with a plain
-// 413 the form cannot show properly, so the cap sits just under it.
-export const MAX_UPLOAD_MB = 4;
-export const MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024;
+// Shared by the upload routes and the add-source form, so the form can refuse
+// early with the same numbers the server enforces.
+
+// Pasted text travels in the request body, and Vercel rejects any function
+// request body over 4.5 MB before the route runs, with a plain 413 the form
+// cannot show properly, so the cap sits just under it.
+export const MAX_TEXT_MB = 4;
+export const MAX_TEXT_BYTES = MAX_TEXT_MB * 1024 * 1024;
+// Files go from the browser straight to Storage, so that limit does not apply
+// to them. This one bounds the memory a function uses to read one, and the
+// bucket enforces it too, since an upload link cannot limit size itself.
+export const MAX_FILE_MB = 20;
+export const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
 export const MAX_SOURCES_PER_NOTEBOOK = 15;
 // Passages are embedded one at a time, at about 36 ms each on a laptop and
 // slower on a function, so this keeps one source well inside the 300 second

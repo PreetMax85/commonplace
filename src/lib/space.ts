@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "./supabase";
-import { SITE_SPACE, VISITOR_SPACE } from "./limits";
+import { MAX_SOURCES_PER_NOTEBOOK, SITE_SPACE, VISITOR_SPACE } from "./limits";
 
 type Usage = { file_bytes: number; chunk_count: number };
 
@@ -49,4 +49,17 @@ export async function checkSpace(notebookId: string, incomingBytes = 0): Promise
     );
   }
   return null;
+}
+
+export async function checkSourceCount(notebookId: string): Promise<NextResponse | null> {
+  const { count, error } = await supabaseAdmin
+    .from("sources")
+    .select("id", { count: "exact", head: true })
+    .eq("notebook_id", notebookId);
+  if (error) throw error;
+  if ((count ?? 0) < MAX_SOURCES_PER_NOTEBOOK) return null;
+  return NextResponse.json(
+    { error: `A notebook can hold up to ${MAX_SOURCES_PER_NOTEBOOK} sources. Remove one to add another.` },
+    { status: 409 }
+  );
 }

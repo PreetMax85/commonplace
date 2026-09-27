@@ -353,9 +353,7 @@ function Answer({
   onCitationClick: (c: Citation) => void;
 }) {
   const withCitationLinks = citations?.length
-    ? replaceCitations(content, (n, marker) =>
-        citations.some((c) => c.n === n) ? `[[${n}]](citation:${n})` : marker
-      )
+    ? replaceCitations(content, (n) => `[[${n}]](citation:${n})`)
     : content;
 
   return (
@@ -371,7 +369,19 @@ function Answer({
             if (href?.startsWith("citation:")) {
               const n = Number(href.replace("citation:", ""));
               const citation = citations?.find((c) => c.n === n);
-              if (!citation) return <>{children}</>;
+              // The model cited a number it was never given. Shown rather
+              // than dropped, so a claim with no real source says so.
+              if (!citation) {
+                return (
+                  <span
+                    title="No retrieved passage has this number"
+                    className="mx-px cursor-help align-super text-[0.7em] font-semibold text-ink-faint"
+                  >
+                    {children}
+                    <span className="sr-only"> (no matching passage)</span>
+                  </span>
+                );
+              }
               return (
                 <button
                   className="mx-px align-super text-[0.7em] font-semibold text-brand underline decoration-brand/40 underline-offset-2 hover:decoration-brand"

@@ -80,6 +80,7 @@ export async function ingestSource(input: IngestInput, { replacing = false }: { 
         const result = await extractUrl(input.url);
         chunks = result.chunks;
         rawRef = input.url;
+        if (input.autoTitle) title = cleanTitle(result.title);
         break;
       }
       case "youtube": {

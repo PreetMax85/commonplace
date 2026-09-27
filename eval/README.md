@@ -147,6 +147,96 @@ Read this carefully:
   settling after the delete. The three later runs were identical, and the last
   one is the one recorded.
 
+## Answers and citations, 2026-09-27
+
+The numbers above stop at retrieval. `answers.ts` goes one step further: it
+answers each of the 40 questions with the same hybrid search, the same 8
+passages and the same answer call as `/api/query`, then checks the answer's
+citations against the same labels. One run, commit `8ec9871`, scored again
+with the final citation checker at `bad79e0`, file
+`results/answers-2026-09-27-04-47.json`.
+
+| | questions | answer retrieved | answer cited it | citation precision | top passage alone |
+| --- | --- | --- | --- | --- | --- |
+| Overall | 40 | 36 | 35 (0.97) | 0.75 | 0.61 |
+| Word for word | 20 | 20 | 20 (1.00) | 0.73 | 0.75 |
+| Reworded | 20 | 16 | 15 (0.94) | 0.77 | 0.44 |
+
+What the columns mean:
+
+- **answer retrieved**: questions where one of the 8 passages carries the
+  labelled answer. This is hit@8 again (0.90), and it is the most any answer
+  could cite, so the next column is out of this number.
+- **answer cited it**: of those, how often the answer cites a passage that
+  carries the answer.
+- **citation precision**: of all the passages those answers cite, the share
+  that carry the labelled answer. An answer that cited every passage would
+  score perfectly in the previous column and badly here.
+- **top passage alone**: what always citing the first passage would score on
+  the same questions. It is the bar the model has to clear, and on reworded
+  questions, where search puts the answer first less often, it clears it by
+  the widest margin.
+
+What the checker also counted:
+
+- **No citation pointed at a passage the model was not given**: 0 of 69. The
+  chat flags one if it happens, but it did not happen here.
+- **One answer had no citation**, and it was right not to: the reworded Rip
+  Van Winkle question, where search missed the answer and the model said the
+  passages do not cover it.
+- **57 of the 69 citations, in 36 of the 40 answers, were written as
+  `【n】`** rather than the `[n]` the prompt asks for. Without accepting that
+  format, most answers would have looked uncited.
+
+### Reading all 40 answers by hand
+
+A citation check can only say whether the right passage was cited, not
+whether the answer is right, so every answer was also read against its
+passages.
+
+| verdict | count | questions |
+| --- | --- | --- |
+| Correct, grounded | 32 | |
+| Correct refusal | 1 | Rip Van Winkle, reworded |
+| Correct, with details from outside the passages | 1 | Twinkie, reworded |
+| Partial | 3 | 84 percent, reworded; four circumstances, reworded; Loftus, verbatim |
+| Wrong | 3 | Loftus, reworded; fly-wheel, reworded; four circumstances, verbatim |
+
+- **Two of the three wrong answers cite the right passage and misread it.**
+  The fly-wheel answer credits "the prevailing social order" with what James
+  says habit does. The four circumstances answer gives "hormones", which in the
+  lecture is a student's guess that Sapolsky moves past; the actual answer is
+  that all four were used in court to explain a murderer. Both score as a hit
+  in the table above, which is the main limit of measuring citations alone.
+- **The third wrong answer is the one a citation check should catch.** Search
+  missed the Loftus passage, and instead of saying so, the answer described a
+  different experiment about naming shapes and cited that passage for it.
+- **The outside details** are real facts (the 1978 date and Mayor Moscone in
+  the Twinkie case) that appear in none of the 8 passages. The prompt forbids
+  this, and the model did it once.
+- **Precision undercounts good citations.** 13 citations point at a passage
+  without the labelled quote. Read by hand, 12 of them support the sentence
+  they are attached to: answers pull extra detail from neighbouring passages,
+  such as the survey dates in the moral decline paper. The one that does not
+  is attached to the wrong "hormones" answer.
+- **Of the four retrieval misses**, one answer refused correctly, one
+  answered correctly from other passages of the same essay, one gave a
+  grounded but vague answer without the 84 percent figure, and one was the
+  wrong Loftus answer.
+
+### Limits of this part
+
+- **One run.** Answers are generated at temperature 0.3, so a second run
+  would word things differently and could flip a question or two. With 36
+  questions in the rate, one question is almost three points.
+- **Single turn only**, like the retrieval numbers.
+- **The hand reading was done once, by one reader**, with the passages open.
+  The verdict for each question can be checked against the answers saved in
+  the results file.
+- **It spends the live demo's Groq budget.** A full run costs roughly 140,000
+  of the free tier's 200,000 daily tokens, so it is run when nobody is likely
+  to be using the demo.
+
 ## How the questions were built
 
 20 facts, each asked twice:
@@ -195,6 +285,7 @@ prints how many chunks each one resolves to. All 20 resolve to 1 or 2 chunks.
 ```
 npm run eval:check   # confirm the 20 labels still point at real passages
 npm run eval         # run the 40 questions, write a timestamped file to results/
+npm run eval:answers # answer them too and check the citations (spends Groq tokens)
 npm run typecheck    # typechecks the app and these scripts separately
 ```
 

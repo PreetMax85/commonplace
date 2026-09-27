@@ -84,6 +84,30 @@ dated file to `eval/results/` holding every question's rank and the chunks that
 came back, failures included. See [eval/README.md](eval/README.md) for method,
 what the misses show, and the limits of a 40 question set.
 
+### Answer quality
+
+Finding the right passage is half the job; the answer then has to use it and
+cite it. `npm run eval:answers` answers the same 40 questions through the same
+search and answer call as `/api/query` and checks every citation against the
+labels. One run:
+
+| | questions | answer retrieved | answer cited it | top passage alone |
+| --- | --- | --- | --- | --- |
+| Overall | 40 | 36 | 35 (0.97) | 0.61 |
+| Word for word | 20 | 20 | 20 (1.00) | 0.75 |
+| Reworded | 20 | 16 | 15 (0.94) | 0.44 |
+
+- **Answer cited it**: of the questions where search found the answering
+  passage, how often the answer cites that passage. **Top passage alone** is
+  what always citing the first passage would score, the bar to beat.
+- No answer cited a passage number it was not given (0 of 69 citations). If one
+  does, the chat shows it greyed out rather than as a working link.
+- Every answer was also read by hand: 32 correct, 1 correct refusal, 1 correct
+  but adding facts from outside the passages, 3 partial, 3 wrong. Two of the
+  wrong answers cite the right passage and misread it, which a citation check
+  cannot catch. [eval/README.md](eval/README.md#answers-and-citations-2026-09-27)
+  has each case.
+
 ### Multi-turn chat
 
 Each question is sent with the prior conversation. A lightweight LLM call rewrites the question into standalone form for retrieval; the answer call sees the last 3 exchanges verbatim but is still instructed to answer only from retrieved context.

@@ -70,9 +70,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return tooLarge(MAX_TEXT_MB);
   }
 
-  const full = await checkSourceCount(notebookId);
-  if (full) return full;
-
   // Pages loaded before uploads moved to Storage still send the file here.
   if ((req.headers.get("content-type") || "").includes("multipart/form-data")) {
     return NextResponse.json({ error: "This page is out of date. Refresh it and add the file again." }, { status: 400 });
@@ -149,7 +146,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   // An uploaded file is already stored, so it is part of what this counts.
   // Before the rate limit, so a refusal here does not spend one of the day's slots.
-  const noRoom = await checkSpace(notebookId);
+  const noRoom = (await checkSourceCount(notebookId)) ?? (await checkSpace(notebookId));
   if (noRoom) return refuse(noRoom);
 
   // A file was counted when its upload link was handed out. Videos count
@@ -166,7 +163,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     .insert({ notebook_id: notebookId, type, title, status: "uploading", raw_ref: url ?? null })
     .select()
     .single();
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return refuse(NextResponse.json({ error: error.message }, { status: 500 }));
 
   // Ingestion continues after this response is sent, and the client polls
   // GET /sources for status. On serverless a bare floating promise is not

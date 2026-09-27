@@ -53,10 +53,13 @@ export async function ensureVisitor(): Promise<void> {
 
 // Sends a file straight to Storage with a one-time link from /uploads, since
 // Vercel refuses request bodies over 4.5 MB. The link is the permission, so
-// this works with the public key and no Storage policies. The type is set
-// here because browsers often report none for .vtt and .srt, and the bucket
-// accepts only the types it lists.
+// this works with the public key and no Storage policies. The bucket accepts
+// only the types it lists, and browsers report .vtt as text/vtt and often
+// give .srt no type at all. A File is sent as a form whose part carries the
+// file's own type, ignoring the contentType option, so the type is set by
+// copying the file under it.
 export async function uploadFile(path: string, token: string, file: File, contentType: string): Promise<void> {
-  const { error } = await browserClient().storage.from("sources").uploadToSignedUrl(path, token, file, { contentType });
+  const typed = new File([file], file.name, { type: contentType });
+  const { error } = await browserClient().storage.from("sources").uploadToSignedUrl(path, token, typed);
   if (error) throw error;
 }

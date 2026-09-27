@@ -22,13 +22,13 @@ The roadmap orders the ideas in a notebook's videos for learning, and each step 
 ## Setup
 
 1. Create a Supabase project. Run `supabase/schema.sql` in the SQL editor. For a project created from an older schema, run the files in `supabase/migrations/` in order instead.
-2. Create a private **Storage** bucket named `sources` in Supabase. The app hands out short-lived signed URLs, so the files never need to be publicly listable.
+2. Create a private **Storage** bucket named `sources` in Supabase. The app hands out short-lived signed URLs, so the files never need to be publicly listable. In the bucket's settings, restrict uploads to 20 MB and to the types `application/pdf` and `text/plain`: files go from the browser straight to the bucket, and an upload link cannot limit size by itself.
 3. In Supabase, turn on **Allow anonymous sign-ins** (Authentication, Sign In / Providers).
 4. Copy `.env.example` to `.env.local` and fill in `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `GROQ_API_KEY`.
    `SUPADATA_API_KEY` is optional and only used as a fallback for YouTube transcripts (see below). Without it, YouTube ingestion still works wherever the direct fetch does.
 5. `npm install`
 6. `npm run dev`
-7. On Vercel, set `CRON_SECRET` to a long random string. Vercel sends it with the daily cron call, and the cleanup of expired visitors only runs when it matches.
+7. On Vercel, set `CRON_SECRET` to a long random string. Vercel sends it with the daily cron call, and the cleanup of expired visitors and unfinished uploads only runs when it matches.
 8. Optional: to make a notebook the read-only public demo, run `update notebooks set is_demo = true where id = '<notebook id>';` in the SQL editor.
 
 ## Stack
@@ -53,12 +53,13 @@ notebooks (1) ──< sources (many) ──< chunks (many, with embedding vector
 
 ### Ingestion flow
 
-1. Source row created with `status: "uploading"` → returned to client immediately.
-2. Background ingestion: `status → "indexing"`.
-3. Type-specific extractor pulls text + per-segment metadata.
-4. Shared `chunkText()` splits long segments further (~1000 chars, 150 overlap), preserving metadata on every sub-chunk.
-5. Chunks embedded and inserted into `chunks`.
-6. `status → "ready"` (green dot) or `"error"` with the reason shown on the source. A source that fails partway through has its chunks deleted, so a half-indexed document is never left searchable. Re-indexing keeps the previous chunks until the new ones are fully written, so a failed re-index leaves the source as it was.
+1. PDF and transcript files go from the browser straight to Storage with a one-time upload link from `/api/notebooks/[id]/uploads`, since Vercel refuses request bodies over 4.5 MB. The source is then added by its Storage path, which must sit in that notebook's own folder. Uploads that never become a source are removed by the daily cron.
+2. Source row created with `status: "uploading"` → returned to client immediately.
+3. Background ingestion: `status → "indexing"`.
+4. Type-specific extractor pulls text + per-segment metadata.
+5. Shared `chunkText()` splits long segments further (~1000 chars, 150 overlap), preserving metadata on every sub-chunk. A source over 1,500 chunks, about a 400 page book, is refused here, before the slow part.
+6. Chunks embedded and inserted into `chunks`.
+7. `status → "ready"` (green dot) or `"error"` with the reason shown on the source. A source that fails partway through has its chunks deleted, so a half-indexed document is never left searchable. Re-indexing keeps the previous chunks until the new ones are fully written, so a failed re-index leaves the source as it was.
 
 ### Retrieval + answer flow
 
@@ -142,7 +143,7 @@ Questions and roadmaps also share a site-wide limit of 2 per minute, matching th
 
 ## Known scope cuts
 
-- Accounts are anonymous only, so notebooks live in one browser and cannot move to another device. Demo notebooks are read-only, uploads and pasted text are capped at 4 MB (Vercel rejects function request bodies over 4.5 MB), and a notebook holds up to 15 sources.
+- Accounts are anonymous only, so notebooks live in one browser and cannot move to another device. Demo notebooks are read-only. Files are capped at 20 MB and pasted text at 4 MB (it still travels through a function, and Vercel rejects request bodies over 4.5 MB). A notebook holds up to 15 sources, a visitor up to 50 MB of files and 3,000 chunks, and the whole site 800 MB and 30,000 chunks, which keeps it inside Supabase's free plan: a full database turns read-only and would take the demo down with it. Space limits are checked before a source is added, so one source can pass them by its own size.
 - Podcast/voice-over bonus deprioritized in favor of the roadmap bonus (YouTube sources → ordered concept list grounded in transcript timestamps).
 - PDF source viewer jumps to the cited page but doesn't highlight the exact passage (text/VTT/URL sources do highlight).
 - YouTube serves caption tracks to home connections but refuses them to cloud ones, so the direct fetch works locally and never on the deployment. When it fails and `SUPADATA_API_KEY` is set, the transcript is fetched through Supadata instead, which reads the same published captions. Its free plan covers 100 transcripts a month, so adding a video is capped at 3 a day across the site. If both paths fail, the error says so and points at the VTT or SRT upload, which works everywhere.

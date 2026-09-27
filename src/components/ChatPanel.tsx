@@ -6,6 +6,7 @@ import remarkGfm from "remark-gfm";
 import { ArrowUp, Quote, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatTimestamp } from "@/lib/format";
+import { CITATION_MARKER, checkCitations } from "@/lib/citations";
 import SourceIcon from "./SourceIcon";
 import type { SourceItem } from "./SourceList";
 
@@ -291,11 +292,8 @@ export default function ChatPanel({
 // chunks would bury the two the answer leaned on.
 function usedCitations(content: string, citations: Citation[] | undefined): Citation[] {
   if (!citations?.length) return [];
-  const used = new Set<number>();
-  for (const [, n] of content.matchAll(/[[【](\d+)(?:†[^\]】\s]{0,32})?[\]】]/g)) {
-    used.add(Number(n));
-  }
-  return citations.filter((c) => used.has(c.n));
+  const { valid } = checkCitations(content, citations.length);
+  return citations.filter((c) => valid.includes(c.n));
 }
 
 function CitedSources({
@@ -344,8 +342,7 @@ function CitedSources({
 // keeping [n] citation markers clickable. We pre-convert "[n]" into a
 // markdown link "[n](citation:n)" before parsing, then intercept links
 // with that scheme in the `a` renderer instead of letting them navigate.
-// gpt-oss often ignores the prompt and cites in its own training format,
-// "【n】" or "【n†L1-L4】", so those are accepted and rewritten as "[n]".
+// Markers in gpt-oss's own "【n】" format are rewritten as "[n]" on the way.
 function Answer({
   content,
   citations,
@@ -356,7 +353,7 @@ function Answer({
   onCitationClick: (c: Citation) => void;
 }) {
   const withCitationLinks = citations?.length
-    ? content.replace(/[[【](\d+)(?:†[^\]】\s]{0,32})?[\]】]/g, (match, n) =>
+    ? content.replace(CITATION_MARKER, (match, n) =>
         citations.some((c) => c.n === Number(n)) ? `[[${n}]](citation:${n})` : match
       )
     : content;

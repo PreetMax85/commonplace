@@ -1,9 +1,9 @@
 // Citation markers in a generated answer. The prompt asks for [n], but gpt-oss
-// often cites in its own training format instead, "【n】" or "【n†L1-L4】", so
-// all three are accepted. Only one or two digits count: an answer never has
-// more than a handful of passages, and a bracketed year like [1890] quoted from
-// a source is not a citation.
-const CITATION_MARKER = /[[【](\d{1,2})(?:†[^\]】\s]{0,32})?[\]】]/g;
+// often cites in its own training format instead, "【n】", "【n†L1-L4】" or
+// "【n†source name】", so all of them are accepted. Only one or two digits
+// count: an answer never has more than a handful of passages, and a bracketed
+// year like [1890] quoted from a source is not a citation.
+const CITATION_MARKER = /[[【](\d{1,2})(?:†[^\]】\n]{0,40})?[\]】]/g;
 
 /** Splits text into its plain runs and the passage numbers cited between them. */
 export function splitCitations(text: string): (string | number)[] {

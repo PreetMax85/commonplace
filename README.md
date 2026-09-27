@@ -7,6 +7,18 @@
 
 Upload PDFs, text, URLs, YouTube videos, and transcripts into isolated notebooks, ask questions, and get grounded, streamed answers with clickable citations that jump to the exact page, timestamp, or passage in the source.
 
+![An answer about forming habits, each claim cited, with the cited page of the PDF open beside it](docs/screenshots/pdf-citation.png)
+
+## Screenshots
+
+A citation into a lecture transcript opens the transcript with the cited passage highlighted. The chips under the answer give each passage's timestamp.
+
+![An answer about how chess experts remember positions, with the cited transcript passage highlighted](docs/screenshots/transcript-citation.png)
+
+The roadmap orders the ideas in a notebook's videos for learning, and each step links to the moment it is explained.
+
+![A learning roadmap built from the demo notebook's videos, with the first step's video open](docs/screenshots/roadmap.png)
+
 ## Setup
 
 1. Create a Supabase project. Run `supabase/schema.sql` in the SQL editor. For a project created from an older schema, run the files in `supabase/migrations/` in order instead.

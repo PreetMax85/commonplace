@@ -7,7 +7,7 @@ import { supabaseAdmin } from "./supabase";
 // outcome than reporting a delete that did happen as failed. The result says
 // whether it worked, for callers that must not go on without it.
 
-const BUCKET = "sources";
+export const BUCKET = "sources";
 
 export async function removeNotebookFiles(notebookId: string): Promise<boolean> {
   // A notebook holds at most 15 sources, well under one page of results.

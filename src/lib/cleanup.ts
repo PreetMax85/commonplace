@@ -1,5 +1,5 @@
 import { supabaseAdmin } from "./supabase";
-import { removeNotebookFiles } from "./storage";
+import { BUCKET, removeNotebookFiles } from "./storage";
 
 // Visitors are anonymous accounts, and Supabase never removes those on its
 // own. The daily cron removes each one 30 days after it was made: first the
@@ -39,5 +39,27 @@ export async function removeExpiredVisitors(): Promise<void> {
 
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
     if (deleteError) console.error(`Deleting visitor ${userId} failed:`, deleteError);
+  }
+}
+
+// Files uploaded straight from the browser that never became a source: an
+// upload abandoned halfway, or one refused after it arrived. A day is far
+// longer than adding a source takes, so nothing still in progress is touched.
+export async function removeUnregisteredUploads(): Promise<void> {
+  const [{ data: paths, error }, { data: demos, error: demoError }] = await Promise.all([
+    supabaseAdmin.rpc("unregistered_uploads", { max_age: "1 day" }),
+    supabaseAdmin.from("notebooks").select("id").eq("is_demo", true),
+  ]);
+  if (error || demoError) {
+    console.error("Finding unregistered uploads failed:", error ?? demoError);
+    return;
+  }
+  // The demo's files are never removed here, whatever the query returns.
+  const demoFolders = (demos ?? []).map((d) => `${d.id}/`);
+  const orphans = (paths as string[]).filter((p) => !demoFolders.some((folder) => p.startsWith(folder)));
+
+  for (let i = 0; i < orphans.length; i += 100) {
+    const { error: removeError } = await supabaseAdmin.storage.from(BUCKET).remove(orphans.slice(i, i + 100));
+    if (removeError) console.error("Removing unregistered uploads failed:", removeError);
   }
 }

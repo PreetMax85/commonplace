@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { removeExpiredVisitors } from "@/lib/cleanup";
+import { removeExpiredVisitors, removeUnregisteredUploads } from "@/lib/cleanup";
 
 // Hit daily by a Vercel cron. A free Supabase project pauses after a week
 // without activity, which is how an earlier deployment went dark, so this
@@ -25,13 +25,15 @@ export async function GET(req: NextRequest) {
     .or(`window_start.lt.${cutoff},count.lte.0`);
   if (pruneError) console.error("Rate limit prune failed:", pruneError);
 
-  // And removes visitors past the 30 days the home page promises. The rest of
-  // this endpoint is public, but this part only runs for the cron itself:
-  // Vercel sends CRON_SECRET as a bearer token when that variable is set, so
-  // strangers cannot make it scan and delete accounts on demand.
+  // And removes visitors past the 30 days the home page promises, then uploads
+  // that never became a source. The rest of this endpoint is public, but this
+  // part only runs for the cron itself: Vercel sends CRON_SECRET as a bearer
+  // token when that variable is set, so strangers cannot make it scan and
+  // delete accounts on demand.
   const cronSecret = process.env.CRON_SECRET;
   if (cronSecret && req.headers.get("authorization") === `Bearer ${cronSecret}`) {
     await removeExpiredVisitors();
+    await removeUnregisteredUploads();
   }
 
   return NextResponse.json({ ok: true });

@@ -5,6 +5,7 @@ import { extractYoutubeId } from "@/lib/extract/youtube";
 import { checkNotebook } from "@/lib/access";
 import { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB, MAX_SOURCES_PER_NOTEBOOK } from "@/lib/limits";
 import { enforceRateLimit } from "@/lib/rateLimit";
+import { checkSpace } from "@/lib/space";
 
 // Embedding a long PDF runs well past a default request, and after() inherits
 // this budget.
@@ -136,6 +137,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       return NextResponse.json({ error: "That does not look like a YouTube video link." }, { status: 400 });
     }
   }
+
+  // Before the rate limit, so a refusal here does not spend one of the day's slots.
+  const full = await checkSpace(notebookId, fileBuffer?.length ?? 0);
+  if (full) return full;
 
   // Videos count against the transcript service's credits as well, so they are
   // counted under their own rules, which include these same source limits.

@@ -5,6 +5,7 @@ import { extractPlainText } from "./extract/text";
 import { extractYoutube, extractYoutubeId, fetchYoutubeTitle } from "./extract/youtube";
 import { extractVtt } from "./extract/vtt";
 import { RawChunk } from "./chunking";
+import { MAX_CHUNKS_PER_SOURCE } from "./limits";
 
 export type SourceType = "pdf" | "text" | "url" | "youtube" | "vtt";
 
@@ -105,6 +106,13 @@ export async function ingestSource(input: IngestInput, { replacing = false }: { 
 
     if (chunks.length === 0) {
       throw new Error("No extractable content found in source");
+    }
+    // Checked before embedding, the slow part, so an oversized source fails
+    // at once instead of running out the function's time.
+    if (chunks.length > MAX_CHUNKS_PER_SOURCE) {
+      throw new Error(
+        `This source is too long: it splits into ${chunks.length.toLocaleString("en")} passages, and one source can hold up to ${MAX_CHUNKS_PER_SOURCE.toLocaleString("en")} (about 400 pages). Split it into parts.`
+      );
     }
 
     const embeddings = await embedBatch(chunks.map((c) => c.content));

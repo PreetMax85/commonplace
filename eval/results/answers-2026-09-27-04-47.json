@@ -1,0 +1,2620 @@
+{
+  "run_at": "2026-09-27T04:47:14.334Z",
+  "complete": true,
+  "commit": "8ec9871",
+  "rescored_at": "bad79e0",
+  "notebook_id": "df22a1d0-431f-4667-a846-d5fa726a1799",
+  "embedding_model": "Xenova/bge-small-en-v1.5",
+  "answer_model": "openai/gpt-oss-120b",
+  "passages": 8,
+  "summary": {
+    "overall": {
+      "questions": 40,
+      "answer_retrieved": 36,
+      "cited_answer": 35,
+      "cited_answer_rate": 0.9722,
+      "citation_precision": 0.75,
+      "top_passage_rate": 0.6111
+    },
+    "verbatim": {
+      "questions": 20,
+      "answer_retrieved": 20,
+      "cited_answer": 20,
+      "cited_answer_rate": 1,
+      "citation_precision": 0.7333,
+      "top_passage_rate": 0.75
+    },
+    "reworded": {
+      "questions": 20,
+      "answer_retrieved": 16,
+      "cited_answer": 15,
+      "cited_answer_rate": 0.9375,
+      "citation_precision": 0.7727,
+      "top_passage_rate": 0.4375
+    },
+    "no_citations": 1,
+    "markers": 69,
+    "out_of_range": 0,
+    "answers_with_out_of_range": 0,
+    "retrieval_misses": 4,
+    "misses_saying_not_found_rough": 1
+  },
+  "results": [
+    {
+      "id": "james-plasticity-verbatim",
+      "phrasing": "verbatim",
+      "question": "How does William James define plasticity, as a structure weak enough to yield but strong enough not to?",
+      "rank": 1,
+      "answer": "**William James’s definition of plasticity**\n\n- Plasticity is the **capacity of a structure to be weak enough to yield to an influence** (so it can be altered) **but still strong enough that it does not give way completely at once**【1】.  \n\nIn other words, a plastic structure can change under external or internal forces while retaining enough integrity to remain intact.",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": true,
+          "snippet": "ucture has yielded, the same inertia becomes a condition of its comparative permanence in the new form, and of the new h"
+        },
+        {
+          "n": 2,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "e compound, and either outward forces or inward tensions can, from one hour to another, turn that structure into somethi"
+        },
+        {
+          "n": 3,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "y outset to define clearly just what its limits are. The moment one tries to define what habit is, one is led to the fun"
+        },
+        {
+          "n": 4,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "Classics in the History of Psychology An internet resource developed by Christopher D. Green York University, Toronto, O"
+        },
+        {
+          "n": 5,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "ogy of visible massive ones enables us to frame easily an abstract and general scheme of processes which the physical ch"
+        },
+        {
+          "n": 6,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "we had the wrong model of how science works. We treated science like it’s a weak-link problem where progress depends on "
+        },
+        {
+          "n": 7,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "l that class of matter will have built itself up within him as a possession that will never pass away. Young people shou"
+        },
+        {
+          "n": 8,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "n’s laws of physics stuck around; his recipe for the Philosopher’s Stone didn’t. We didn’t need a scientific establishme"
+        }
+      ]
+    },
+    {
+      "id": "james-plasticity-reworded",
+      "phrasing": "reworded",
+      "question": "What balance between giving way and holding firm must a material have before it can pick up new habits?",
+      "rank": 1,
+      "answer": "The material must possess **a structure that is weak enough to give way to an influence yet strong enough not to collapse completely** – i.e., it must be sufficiently pliable to yield, but also sufficiently robust to retain its integrity while forming new habits【1】.",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": true,
+          "snippet": "ucture has yielded, the same inertia becomes a condition of its comparative permanence in the new form, and of the new h"
+        },
+        {
+          "n": 2,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "uisition of a new habit, or the leaving off of an old one, we must take care to launch ourselves with as strong and deci"
+        },
+        {
+          "n": 3,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "e compound, and either outward forces or inward tensions can, from one hour to another, turn that structure into somethi"
+        },
+        {
+          "n": 4,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "last degree, and amounts to little more than saying that a new path may be formed by the sort of chances that in nervous"
+        },
+        {
+          "n": 5,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "at the outset the guiding sensations must all be strongly felt. The bow will perhaps slip from the fingers, because some"
+        },
+        {
+          "n": 6,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "less trouble to fold a paper when it has been [p.106] folded already. This saving of trouble is due to the essential nat"
+        },
+        {
+          "n": 7,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "e among them is due to their despair of ever succeeding as the new-comers do in the larger tasks of life. Old ways are b"
+        },
+        {
+          "n": 8,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "self to be so peculiarly susceptible. The currents, once in, must find a way out. In getting out they leave their traces"
+        }
+      ]
+    },
+    {
+      "id": "james-flywheel-verbatim",
+      "phrasing": "verbatim",
+      "question": "Why does James call habit the enormous fly-wheel of society?",
+      "rank": 1,
+      "answer": "**James calls habit the “enormous fly‑wheel of society” because it functions as the great stabilizing force that keeps people orderly and prevents chaos.**  \n\n- Habit **keeps us all within the bounds of ordinance**, acting as a conservative agent that maintains social regularity.  \n- By doing so, it **saves the “children of fortune” from envious uprisings**, preventing disruptive challenges to the existing social order.  \n\nThese ideas are expressed directly in James’s description of habit as the massive fly‑wheel that holds society together【1】.",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": true,
+          "snippet": "t the possibility of an alternative ever suggests itself to their mind. Men grown old in prison have asked to be readmit"
+        },
+        {
+          "n": 2,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "y is more important still for the fixing of personal habits, properly so called, such as vocalization and pronunciation,"
+        },
+        {
+          "n": 3,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "Classics in the History of Psychology An internet resource developed by Christopher D. Green York University, Toronto, O"
+        },
+        {
+          "n": 4,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "ch they have been exercised, and dwelt upon its consequences, that his book almost deserves to be called a work of edifi"
+        },
+        {
+          "n": 5,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "agency until disease has impaired its functions.\" The next result is that habit diminishes the conscious attention with "
+        },
+        {
+          "n": 6,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "he professional mannerism settling down on the young commercial traveller, on the young doctor, on the young minister, o"
+        },
+        {
+          "n": 7,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "y outset to define clearly just what its limits are. The moment one tries to define what habit is, one is led to the fun"
+        },
+        {
+          "n": 8,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "fter, of which theology tells, is no worse than the hell we make for ourselves in this world by habitually fashioning ou"
+        }
+      ]
+    },
+    {
+      "id": "james-flywheel-reworded",
+      "phrasing": "reworded",
+      "question": "What does the author say keeps a society stable and keeps people in hard jobs they were raised into?",
+      "rank": 2,
+      "answer": "The author argues that **the prevailing social order (the “it” he describes)** is what holds a society together and forces people to remain in the hard, often inherited occupations into which they were raised. He says it “prevents the hardest and most repulsive walks of life from being deserted… it keeps the fisherman and the deck‑hand at sea… it holds the miner in his darkness… it protects us… It keeps different social strata from mixing” and that by the mid‑twenties people have already settled into the professional roles of their class【2】.",
+      "cited": [
+        2
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "e next temptation comes. Nothing we ever do is, in strict scientific literalness, wiped out. Of course, this has its goo"
+        },
+        {
+          "n": 2,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": true,
+          "snippet": "poor. It alone prevents the hardest and most repulsive walks of life from being deserted by those brought up to tread th"
+        },
+        {
+          "n": 3,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "ou to stop reading immediately. Recently, a friend asked me when I last read a paper from beginning to end; I couldn’t r"
+        },
+        {
+          "n": 4,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "to enable it to cope with the opposition, under any circumstances. This is the theoretically best career of mental progr"
+        },
+        {
+          "n": 5,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "n’s laws of physics stuck around; his recipe for the Philosopher’s Stone didn’t. We didn’t need a scientific establishme"
+        },
+        {
+          "n": 6,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "hey have a job to do, i.e., to help the company accomplish its goals. But employees don't come for free: they have to ea"
+        },
+        {
+          "n": 7,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "tice, become thorough master of the art of keeping up four balls at once, he placed a book before him, and, while the ba"
+        },
+        {
+          "n": 8,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "obtain cures and improvements but no failures final quote worst one of all the selection for social utility must be acco"
+        }
+      ]
+    },
+    {
+      "id": "james-exception-verbatim",
+      "phrasing": "verbatim",
+      "question": "What is James's maxim about never suffering an exception until a new habit is securely rooted?",
+      "rank": 1,
+      "answer": "**James’s maxim:**  \nWhen forming a new habit, *do not allow any exception* to happen until the habit is firmly established. A single lapse is likened to “the letting fall of a ball of string which one is carefully winding up”; one slip can undo far more progress than many successful turns would have added【1】.",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": true,
+          "snippet": "uisition of a new habit, or the leaving off of an old one, we must take care to launch ourselves with as strong and deci"
+        },
+        {
+          "n": 2,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "e among them is due to their despair of ever succeeding as the new-comers do in the larger tasks of life. Old ways are b"
+        },
+        {
+          "n": 3,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "of every cup, the time of rising and going to bed every day, and the beginning of every bit of work, are subjects of exp"
+        },
+        {
+          "n": 4,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "pportunity to act on every resolution you make, and on every emotional prompting you may experience in the direction of "
+        },
+        {
+          "n": 5,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "ke that of opium, or in simply changing one's hours of rising or of work. It is surprising how soon a desire will die of"
+        },
+        {
+          "n": 6,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "t the possibility of an alternative ever suggests itself to their mind. Men grown old in prison have asked to be readmit"
+        },
+        {
+          "n": 7,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "hat to which you are averse; that he who fails of the object of his desires is disappointed; and he who incurs the objec"
+        },
+        {
+          "n": 8,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "to enable it to cope with the opposition, under any circumstances. This is the theoretically best career of mental progr"
+        }
+      ]
+    },
+    {
+      "id": "james-exception-reworded",
+      "phrasing": "reworded",
+      "question": "When building a new routine, why is a single slip so costly, and what is it compared to?",
+      "rank": 4,
+      "answer": "When you try to establish a new habit, **a single slip can erase a great deal of the progress you have already built**. The text likens each lapse to **“the letting fall of a ball of string which one is carefully winding up”** – one slip can undo more than the many turns you have previously added【4】. This metaphor explains why even a brief failure is so costly: it can reverse much of the accumulated momentum of the new routine.",
+      "cited": [
+        4
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "at the outset the guiding sensations must all be strongly felt. The bow will perhaps slip from the fingers, because some"
+        },
+        {
+          "n": 2,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "Principally, however, the impulse is determined to the motion of the hand and of the single finger. This is, in the firs"
+        },
+        {
+          "n": 3,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "udy. If practice did not make perfect, nor habit economize the expense of nervous and muscular energy, he would therefor"
+        },
+        {
+          "n": 4,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": true,
+          "snippet": "uisition of a new habit, or the leaving off of an old one, we must take care to launch ourselves with as strong and deci"
+        },
+        {
+          "n": 5,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "ucture has yielded, the same inertia becomes a condition of its comparative permanence in the new form, and of the new h"
+        },
+        {
+          "n": 6,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "Why is it that we kind of wish we had it at certain moments? But what's the drawback? Well the drawback seems to be, ima"
+        },
+        {
+          "n": 7,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "less trouble to fold a paper when it has been [p.106] folded already. This saving of trouble is due to the essential nat"
+        },
+        {
+          "n": 8,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "e compound, and either outward forces or inward tensions can, from one hour to another, turn that structure into somethi"
+        }
+      ]
+    },
+    {
+      "id": "james-rip-verbatim",
+      "phrasing": "verbatim",
+      "question": "What does the drunken Rip Van Winkle say to excuse himself, and does James think it is counted?",
+      "rank": 1,
+      "answer": "- The **drunken Rip Van Winkle** excuses each new misdeed by saying, **“I won’t count this time!”**【1】  \n- **James** (the narrator) argues that, even if Rip and “a kind Heaven” refuse to count it, **the act is still being counted** by the body and mind【1】.",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 2,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": true,
+          "snippet": "fter, of which theology tells, is no worse than the hell we make for ourselves in this world by habitually fashioning ou"
+        },
+        {
+          "n": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "and months later perfectly. This is almost the only case we have well-described and well-analyzed. So it's really rare. "
+        },
+        {
+          "n": 3,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "seven okay now what that laxer size is no that doesn't count towards the great what that will show unsure when in some o"
+        },
+        {
+          "n": 4,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "ch they have been exercised, and dwelt upon its consequences, that his book almost deserves to be called a work of edifi"
+        },
+        {
+          "n": 5,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "ou to stop reading immediately. Recently, a friend asked me when I last read a paper from beginning to end; I couldn’t r"
+        },
+        {
+          "n": 6,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "So the father went to jail. The lawyers who were defending the father wanted to tell the jurors the following thing, whi"
+        },
+        {
+          "n": 7,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "em as laws, and as if you would be impious to transgress them; and do not regard what anyone says of you, for this, afte"
+        },
+        {
+          "n": 8,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "But they're sitting somewhere in some village remembering everything perfectly going, I thought you all remembered every"
+        }
+      ]
+    },
+    {
+      "id": "james-rip-reworded",
+      "phrasing": "reworded",
+      "question": "Can one small indulgence really go unrecorded, according to the warning about a drinker who says this one does not matter?",
+      "rank": null,
+      "answer": "The provided excerpts do not contain any warning about a drinker claiming that a single indulgence “does not matter,” nor do they say whether such an indulgence can truly go unrecorded. Therefore, the answer cannot be derived from the given context.",
+      "cited": [],
+      "out_of_range": [],
+      "markers": 0,
+      "cites_answer": false,
+      "says_not_found": true,
+      "passages": [
+        {
+          "n": 1,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "t deal on what has passed and what contributes nothing to your own amendment. For it would appear by such discourse that"
+        },
+        {
+          "n": 2,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "ch they have been exercised, and dwelt upon its consequences, that his book almost deserves to be called a work of edifi"
+        },
+        {
+          "n": 3,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "leading ultimately to survival and reproductive success. That's our \"bottom line,\" and that's what determines whether ou"
+        },
+        {
+          "n": 4,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "nlawful intercourse with women; yet be not uncharitable or severe to those who are led into this, nor boast frequently t"
+        },
+        {
+          "n": 5,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "last degree, and amounts to little more than saying that a new path may be formed by the sort of chances that in nervous"
+        },
+        {
+          "n": 6,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "igested. And if anyone tells you that you know nothing, and you are not nettled at it, then you may be sure that you hav"
+        },
+        {
+          "n": 7,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "y, and Reviewer 2 says “I will only be impressed if this works for cat videos as well,” you are under extreme pressure t"
+        },
+        {
+          "n": 8,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "e next temptation comes. Nothing we ever do is, in strict scientific literalness, wiped out. Of course, this has its goo"
+        }
+      ]
+    },
+    {
+      "id": "moral-84-percent-verbatim",
+      "phrasing": "verbatim",
+      "question": "On what percentage of the survey items did the majority of participants report that morality had declined?",
+      "rank": 2,
+      "answer": "**The majority of participants reported moral decline on roughly 84 % of the survey items.**  \n\n- In the full set of items examined by the authors, **84.18 %** showed that most respondents said morality had declined【2】.  \n\n(For comparison, among the non‑U.S. sample the figure was slightly higher—**86.21 %**—but the overall reported rate across all items is 84.18 %.)",
+      "cited": [
+        2
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "participants in 59 nations other than the United States if and how they thought other people’s morality had changed over"
+        },
+        {
+          "n": 2,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": true,
+          "snippet": "Nature | Vol 618 | 22 June 2023 | 783 (further methodological details can be found in the concluding method section as w"
+        },
+        {
+          "n": 3,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "and, as Fig. 1 shows, in every one of those nations, the majority of participants reported that moral decline was at lea"
+        },
+        {
+          "n": 4,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "at- ment of African Americans, 51% reported improved treatment of people with physical disabilities and 50% reported imp"
+        },
+        {
+          "n": 5,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "u feel things in this country are generally going in the right direction or do you feel things have pretty seriously got"
+        },
+        {
+          "n": 6,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "e rate for as long as research- ers have been asking them about it. (These and all tests we report are two-tailed). Two "
+        },
+        {
+          "n": 7,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "e concluding method section and in the Supplementary Information. As Fig. 2 shows, participants in Fig. 1 | Countries su"
+        },
+        {
+          "n": 8,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "survey was conducted explained less than 0.3% of the variance in responses, and in almost all cases it explained less th"
+        }
+      ]
+    },
+    {
+      "id": "moral-84-percent-reworded",
+      "phrasing": "reworded",
+      "question": "Across the whole archive of polls, how often did most respondents say people had become less moral?",
+      "rank": null,
+      "answer": "Across the entire archive of surveys, **the majority of respondents in virtually every nation reported that people had become less moral** – that is, most people said morality had declined (often described as at least a “moderately big problem”)【1】.",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": false,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "and, as Fig. 1 shows, in every one of those nations, the majority of participants reported that moral decline was at lea"
+        },
+        {
+          "n": 2,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "the past 12 months, how often have you carried a stranger’s belongings, like groceries, a suitcase, or shopping bag?” (S"
+        },
+        {
+          "n": 3,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "times may seem, it was written more than 2,000 years ago by the historian Livy, who was bemoaning the declining morality"
+        },
+        {
+          "n": 4,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "ey thought other people’s morality had changed over time (Supplementary Table 1). These items were administered over a 7"
+        },
+        {
+          "n": 5,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "researchers have been asking them about it. Archival data are uniquely able to tell us how people in the past thought an"
+        },
+        {
+          "n": 6,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "at- ment of African Americans, 51% reported improved treatment of people with physical disabilities and 50% reported imp"
+        },
+        {
+          "n": 7,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "in the archival data of study 1 and in the original data collected for studies 2a–c. Is morality declining? People belie"
+        },
+        {
+          "n": 8,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "people’s reports of the morality of their contemporaries have not declined over time, suggesting that the perception of "
+        }
+      ]
+    },
+    {
+      "id": "moral-60-nations-verbatim",
+      "phrasing": "verbatim",
+      "question": "In how many nations do people believe that morality is declining, and for how long have they believed it?",
+      "rank": 2,
+      "answer": "- **Number of nations:** People in **at least 60 nations** around the world believe that morality is declining【2】.  \n- **Duration of the belief:** This belief has been held for **at least 70 years**【2】【3】.",
+      "cited": [
+        2,
+        3
+      ],
+      "out_of_range": [],
+      "markers": 3,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "and, as Fig. 1 shows, in every one of those nations, the majority of participants reported that moral decline was at lea"
+        },
+        {
+          "n": 2,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": true,
+          "snippet": "782 | Nature | Vol 618 | 22 June 2023Article The illusion of moral decline Adam M. Mastroianni1 ✉ & Daniel T. Gilbert2 A"
+        },
+        {
+          "n": 3,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": true,
+          "snippet": "sychological illusion to which people all over the world and throughout history have been susceptible. We provide eviden"
+        },
+        {
+          "n": 4,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "of moral decline is an illusion. Moreover, studies that use the rare objective measure of changes in everyday moral beha"
+        },
+        {
+          "n": 5,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "CI = [0.40, 0.60], t(304) = 9.87, P < 0.001; interpersonal replacement b = 0.18, 95% CI = [0.13, 0.23], t(304) = 6.71, P"
+        },
+        {
+          "n": 6,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "times may seem, it was written more than 2,000 years ago by the historian Livy, who was bemoaning the declining morality"
+        },
+        {
+          "n": 7,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "participants in 59 nations other than the United States if and how they thought other people’s morality had changed over"
+        },
+        {
+          "n": 8,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "in 2020 were not as kind, honest, nice and good as older people were in 2005, M = −0.44, t(282) = −5.82, 95% CI = [−0.59"
+        }
+      ]
+    },
+    {
+      "id": "moral-60-nations-reworded",
+      "phrasing": "reworded",
+      "question": "How widely around the world is this belief held, and how far back does the survey evidence reach?",
+      "rank": 2,
+      "answer": "**Geographic scope**\n\n- The belief that morality is declining is reported in **at least 60 nations** around the world — the surveys cover participants from 59 non‑U.S. nations plus the United States itself 【2】.  \n- In every one of those nations, a **majority of respondents** said that moral decline was at least a “moderately big problem” 【5】.\n\n**Temporal depth**\n\n- Archival survey data show that people have held this view for **at least 70 years**; the earliest surveys in the compiled dataset date back to **1949**, and the series continues through 2019 【7】.  \n- The non‑U.S. items span a **13‑year window from 1996 to 2007**, reinforcing that the perception has been stable across recent decades 【5】.  \n\nThus, the perception of moral decline is a **widely held, cross‑national belief** that has been documented for **seven decades** in the archival record.",
+      "cited": [
+        2,
+        5,
+        7
+      ],
+      "out_of_range": [],
+      "markers": 4,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "and, as Fig. 1 shows, in every one of those nations, the majority of participants reported that moral decline was at lea"
+        },
+        {
+          "n": 2,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": true,
+          "snippet": "782 | Nature | Vol 618 | 22 June 2023Article The illusion of moral decline Adam M. Mastroianni1 ✉ & Daniel T. Gilbert2 A"
+        },
+        {
+          "n": 3,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "it also has social value, insofar as my team is more likely to trust me when I express this belief. So is it a \"merit be"
+        },
+        {
+          "n": 4,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "ArticleMethods Study 1 In study 1, we conducted keyword-term searches of the Roper Center for Public Opinion iPoll Datab"
+        },
+        {
+          "n": 5,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "participants in 59 nations other than the United States if and how they thought other people’s morality had changed over"
+        },
+        {
+          "n": 6,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "hey have a job to do, i.e., to help the company accomplish its goals. But employees don't come for free: they have to ea"
+        },
+        {
+          "n": 7,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "alities since at least 1949, but the full corpus of relevant survey data has never been systematically assembled and ana"
+        },
+        {
+          "n": 8,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "tems). To determine whether people’s reports of the current morality of their contemporaries changed over time, we fit a"
+        }
+      ]
+    },
+    {
+      "id": "moral-improvements-verbatim",
+      "phrasing": "verbatim",
+      "question": "On which specific issues did participants report improvement rather than decline?",
+      "rank": 1,
+      "answer": "**Specific issues on which participants reported moral improvement**\n\n- **Improved treatment of African Americans** – 59 % of participants said this had gotten better【1】  \n- **Improved treatment of people with physical disabilities** – 51 % reported improvement【1】  \n- **Improved treatment of gay people** – 50 % reported improvement【1】",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 3,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": true,
+          "snippet": "e rate for as long as research- ers have been asking them about it. (These and all tests we report are two-tailed). Two "
+        },
+        {
+          "n": 2,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": true,
+          "snippet": "at- ment of African Americans, 51% reported improved treatment of people with physical disabilities and 50% reported imp"
+        },
+        {
+          "n": 3,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "and 2020 had shown moral improvement over that period rather than moral decline, M = 0.23, t(255) = 4.86, 95% CI = [0.14"
+        },
+        {
+          "n": 4,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "Nature | Vol 618 | 22 June 2023 | 783 (further methodological details can be found in the concluding method section as w"
+        },
+        {
+          "n": 5,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "ecline than did younger participants, b = −0.02, 95% CI = [−0.03, −0.004], t(329) = −2.61, P = 0.01. No other effects we"
+        },
+        {
+          "n": 6,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "u feel things in this country are generally going in the right direction or do you feel things have pretty seriously got"
+        },
+        {
+          "n": 7,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "(M = 5.14) than they were 40 years before the participant was born (M = 5.05), b = 0.09, 95% CI = [−0.24, 0.04], t(1506)"
+        },
+        {
+          "n": 8,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "adults in both 2005 and 2020. The difference between these ratings was a measure of participants’ perceptions of persona"
+        }
+      ]
+    },
+    {
+      "id": "moral-improvements-reworded",
+      "phrasing": "reworded",
+      "question": "Were there any areas where people said things had actually got better, and which ones?",
+      "rank": 3,
+      "answer": "**Yes – participants identified several domains where they believed things had actually improved:**  \n\n- **Treatment of people with physical disabilities** – 51 % of respondents said they had seen improvement in how people with physical disabilities are treated. [3]  \n- **Treatment of gay people** – 50 % of respondents reported that the treatment of gay people had gotten better. [3]  \n\nThese were the specific areas highlighted in the survey data as showing positive change.",
+      "cited": [
+        3
+      ],
+      "out_of_range": [],
+      "markers": 2,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "u feel things in this country are generally going in the right direction or do you feel things have pretty seriously got"
+        },
+        {
+          "n": 2,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "n’s laws of physics stuck around; his recipe for the Philosopher’s Stone didn’t. We didn’t need a scientific establishme"
+        },
+        {
+          "n": 3,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": true,
+          "snippet": "at- ment of African Americans, 51% reported improved treatment of people with physical disabilities and 50% reported imp"
+        },
+        {
+          "n": 4,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "y, and Reviewer 2 says “I will only be impressed if this works for cat videos as well,” you are under extreme pressure t"
+        },
+        {
+          "n": 5,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "result of interpersonal replacement (because no human being lives for 200 years and therefore no one who was measured at"
+        },
+        {
+          "n": 6,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "remember a lot better, because there's an organization that helps you. Your background knowledge of what is a career, wh"
+        },
+        {
+          "n": 7,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "hey had just given. The difference between these two ratings was used as a measure of participants’ perception of moral "
+        },
+        {
+          "n": 8,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "experiences during the night that are messing up the memory they got. And they're having this consolidation period durin"
+        }
+      ]
+    },
+    {
+      "id": "crony-merit-vs-crony-verbatim",
+      "phrasing": "verbatim",
+      "question": "What is the difference between merit beliefs and crony beliefs?",
+      "rank": 2,
+      "answer": "**Merit beliefs** are those we hold because they help us *act effectively* in the world.  \n- Their primary reward comes from **accurate predictions and successful actions** (the “meritocratic” system) [4][8].  \n- They tend to be **pragmatic, actionable, and open to criticism**, since we need to know when they are wrong [1][6].\n\n**Crony beliefs** are held because they improve our **social standing or relationships** rather than our ability to navigate reality.  \n- Their reward is **social impression‑making** – gaining allies, protectors, or prestige [2][8].  \n- They are often **abstract, impractical, and defended against criticism**, since their value lies in how they look to others, not in factual accuracy [3][6].\n\nIn short, merit beliefs are valued for **effective action**, while crony beliefs are valued for **social advantage**.",
+      "cited": [
+        4,
+        8,
+        1,
+        6,
+        2,
+        3
+      ],
+      "out_of_range": [],
+      "markers": 8,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "w can we identify which of our beliefs are cronies? What makes this task difficult is that crony beliefs are designed to"
+        },
+        {
+          "n": 2,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": true,
+          "snippet": "old beliefs that bring the belief-holder the greatest number of allies, protectors, or disciples, rather than beliefs th"
+        },
+        {
+          "n": 3,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "beliefs. Here, then, is a short list of features that crony beliefs will tend to have, relative to good-faith merit beli"
+        },
+        {
+          "n": 4,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "crony beliefs necessarily false. What distinguishes the two concepts is how we're rewarded for them: via effective actio"
+        },
+        {
+          "n": 5,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "it also has social value, insofar as my team is more likely to trust me when I express this belief. So is it a \"merit be"
+        },
+        {
+          "n": 6,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "irely different treatment. Since we mostly don't care whether they're making accurate predictions, we have little need t"
+        },
+        {
+          "n": 7,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "rivate merit belief, but makes perfect sense as a crony belief, if expressing it inspires others to have confidence in y"
+        },
+        {
+          "n": 8,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": ", systematic, and (in some cases) exaggerated by runaway social feedback loops. And this, I claim, is because our lives "
+        }
+      ]
+    },
+    {
+      "id": "crony-merit-vs-crony-reworded",
+      "phrasing": "reworded",
+      "question": "How does the essay split the ideas we hold into ones that help us act well and ones that help our standing with other people?",
+      "rank": null,
+      "answer": "The essay divides our beliefs into two categories:\n\n- **Merit beliefs** – ideas that are adopted because they **lead to effective actions** and improve our ability to achieve real‑world goals (e.g., finding food, avoiding danger, successful reproduction)【5】.  \n- **Crony beliefs** – ideas that are adopted because they **enhance our social standing** or the impressions we make on others, regardless of whether they are true【7】【8】.  \n\nThus, merit beliefs are judged by their practical utility, while crony beliefs are judged by the social rewards they generate.",
+      "cited": [
+        5,
+        7,
+        8
+      ],
+      "out_of_range": [],
+      "markers": 3,
+      "cites_answer": false,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "rivate merit belief, but makes perfect sense as a crony belief, if expressing it inspires others to have confidence in y"
+        },
+        {
+          "n": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "But, of course, if they focus on it, they can do a lot better. So this is just saying that we naturally go for gist and "
+        },
+        {
+          "n": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "remember a lot better, because there's an organization that helps you. Your background knowledge of what is a career, wh"
+        },
+        {
+          "n": 4,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "\"In these cases, the feelings which are conditions of the appropriate acts are very faint. But none the less are they ne"
+        },
+        {
+          "n": 5,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "hey have a job to do, i.e., to help the company accomplish its goals. But employees don't come for free: they have to ea"
+        },
+        {
+          "n": 6,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "particularly different but because there's this boundary drawn there between passing and failing there is this dramatic "
+        },
+        {
+          "n": 7,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": ", systematic, and (in some cases) exaggerated by runaway social feedback loops. And this, I claim, is because our lives "
+        },
+        {
+          "n": 8,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "o have means of humbling ourselves epistemically, e.g., by adopting beliefs that privilege others' interests over our ow"
+        }
+      ]
+    },
+    {
+      "id": "crony-nepotsville-verbatim",
+      "phrasing": "verbatim",
+      "question": "What is the unwritten rule of doing business in Nepotsville?",
+      "rank": 3,
+      "answer": "The unwritten rule of doing business in Nepotsville is **that companies are expected to hire the city council’s friends and family members** in order to secure permits, contracts, and avoid retaliation【3】.",
+      "cited": [
+        3
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": ", smeared in the local papers, and shut out of new business. In this environment, Acme faces two kinds of incentives, on"
+        },
+        {
+          "n": 2,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "comes down hard on Acme, or (2) the other execs, who are clued in to the cronyism, have to work even harder to protect t"
+        },
+        {
+          "n": 3,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": true,
+          "snippet": "leading ultimately to survival and reproductive success. That's our \"bottom line,\" and that's what determines whether ou"
+        },
+        {
+          "n": 4,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "nd even works overtime to compensate for them. God knows, maybe he's even promoted. Clearly Robert is a different kind o"
+        },
+        {
+          "n": 5,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "wealth likewise, you may miss the latter in seeking the former; and you will certainly fail of that by which alone happi"
+        },
+        {
+          "n": 6,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "then in a long one. If it be his pleasure that you should enact a poor man, or a cripple, or a ruler, or a private citiz"
+        },
+        {
+          "n": 7,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "e next temptation comes. Nothing we ever do is, in strict scientific literalness, wiped out. Of course, this has its goo"
+        },
+        {
+          "n": 8,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "or's nephew Robert as a business analyst.[3] Robert isn't even remotely qualified for the role, but it's nevertheless in"
+        }
+      ]
+    },
+    {
+      "id": "crony-nepotsville-reworded",
+      "phrasing": "reworded",
+      "question": "In the property developer example, what did firms have to do to get their permits approved?",
+      "rank": 1,
+      "answer": "**Firms had to hire the city council’s friends and family members** in order to have their permits approved and win contracts in Nepotsville — the unwritten rule was that “companies are expected to hire the city council's friends and family members” to secure permits【1】.",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": true,
+          "snippet": "leading ultimately to survival and reproductive success. That's our \"bottom line,\" and that's what determines whether ou"
+        },
+        {
+          "n": 2,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": ", smeared in the local papers, and shut out of new business. In this environment, Acme faces two kinds of incentives, on"
+        },
+        {
+          "n": 3,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "is approach is that it addresses the symptom (irrationality) without addressing the root cause (social incentives). Let'"
+        },
+        {
+          "n": 4,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "researchers have been asking them about it. Archival data are uniquely able to tell us how people in the past thought an"
+        },
+        {
+          "n": 5,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "comes down hard on Acme, or (2) the other execs, who are clued in to the cronyism, have to work even harder to protect t"
+        },
+        {
+          "n": 6,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "33. Goodrich, B., Gabry, J., Ali, I. & Brilleman, S. rstanarm: Bayesian applied regression modeling via Stan. R package "
+        },
+        {
+          "n": 7,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "nt beliefs explicitly in words, e.g., \"Bill Clinton was the 42nd president of the United States.\" Most of our beliefs, h"
+        },
+        {
+          "n": 8,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "hour blocks and in the past it is work to be able to get the stuff up online so that will be advantageous for some folks"
+        }
+      ]
+    },
+    {
+      "id": "peer-strong-link-verbatim",
+      "phrasing": "verbatim",
+      "question": "What does it mean to say that science is a strong-link problem rather than a weak-link problem?",
+      "rank": 1,
+      "answer": "**Science as a “strong‑link” problem** means that the overall progress of science depends on the quality of its *best* work, not on eliminating every bad or false idea. Good ideas may take time to be recognized, but they eventually rise to the top because they are more useful and reliable — the “strong links” in the system drive advancement.  \n\n**Science as a “weak‑link” problem** treats scientific progress as limited by its *worst* work. Under this view, the priority is to prevent false or low‑quality ideas from being published, even if it means discarding some good ideas along the way, because the weakest pieces are seen as the bottleneck to progress — the “weak links” are what hold the system back.  \n\nThus, saying science is a strong‑link problem emphasizes that fostering and protecting high‑quality, innovative research is what ultimately moves science forward, whereas a weak‑link perspective focuses on censoring or filtering out bad work, often at the cost of stifling valuable ideas [1][3].",
+      "cited": [
+        1,
+        3
+      ],
+      "out_of_range": [],
+      "markers": 2,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": true,
+          "snippet": "we had the wrong model of how science works. We treated science like it’s a weak-link problem where progress depends on "
+        },
+        {
+          "n": 2,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "n’s laws of physics stuck around; his recipe for the Philosopher’s Stone didn’t. We didn’t need a scientific establishme"
+        },
+        {
+          "n": 3,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "m comes from a peer-reviewed paper in one of the most prestigious journals in the world, and it stayed there for twelve "
+        },
+        {
+          "n": 4,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "ead, scientists tacitly agree that peer review adds nothing, and they make up their minds about scientific work by looki"
+        },
+        {
+          "n": 5,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "I don't care whether you subscribe to the scientific consensus or whether you think it's all a hoax — or even whether yo"
+        },
+        {
+          "n": 6,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "et off. That’s way scarier.Weak-link thinking makes scientific censorship seem reasonable, but all censorship does is ma"
+        },
+        {
+          "n": 7,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "ucture has yielded, the same inertia becomes a condition of its comparative permanence in the new form, and of the new h"
+        },
+        {
+          "n": 8,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "ence? “But my friends will be unassisted.” What do you mean by “unassisted”? They will not have money from you, nor will"
+        }
+      ]
+    },
+    {
+      "id": "peer-strong-link-reworded",
+      "phrasing": "reworded",
+      "question": "Does progress in research depend on suppressing the worst work or on how good the best work is?",
+      "rank": 1,
+      "answer": "**Progress in research depends on how good the best work is, not on suppressing the worst work.**  \n\nThe author argues that science should be viewed as a *strong‑link* problem: “progress depends on the quality of our best work” and that trying to “bury the bad stuff” (a *weak‑link* view) is misguided【1】.",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": true,
+          "snippet": "we had the wrong model of how science works. We treated science like it’s a weak-link problem where progress depends on "
+        },
+        {
+          "n": 2,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "job depends on producing popular ideas, you can get very good at thought-policing yourself into never entertaining anyth"
+        },
+        {
+          "n": 3,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "ou to stop reading immediately. Recently, a friend asked me when I last read a paper from beginning to end; I couldn’t r"
+        },
+        {
+          "n": 4,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "power of memory. If memory didn't work, we wouldn't remember anything. We wouldn't learn anything. So we know it has to "
+        },
+        {
+          "n": 5,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "is no better than chance, that’s pretty dismal.Second: once a paper gets published, we shred the reviews. A few journals"
+        },
+        {
+          "n": 6,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "m comes from a peer-reviewed paper in one of the most prestigious journals in the world, and it stayed there for twelve "
+        },
+        {
+          "n": 7,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "a lot about peer review, when their papers got reviewed and rejected, they would listen to the feedback, do more experim"
+        },
+        {
+          "n": 8,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "evening rather than during a class time and if we're on schedule the class time that day it will be used for review and "
+        }
+      ]
+    },
+    {
+      "id": "pg-labels-verbatim",
+      "phrasing": "verbatim",
+      "question": "What does Paul Graham say about the number of labels you have for yourself?",
+      "rank": 1,
+      "answer": "**Paul Graham argues that having many labels for yourself makes you “dumber.”** He writes that “the more labels you have for yourself, the dumber they make you”【1】.",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Keep Your Identity Small (Paul Graham)",
+          "answers": true,
+          "snippet": "ading this will already be fairly tolerant. But there is a step beyond thinking of yourself as x but tolerating y: not e"
+        },
+        {
+          "n": 2,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "seven okay now what that laxer size is no that doesn't count towards the great what that will show unsure when in some o"
+        },
+        {
+          "n": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "OK. Here are the answers. As you look at this list, put your hand up if you've got all 10, 9, 8, 7, 6, 5, 4, 3, 2. Thank"
+        },
+        {
+          "n": 4,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "y, and Reviewer 2 says “I will only be impressed if this works for cat videos as well,” you are under extreme pressure t"
+        },
+        {
+          "n": 5,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "that was one digit now two ditches I can't ends gone and you're on to the next one and what we see there is the third ex"
+        },
+        {
+          "n": 6,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "different limits. And they'd say our country is smarter than your country, or our educational system is better than your"
+        },
+        {
+          "n": 7,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "telling you is if you think about the world with a certain set of categories in your head you will know the next number "
+        },
+        {
+          "n": 8,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "Nature | Vol 618 | 22 June 2023 | 785 decline per year did not differ by age (100% of high-density interval (HDI) in the"
+        }
+      ]
+    },
+    {
+      "id": "pg-labels-reworded",
+      "phrasing": "reworded",
+      "question": "What is the closing claim about putting yourself into categories?",
+      "rank": 5,
+      "answer": "The closing claim is that **the more labels or categories you apply to yourself, the less intelligent you become** – “the more labels you have for yourself, the dumber they make you”【5】.",
+      "cited": [
+        5
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "whole world of dividing numbers by subway stops we think in categories we think in categories but as you just saw there "
+        },
+        {
+          "n": 2,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "strategy that we come up with a strategy to make things easier which is that we think in categories we think in categori"
+        },
+        {
+          "n": 3,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "it also has social value, insofar as my team is more likely to trust me when I express this belief. So is it a \"merit be"
+        },
+        {
+          "n": 4,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "that they paint with 11 different colors that doesn't work because that's not a category that we have we don't classify "
+        },
+        {
+          "n": 5,
+          "source": "Keep Your Identity Small (Paul Graham)",
+          "answers": true,
+          "snippet": "ading this will already be fairly tolerant. But there is a step beyond thinking of yourself as x but tolerating y: not e"
+        },
+        {
+          "n": 6,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "reasonable hypothesis and worth putting forward, if for no other purpose than to draw out good counterarguments or count"
+        },
+        {
+          "n": 7,
+          "source": "Keep Your Identity Small (Paul Graham)",
+          "answers": false,
+          "snippet": "'t engage the identities of any of the participants. What makes politics and religion such minefields is that they engag"
+        },
+        {
+          "n": 8,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "pain in the rear because of what we're going to be doing is like every two-and-a-half lectures just when you were gettin"
+        }
+      ]
+    },
+    {
+      "id": "epictetus-control-verbatim",
+      "phrasing": "verbatim",
+      "question": "According to Epictetus, which things are within our power and which are beyond our power?",
+      "rank": 1,
+      "answer": "**Things within our power**  \n- **Opinion, aim, desire, aversion**, and generally **any affairs that are truly our own**【1】  \n\n**Things beyond our power**  \n- **Body, property, reputation, office**, and **any matters that are not properly our own affairs**【1】",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 2,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": true,
+          "snippet": "THE ENCHIRIDION I There are things which are within our power, and there are things which are beyond our power. Within o"
+        },
+        {
+          "n": 2,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "wealth likewise, you may miss the latter in seeking the former; and you will certainly fail of that by which alone happi"
+        },
+        {
+          "n": 3,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "pearances and to pronounce him happy; for if the essence of good consists in things within our own power, there will be "
+        },
+        {
+          "n": 4,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "hat to which you are averse; that he who fails of the object of his desires is disappointed; and he who incurs the objec"
+        },
+        {
+          "n": 5,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "e coming; at least, if you are of philosophic mind. For if it is among the things not within our own power, it can by no"
+        },
+        {
+          "n": 6,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "other way than by withdrawing yourself from things which are not within our own power, and by making good or evil to con"
+        },
+        {
+          "n": 7,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "keep your own will in a state conformable to nature, for another cannot hurt you unless you please. You will then be hur"
+        },
+        {
+          "n": 8,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "ence? “But my friends will be unassisted.” What do you mean by “unassisted”? They will not have money from you, nor will"
+        }
+      ]
+    },
+    {
+      "id": "epictetus-control-reworded",
+      "phrasing": "reworded",
+      "question": "What does the handbook say we get to control, and what does it say we do not?",
+      "rank": 5,
+      "answer": "**What we get to control**\n\n- **Opinion, aim, desire, aversion, and any affairs that are truly our own** are described as “things which are within our power” and are “by nature free, unrestricted, unhindered”【5】.\n\n**What we do not get to control**\n\n- **Body, property, reputation, office, and any affairs that are not properly our own** are listed as “things which are beyond our power,” which are “weak, dependent, restricted, alien”【5】.",
+      "cited": [
+        5
+      ],
+      "out_of_range": [],
+      "markers": 2,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "leading ultimately to survival and reproductive success. That's our \"bottom line,\" and that's what determines whether ou"
+        },
+        {
+          "n": 2,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "hat to which you are averse; that he who fails of the object of his desires is disappointed; and he who incurs the objec"
+        },
+        {
+          "n": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "You get the list, you immediately write them down and recall them verbally. That's zero, immediate. Or I wait 10 seconds"
+        },
+        {
+          "n": 4,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "n’s laws of physics stuck around; his recipe for the Philosopher’s Stone didn’t. We didn’t need a scientific establishme"
+        },
+        {
+          "n": 5,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": true,
+          "snippet": "THE ENCHIRIDION I There are things which are within our power, and there are things which are beyond our power. Within o"
+        },
+        {
+          "n": 6,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "y, and Reviewer 2 says “I will only be impressed if this works for cat videos as well,” you are under extreme pressure t"
+        },
+        {
+          "n": 7,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "t deal on what has passed and what contributes nothing to your own amendment. For it would appear by such discourse that"
+        },
+        {
+          "n": 8,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "Good luck!Peer review doesn’t work and there’s probably no way to fix it. But a little bit of vetting is better than non"
+        }
+      ]
+    },
+    {
+      "id": "epictetus-ship-verbatim",
+      "phrasing": "verbatim",
+      "question": "What does Epictetus say you must do if the captain calls while you are picking up a shellfish on shore?",
+      "rank": 1,
+      "answer": "**Epictetus says that when the captain calls you must immediately abandon the shell‑fish (or any other distraction), rush back to the ship, and not look back at what you have left.**【1】",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": true,
+          "snippet": "ce. So that when you are in harmony with nature in this respect, you will be elated with some reason; for you will be el"
+        },
+        {
+          "n": 2,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "r, than to live in affluence with perturbation; and it is better that your servant should be bad than you unhappy. Begin"
+        },
+        {
+          "n": 3,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "ch the whole consideration relates to the event, and in which no opportunities are afforded by reason or any other art t"
+        },
+        {
+          "n": 4,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "even while she reads or is engaged in lively talk. But if we ask her how this be possible, she will hardly reply that th"
+        },
+        {
+          "n": 5,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "keep your own will in a state conformable to nature, for another cannot hurt you unless you please. You will then be hur"
+        },
+        {
+          "n": 6,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "of every cup, the time of rising and going to bed every day, and the beginning of every bit of work, are subjects of exp"
+        },
+        {
+          "n": 7,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "be borne, but rather by the opposite—that he is your brother, that he was brought up with you; and thus you will lay hol"
+        },
+        {
+          "n": 8,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "t you must behave as at a banquet. Is anything brought round to you? Put out your hand and take a moderate share. Does i"
+        }
+      ]
+    },
+    {
+      "id": "epictetus-ship-reworded",
+      "phrasing": "reworded",
+      "question": "In the voyage comparison, what should you do the moment you are summoned back?",
+      "rank": 1,
+      "answer": "**When the captain summons you, you must immediately run back to the ship, abandon whatever you are doing, and do not look back**【1】.",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": true,
+          "snippet": "ce. So that when you are in harmony with nature in this respect, you will be elated with some reason; for you will be el"
+        },
+        {
+          "n": 2,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "at the outset the guiding sensations must all be strongly felt. The bow will perhaps slip from the fingers, because some"
+        },
+        {
+          "n": 3,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "blance of any promised pleasure, guard yourself against being bewildered by it; but let the affair wait your leisure, an"
+        },
+        {
+          "n": 4,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "timing to do correctly. But the way they approached this sensory memory, the flash of memory, just capturing for a momen"
+        },
+        {
+          "n": 5,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "e coming; at least, if you are of philosophic mind. For if it is among the things not within our own power, it can by no"
+        },
+        {
+          "n": 6,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "It's not been used. It's not available. That's passive forgetting. The other way to think about why we forget is not tha"
+        },
+        {
+          "n": 7,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "ed hour, in heat and cold; you must drink no cold water, and sometimes no wine—in a word, you must give yourself up to y"
+        },
+        {
+          "n": 8,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "ining inert, it is easy to see how their inertness might oppose a friction which it would take many waves of rearrangeme"
+        }
+      ]
+    },
+    {
+      "id": "sapolsky-four-circumstances-verbatim",
+      "phrasing": "verbatim",
+      "question": "What do having your period, a brain tumour, eating a lot of junk food and taking anabolic steroids have in common?",
+      "rank": 1,
+      "answer": "The four situations **share a hormonal basis** – each involves changes in hormone levels or hormone‑related activity【1†L0-L2】【2†L0-L2】.",
+      "cited": [
+        1,
+        2
+      ],
+      "out_of_range": [],
+      "markers": 2,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": true,
+          "snippet": "of you were not oriented to it that's the ones that build up your muscle like testosterone derivatives okay these all ha"
+        },
+        {
+          "n": 2,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "yay okay well everybody's gonna get an A+ then you already have the course under control okay so we start off trying to "
+        },
+        {
+          "n": 3,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "that led to a remarkably short jail sentence was the famed Twinkie defense the argument that his addiction to junk food "
+        },
+        {
+          "n": 4,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "fear and you get a brain tumor there and in a number of cases you get someone who is uncontrollably violent and this has"
+        },
+        {
+          "n": 5,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "eat of catarrh, are with each fresh recurrence more prone to a relapse, until often the morbid state chronically substit"
+        },
+        {
+          "n": 6,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "in the first case a number of cases where the fact that a woman was having her period at the time of killing someone was"
+        },
+        {
+          "n": 7,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "believe what's true. In short: Just as money can pervert scientific research, so everyday social incentives have the pot"
+        },
+        {
+          "n": 8,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "experiences during the night that are messing up the memory they got. And they're having this consolidation period durin"
+        }
+      ]
+    },
+    {
+      "id": "sapolsky-four-circumstances-reworded",
+      "phrasing": "reworded",
+      "question": "Why does the lecturer open by grouping four unrelated bodily conditions together?",
+      "rank": 5,
+      "answer": "The lecturer begins by **grouping four seemingly unrelated bodily conditions**—having a period, having a brain tumor, eating a lot of junk food, and taking anabolic steroids—**in order to search for a common factor that links them together**【2】. This sets up the lesson’s focus on identifying underlying similarities across diverse events.",
+      "cited": [
+        2
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": false,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "pain in the rear because of what we're going to be doing is like every two-and-a-half lectures just when you were gettin"
+        },
+        {
+          "n": 2,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "yay okay well everybody's gonna get an A+ then you already have the course under control okay so we start off trying to "
+        },
+        {
+          "n": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "Yeah, question? AUDIENCE: So if you're forced to think about-- get confused by the uppercase and the lowercase and the l"
+        },
+        {
+          "n": 4,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "le who varied widely in terms of age and that was large enough to provide sufficient power to detect the effects we had "
+        },
+        {
+          "n": 5,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": true,
+          "snippet": "on somebody want to guess see these brief movements of hands there's people change their mind okay it all has to do with"
+        },
+        {
+          "n": 6,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "s, and we used the same age quotas as in Study 2c. One thousand eighty-two people responded to an advertisement for a st"
+        },
+        {
+          "n": 7,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "repeat. AUDIENCE: 4, 2, 6, 9, 8, 5, 1. PROFESSOR: Very good. Ready? 8, 1, 6, 3, 7, 2, 4, 9. Repeat. AUDIENCE: 8, 1, 6, 7"
+        },
+        {
+          "n": 8,
+          "source": "Optimistic Nihilism (Kurzgesagt)",
+          "answers": false,
+          "snippet": "in a quiet region of one arm of an average galaxy, which is part of a galaxy group that we will never leave. And this gr"
+        }
+      ]
+    },
+    {
+      "id": "sapolsky-twinkie-verbatim",
+      "phrasing": "verbatim",
+      "question": "What was the Twinkie defence used by Dan White?",
+      "rank": 1,
+      "answer": "**The “Twinkie defence” was the argument that Dan White’s addiction to junk food (especially sugary snacks like Twinkies) caused extreme swings in his blood‑sugar levels, which in turn made him lose self‑control and commit the murders.** This claim was presented in court as a mitigating factor to explain his violent behavior and helped secure a notably short jail sentence【4】.",
+      "cited": [
+        4
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": true,
+          "snippet": "fear and you get a brain tumor there and in a number of cases you get someone who is uncontrollably violent and this has"
+        },
+        {
+          "n": 2,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "et off. That’s way scarier.Weak-link thinking makes scientific censorship seem reasonable, but all censorship does is ma"
+        },
+        {
+          "n": 3,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "as always entered as a predictor and the outcome was always the average perception of current morality. We used R2 value"
+        },
+        {
+          "n": 4,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": true,
+          "snippet": "that led to a remarkably short jail sentence was the famed Twinkie defense the argument that his addiction to junk food "
+        },
+        {
+          "n": 5,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "ed. Exclusions. One hundred and eighty-one participants failed the atten- tion check embedded in the demographics and we"
+        },
+        {
+          "n": 6,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "ed hour, in heat and cold; you must drink no cold water, and sometimes no wine—in a word, you must give yourself up to y"
+        },
+        {
+          "n": 7,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "s no defense. But he goes about with the caution of a convalescent, careful of interference with anything that is doing "
+        },
+        {
+          "n": 8,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "s, and we used the same age quotas as in Study 2c. One thousand eighty-two people responded to an advertisement for a st"
+        }
+      ]
+    },
+    {
+      "id": "sapolsky-twinkie-reworded",
+      "phrasing": "reworded",
+      "question": "Which killing in San Francisco involved a lawyer blaming the defendant for what he had been eating?",
+      "rank": 1,
+      "answer": "**The killing was the 1978 assassination of San Francisco Mayor George Moscone and Supervisor Harvey Milk by Dan White.**  \n\nWhite’s defense team argued that his “junk‑food addiction” – the infamous **Twinkie defense** – caused wild blood‑sugar fluctuations that made him violent, effectively blaming what he had been eating for the murders【6†L0-L4】【1†L0-L4】.",
+      "cited": [
+        6,
+        1
+      ],
+      "out_of_range": [],
+      "markers": 2,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": true,
+          "snippet": "fear and you get a brain tumor there and in a number of cases you get someone who is uncontrollably violent and this has"
+        },
+        {
+          "n": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "So the father went to jail. The lawyers who were defending the father wanted to tell the jurors the following thing, whi"
+        },
+        {
+          "n": 3,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "in the first case a number of cases where the fact that a woman was having her period at the time of killing someone was"
+        },
+        {
+          "n": 4,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "called behaviorism behaviorism that sort of reached this Apogee with this guy BF Skinner in the 1950s this notion that i"
+        },
+        {
+          "n": 5,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "Sadly, this is the man who attacked and raped me. He's released from jail. By then, he's lost his money, his job, his fi"
+        },
+        {
+          "n": 6,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": true,
+          "snippet": "that led to a remarkably short jail sentence was the famed Twinkie defense the argument that his addiction to junk food "
+        },
+        {
+          "n": 7,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "rivate merit belief, but makes perfect sense as a crony belief, if expressing it inspires others to have confidence in y"
+        },
+        {
+          "n": 8,
+          "source": "Optimistic Nihilism (Kurzgesagt)",
+          "answers": false,
+          "snippet": "Human existence is scary and confusing. A few hundred thousand years ago, we became conscious and found ourselves in a s"
+        }
+      ]
+    },
+    {
+      "id": "sapolsky-two-points-verbatim",
+      "phrasing": "verbatim",
+      "question": "What are the two key points of the entire course?",
+      "rank": 1,
+      "answer": "**The two key points of the entire course are**\n\n1. **The state of your body can dramatically influence what happens in your brain.**  \n   *The instructor explains that physiological processes (e.g., heart rate, blood flow) can have a strong impact on brain activity.*【1】\n\n2. **What is happening in your head can affect every part of your body.**  \n   *The course emphasizes the reciprocal relationship: mental states, emotions, thoughts, and memories can influence bodily functions throughout the organism.*【2】",
+      "cited": [
+        1,
+        2
+      ],
+      "out_of_range": [],
+      "markers": 2,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": true,
+          "snippet": "the two points of this entire course which is sometimes the stuff that's going on in your body can dramatically influenc"
+        },
+        {
+          "n": 2,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": true,
+          "snippet": "feet and your toes getting cold and at that point you will probably be increasing the rate at which that heart beats and"
+        },
+        {
+          "n": 3,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "five-minute break in the middle so you could stand up and just get to the front of the line for the Froome and then we w"
+        },
+        {
+          "n": 4,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "biology have to do with it okay general structure of the course the first half of the course is going to be an overview "
+        },
+        {
+          "n": 5,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "language use in each of these cases what's going on a second before what's going on ten million years before where do al"
+        },
+        {
+          "n": 6,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "obin Hanson, Are Beliefs Like Clothes? Probably the original statement of the dual function of beliefs. Sarah Perry, The"
+        },
+        {
+          "n": 7,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "going to be a huge amount of information online the coursework is going to be set up for the class there will be copies "
+        },
+        {
+          "n": 8,
+          "source": "The Enchiridion (Epictetus, tr. Higginson)",
+          "answers": false,
+          "snippet": "_Why it is that we ought not to lie_; the third, that which gives strength and logical connection to the other two, as, "
+        }
+      ]
+    },
+    {
+      "id": "sapolsky-two-points-reworded",
+      "phrasing": "reworded",
+      "question": "Which two directions of influence between body and mind does the lecture say the class is about?",
+      "rank": 1,
+      "answer": "**The lecture says the class will examine the two-way relationship between body and mind:**\n\n1. **How bodily states affect the brain and mental processes** – the course emphasizes that “what’s going on in your body can dramatically influence what goes on in your brain”【1】.  \n2. **How mental states, emotions, and behavior feed back onto the body** – it also stresses the “looping” where “what goes on there influences your body”【2】.",
+      "cited": [
+        1,
+        2
+      ],
+      "out_of_range": [],
+      "markers": 2,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": true,
+          "snippet": "the two points of this entire course which is sometimes the stuff that's going on in your body can dramatically influenc"
+        },
+        {
+          "n": 2,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "behavior is explained by a gene a neurotransmitter a childhood trauma a a living inside one bucket what we're going to b"
+        },
+        {
+          "n": 3,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "ogy of visible massive ones enables us to frame easily an abstract and general scheme of processes which the physical ch"
+        },
+        {
+          "n": 4,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "action as to indicate their intimate relation to a 'mechanism of thought and feeling,' acting under the like conditions "
+        },
+        {
+          "n": 5,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "caught us so we stopped doing that so first first she did that and then weapons of mass destruction so it's a five minut"
+        },
+        {
+          "n": 6,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "what we're going to be doing instead throughout in terms of the structure of the class when we get to actual behaviors f"
+        },
+        {
+          "n": 7,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "udy. If practice did not make perfect, nor habit economize the expense of nervous and muscular energy, he would therefor"
+        },
+        {
+          "n": 8,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "whole course. In an habitual action, mere sensation is a sufficient guide, and the upper [p.116] regions of brain and mi"
+        }
+      ]
+    },
+    {
+      "id": "kurzgesagt-weeks-verbatim",
+      "phrasing": "verbatim",
+      "question": "How many weeks do you have at your disposal if you are lucky enough to live to one hundred?",
+      "rank": 1,
+      "answer": "If you live to **one hundred years old**, you have **about 5,200 weeks** at your disposal【1】.",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Optimistic Nihilism (Kurzgesagt)",
+          "answers": true,
+          "snippet": "The universe is too big. There is too much of it. But size is not the most troubling concept we have to deal with. It's "
+        },
+        {
+          "n": 2,
+          "source": "Optimistic Nihilism (Kurzgesagt)",
+          "answers": false,
+          "snippet": "people to help, happy feelings to be experienced, and video games to finish. There is so much to do. So, wrapping up, yo"
+        },
+        {
+          "n": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "lives and why we forget so many other things that we experience. And a version of the way people sometimes think about i"
+        },
+        {
+          "n": 4,
+          "source": "Optimistic Nihilism (Kurzgesagt)",
+          "answers": false,
+          "snippet": "And then what? Your biological processes will break down, and the dynamic pattern that is you will stop beinge dynamic. "
+        },
+        {
+          "n": 5,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "nged that trend. New ideas are failing to displace older ones. Many peer-reviewed findings don’t replicate, and most of "
+        },
+        {
+          "n": 6,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "And the guy repeated every word perfectly. This guy truly had photographic memory. And kind of interestingly, when they "
+        },
+        {
+          "n": 7,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "le who varied widely in terms of age and that was large enough to provide sufficient power to detect the effects we had "
+        },
+        {
+          "n": 8,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "like this, you're pretty much back to short-term memory limits in many senses, not completely, but in many ways. So if y"
+        }
+      ]
+    },
+    {
+      "id": "kurzgesagt-weeks-reworded",
+      "phrasing": "reworded",
+      "question": "If a person reaches a century of age, how much time is that when counted out in seven-day stretches?",
+      "rank": 3,
+      "answer": "A person who lives to **100 years old** experiences roughly **5,200 weeks** of life – that is, about five‑thousand‑two‑hundred seven‑day periods【3】.",
+      "cited": [
+        3
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "t T2 but who were not yet born (or who were not yet adults and therefore not sampled) at T1 (a phenomenon we refer to as"
+        },
+        {
+          "n": 2,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "ind, honest, nice and good” people were when they (the participants) were about 20 years old, and at about the time they"
+        },
+        {
+          "n": 3,
+          "source": "Optimistic Nihilism (Kurzgesagt)",
+          "answers": true,
+          "snippet": "The universe is too big. There is too much of it. But size is not the most troubling concept we have to deal with. It's "
+        },
+        {
+          "n": 4,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "do it: We’re done, everybody! Champagne all around! Great work, and congratulations. We tried peer review and it didn’t "
+        },
+        {
+          "n": 5,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "And the guy repeated every word perfectly. This guy truly had photographic memory. And kind of interestingly, when they "
+        },
+        {
+          "n": 6,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "in the first case a number of cases where the fact that a woman was having her period at the time of killing someone was"
+        },
+        {
+          "n": 7,
+          "source": "Optimistic Nihilism (Kurzgesagt)",
+          "answers": false,
+          "snippet": "And then what? Your biological processes will break down, and the dynamic pattern that is you will stop beinge dynamic. "
+        },
+        {
+          "n": 8,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "s ago” and “ten years ago”, in that order. All questions were answered using a seven-point Likert scale with endpoints l"
+        }
+      ]
+    },
+    {
+      "id": "gabrieli-chess-verbatim",
+      "phrasing": "verbatim",
+      "question": "Why do chess masters do worse than beginners when the pieces are placed randomly?",
+      "rank": 2,
+      "answer": "**Chess masters perform worse than beginners on random board displays because they rely heavily on their stored chess patterns and background knowledge.**  \n\n- When the pieces are arranged in familiar, realistic configurations, masters can quickly match the layout to the many patterns they have memorized, which boosts their memory performance.  \n- In a random configuration, those familiar patterns are absent. Masters try to fit the pieces into the “ought‑to‑be” positions dictated by their mental model, which leads them to misplace pieces and make more errors. Beginners, who lack strong pattern knowledge, treat the board as just a collection of pieces and therefore do not suffer the same interference, showing relatively better performance on random setups【3†L0-L4】【4†L0-L4】.",
+      "cited": [
+        3,
+        4
+      ],
+      "out_of_range": [],
+      "markers": 2,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "of chess and people who have played very little chess. It's better to be high, the number of correct pieces. And there's"
+        },
+        {
+          "n": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": true,
+          "snippet": "array means. Somebody's in trouble, somebody's winning, something interesting is happening in this corner. That knowledg"
+        },
+        {
+          "n": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": true,
+          "snippet": "normal chess configuration. Here are the players who are beginners. And look at the worst performances, the chess master"
+        },
+        {
+          "n": 4,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "were randomly located. If you're a chess player, you don't like that random board. It doesn't feel right. But they're tr"
+        },
+        {
+          "n": 5,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "They're going to look at it. The pieces will be swept to the side. And then they have to put all the pieces back out of "
+        },
+        {
+          "n": 6,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "It's because background prior knowledge, things you know before you have to learn something, has a very powerful effect."
+        },
+        {
+          "n": 7,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "So we said, typically, background knowledge helps. But here's the way it can get weirdly not helpful. So here's the perf"
+        },
+        {
+          "n": 8,
+          "source": "Habit (William James, The Principles of Psychology, 1890)",
+          "answers": false,
+          "snippet": "organism specially fitted to profit by it) enables an accomplished pianist to play a difficult piece of music at sight; "
+        }
+      ]
+    },
+    {
+      "id": "gabrieli-chess-reworded",
+      "phrasing": "reworded",
+      "question": "When does an expert knowledge of a board game start hurting recall instead of helping it?",
+      "rank": 1,
+      "answer": "**An expert’s knowledge begins to impair recall when the board layout is random or does not match the patterns the expert expects.**  \n\n- Chess masters have a rich library of familiar configurations that normally aids memory, but when they are shown a **randomly‑arranged board**, their mental model of how the pieces “should” be placed interferes with what they actually saw, leading to mis‑placement errors in recall【1†L0-L4】【5†L0-L4】.  \n\nThus, the advantage of background knowledge turns into a disadvantage whenever the information presented (e.g., a board position) is **unstructured or atypical**, causing the expert’s expectations to overwrite the true perception.",
+      "cited": [
+        1,
+        5
+      ],
+      "out_of_range": [],
+      "markers": 2,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": true,
+          "snippet": "normal chess configuration. Here are the players who are beginners. And look at the worst performances, the chess master"
+        },
+        {
+          "n": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "So we said, typically, background knowledge helps. But here's the way it can get weirdly not helpful. So here's the perf"
+        },
+        {
+          "n": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "It's because background prior knowledge, things you know before you have to learn something, has a very powerful effect."
+        },
+        {
+          "n": 4,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "You get the list, you immediately write them down and recall them verbally. That's zero, immediate. Or I wait 10 seconds"
+        },
+        {
+          "n": 5,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "were randomly located. If you're a chess player, you don't like that random board. It doesn't feel right. But they're tr"
+        },
+        {
+          "n": 6,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "en an eagerness to be criticized and corrected. As Karl Popper and (more recently) David Deutsch have argued, knowledge "
+        },
+        {
+          "n": 7,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "remember a lot better, because there's an organization that helps you. Your background knowledge of what is a career, wh"
+        },
+        {
+          "n": 8,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "It's not been used. It's not available. That's passive forgetting. The other way to think about why we forget is not tha"
+        }
+      ]
+    },
+    {
+      "id": "gabrieli-encoding-verbatim",
+      "phrasing": "verbatim",
+      "question": "What is shallow encoding, and what kind of memory does it lead to?",
+      "rank": 1,
+      "answer": "**Shallow encoding** is the process of focusing on the superficial features of information—such as the visual appearance of a word (e.g., its uppercase or lowercase letters) rather than its meaning【1】.  \n\nBecause it involves only surface‑level processing, shallow encoding **produces relatively poor memory performance**, yielding low recall compared with deeper, meaning‑based encoding【1】.",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 2,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": true,
+          "snippet": "Ready? You did awesome. Thanks. Here we go. OK. Does it feel like you would remember the words better? Does it feel like"
+        },
+        {
+          "n": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": true,
+          "snippet": "optimizes memory. People would call it deep encoding. And it leads to better memory. And in a well-controlled experiment"
+        },
+        {
+          "n": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "Background knowledge lets you escape the bounds of limited short-term memory but at a cost of sometimes substituting in "
+        },
+        {
+          "n": 4,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "788 | Nature | Vol 618 | 22 June 2023Article were almost certainly mistaken. One reason they may have held these mistake"
+        },
+        {
+          "n": 5,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "of subsequent experiences, thoughts, and feelings. So we'll bring the same perspective a little bit. Bottom-up memory mi"
+        },
+        {
+          "n": 6,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "development as a person. Once he realized he had such a rare memory, he became a professional memory performer. And then"
+        },
+        {
+          "n": 7,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "And which of these things, the bottom-up original experience, or the top-down interpretation grows over time to constitu"
+        },
+        {
+          "n": 8,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "Then they give you a new list. And look what happens. If it's fruits, still fruits, you're still stuck. But if it's anot"
+        }
+      ]
+    },
+    {
+      "id": "gabrieli-encoding-reworded",
+      "phrasing": "reworded",
+      "question": "Why does judging how a word looks leave you remembering it worse than judging what it means?",
+      "rank": 2,
+      "answer": "Judging a word only by its **appearance** (e.g., its upper‑ and lower‑case form) engages what researchers call **shallow encoding**. This type of processing focuses on surface features and typically produces **poor memory performance**. In contrast, judging a word by its **meaning** involves **deep encoding**, which links the item to semantic information and therefore **enhances recall**. Experiments show that participants who thought about the meaning of a word remembered it far better than those who only considered how the word looked — even when the latter were given the same amount of exposure 【2】. This difference is explained by the depth‑of‑processing theory: deeper, semantic processing creates stronger, more durable memory traces than shallow, perceptual processing 【3】.",
+      "cited": [
+        2,
+        3
+      ],
+      "out_of_range": [],
+      "markers": 2,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "they were right in front of you, and even though you were looking whether they were upper and lowercase case so you real"
+        },
+        {
+          "n": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": true,
+          "snippet": "Ready? You did awesome. Thanks. Here we go. OK. Does it feel like you would remember the words better? Does it feel like"
+        },
+        {
+          "n": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": true,
+          "snippet": "optimizes memory. People would call it deep encoding. And it leads to better memory. And in a well-controlled experiment"
+        },
+        {
+          "n": 4,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "And they had them learn word lists, like you were looking at word lists, on the land or underwater. And then they were t"
+        },
+        {
+          "n": 5,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "What's the point? If they weren't unwarned, they read the sentence. Then you're tested. It's much better for meaning tha"
+        },
+        {
+          "n": 6,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "You get the list, you immediately write them down and recall them verbally. That's zero, immediate. Or I wait 10 seconds"
+        },
+        {
+          "n": 7,
+          "source": "The rise and fall of peer review (Adam Mastroianni)",
+          "answers": false,
+          "snippet": "It’s easy to imagine how things could be better—my friend Ethan and I wrote a whole paper on it—but that doesn’t mean it"
+        },
+        {
+          "n": 8,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "But even undergraduates, typically, about half the time they'll falsely recall they heard the word window. Again, the id"
+        }
+      ]
+    },
+    {
+      "id": "gabrieli-loftus-verbatim",
+      "phrasing": "verbatim",
+      "question": "What did Elizabeth Loftus's slides of a car at an intersection show about eyewitness testimony?",
+      "rank": 1,
+      "answer": "**Elizabeth Loftus used a set of slides that depicted a sports car approaching an intersection, turning, and striking a pedestrian.** The slides varied only in the traffic sign shown—either a **yield sign** or a **stop sign**—so that participants could later be asked which sign they had seen and whether they remembered details such as another car passing the stopped vehicle【1†L0-L4】. This experimental setup was designed to probe how accurately people recall emotionally intense events and how their memories can be altered or confused by later information【1†L0-L4】.",
+      "cited": [
+        1
+      ],
+      "out_of_range": [],
+      "markers": 2,
+      "cites_answer": true,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": true,
+          "snippet": "So how accurate is eyewitness testimony? Of course it has to be somewhat accurate. We're not living in a crazy world whe"
+        },
+        {
+          "n": 2,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "And they'll be saying, where were you? What were you doing? What were you feeling? Because we need that to be able to ve"
+        },
+        {
+          "n": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": true,
+          "snippet": "before the car turns that you would clearly see. And let's pretend you were in a condition where you saw the yield sign."
+        },
+        {
+          "n": 4,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "what's she mixing up? Her memory for the photo array versus for memory for the original event. Those two have gotten ble"
+        },
+        {
+          "n": 5,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "showing Bugs Bunny shaking hands. Because they had been there. They don't remember stuff. OK. Bugs Bunny, sure. How pote"
+        },
+        {
+          "n": 6,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "eyewitness memory problems. It turns out he was on television at the moment that she was being raped. And, obviously, sh"
+        },
+        {
+          "n": 7,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "scarce resources to reversing an imaginary trend. The belief that every- day morality is on the wane may also affect peo"
+        },
+        {
+          "n": 8,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "I need somebody else, one more volunteer. Thank you. I'm going to show you a sentence. This is meant to be hard, the fir"
+        }
+      ]
+    },
+    {
+      "id": "gabrieli-loftus-reworded",
+      "phrasing": "reworded",
+      "question": "How did slipping one different word into a later question change what people said they had seen?",
+      "rank": null,
+      "answer": "**Answer**\n\nChanging a single word in a later question can alter participants’ reports of what they think they saw.  \nWhen the question uses a familiar label or category, people are able to retrieve and describe the stimulus more accurately. By contrast, when the wording omits a clear label (or replaces it with a less specific term), participants have no ready‑made category to rely on and therefore give fewer or less precise responses about the items they remember【5】.",
+      "cited": [
+        5
+      ],
+      "out_of_range": [],
+      "markers": 1,
+      "cites_answer": false,
+      "says_not_found": false,
+      "passages": [
+        {
+          "n": 1,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "786 | Nature | Vol 618 | 22 June 2023Article people adapt to changes in traffic or morality, then people in different de"
+        },
+        {
+          "n": 2,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "ast 12 months, have you let a stranger go ahead of you in line?” Answers to specific and unambiguous questions such as t"
+        },
+        {
+          "n": 3,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "Yeah, question? AUDIENCE: So if you're forced to think about-- get confused by the uppercase and the lowercase and the l"
+        },
+        {
+          "n": 4,
+          "source": "Memory I (John Gabrieli, MIT 9.00SC Introduction to Psychology)",
+          "answers": false,
+          "snippet": "And then just as it disappeared did we get a tone, a high, medium, or low tone. And that would tell them which row to re"
+        },
+        {
+          "n": 5,
+          "source": "Introduction to Human Behavioral Biology (Robert Sapolsky, Stanford)",
+          "answers": false,
+          "snippet": "have four objects and as drawn here simply because we have categories to describe the first three do one of those tests "
+        },
+        {
+          "n": 6,
+          "source": "Crony Beliefs (Kevin Simler)",
+          "answers": false,
+          "snippet": "believe what's true. In short: Just as money can pervert scientific research, so everyday social incentives have the pot"
+        },
+        {
+          "n": 7,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "s ago” and “ten years ago”, in that order. All questions were answered using a seven-point Likert scale with endpoints l"
+        },
+        {
+          "n": 8,
+          "source": "The illusion of moral decline (Mastroianni and Gilbert, Nature 2023)",
+          "answers": false,
+          "snippet": "e, and good” people are today, were 10 years ago and were 20 years ago, using seven-point Likert scales with endpoints l"
+        }
+      ]
+    }
+  ]
+}

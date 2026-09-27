@@ -241,3 +241,46 @@ $$;
 
 revoke execute on function expired_anonymous_users(interval) from public, anon, authenticated;
 grant execute on function expired_anonymous_users(interval) to service_role;
+
+-- Space taken by sources (migration 0008), so a new source can be refused before
+-- the free plan's Storage or database runs out.
+create or replace function space_used(for_owner uuid default null)
+returns table (file_bytes bigint, chunk_count bigint)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select
+    (select coalesce(sum((o.metadata->>'size')::bigint), 0)
+       from storage.objects o
+      where o.bucket_id = 'sources'
+        and (for_owner is null or split_part(o.name, '/', 1) in (
+          select n.id::text from public.notebooks n where n.owner_id = for_owner))),
+    (select count(*)
+       from public.chunks c
+      where for_owner is null or c.notebook_id in (
+        select n.id from public.notebooks n where n.owner_id = for_owner));
+$$;
+
+revoke execute on function space_used(uuid) from public, anon, authenticated;
+grant execute on function space_used(uuid) to service_role;
+
+-- Files uploaded straight from the browser that never became a source, such
+-- as an upload abandoned halfway. The daily cron removes them.
+create or replace function unregistered_uploads(max_age interval)
+returns setof text
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select o.name
+    from storage.objects o
+   where o.bucket_id = 'sources'
+     and o.created_at < now() - max_age
+     and not exists (select 1 from public.sources s where s.raw_ref = o.name);
+$$;
+
+revoke execute on function unregistered_uploads(interval) from public, anon, authenticated;
+grant execute on function unregistered_uploads(interval) to service_role;

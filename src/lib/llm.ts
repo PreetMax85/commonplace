@@ -1,5 +1,5 @@
 import Groq from "groq-sdk";
-import { pipeline, env } from "@xenova/transformers";
+import { pipeline, env, type FeatureExtractionPipeline } from "@huggingface/transformers";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -23,21 +23,16 @@ export const EMBED_MODEL = "Xenova/bge-small-en-v1.5";
 // eval so it measures exactly what a reader gets.
 export const ANSWER_PASSAGES = 8;
 
-// pipeline() returns a union across every task it supports, so the
-// feature-extraction shape is named here to keep the call sites typed.
-type FeatureExtractor = (
-  text: string,
-  options: { pooling: "mean"; normalize: boolean }
-) => Promise<{ data: Float32Array }>;
-
 class EmbeddingPipeline {
   // The in-flight promise is cached, not the resolved pipeline, so two uploads
   // arriving together share one model download instead of racing to start two.
-  static instance: Promise<FeatureExtractor> | null = null;
+  static instance: Promise<FeatureExtractionPipeline> | null = null;
 
-  static getInstance(): Promise<FeatureExtractor> {
+  static getInstance(): Promise<FeatureExtractionPipeline> {
     if (this.instance === null) {
-      this.instance = (pipeline("feature-extraction", EMBED_MODEL) as Promise<FeatureExtractor>).catch(
+      // q8 is the 8-bit model file every stored chunk was embedded with. Without
+      // it the library loads the full precision file, whose vectors differ.
+      this.instance = pipeline("feature-extraction", EMBED_MODEL, { dtype: "q8" }).catch(
         (err) => {
           // Caching the promise also caches a rejection. A single failed model
           // download would then break embedding for the life of the instance,

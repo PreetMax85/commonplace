@@ -39,7 +39,7 @@ The roadmap orders the ideas in a notebook's videos for learning, and each step 
 - **Supabase Storage**: original PDF/VTT files for the source viewer
 - **Supabase Auth (anonymous sign-ins)**: each visitor gets a private account without a sign-up form
 - **Groq**: `openai/gpt-oss-120b` for grounded streamed answers and the roadmap, `openai/gpt-oss-20b` for question rewriting
-- **Transformers.js** (`@xenova/transformers`): `bge-small-en-v1.5` embeddings computed in-process, no embedding API
+- **Transformers.js** (`@huggingface/transformers`): `bge-small-en-v1.5` embeddings computed in-process, no embedding API
 
 ## Architecture
 

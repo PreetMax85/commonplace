@@ -11,18 +11,28 @@ const nextConfig: NextConfig = {
 
   // Transformers.js loads onnxruntime-node, which is a native addon the bundler
   // cannot process, so it is required at runtime instead.
-  serverExternalPackages: ["@xenova/transformers"],
+  serverExternalPackages: ["@huggingface/transformers"],
 
   // That alone is not enough to deploy. Build tracing follows require() calls,
   // and onnxruntime_binding.node pulls in libonnxruntime.so through dlopen at
   // load time, which tracing cannot see. Without the shared library beside it
   // the addon fails to open and every route that embeds text returns a 500 on
-  // its first request. Ship the whole native directory.
-  // Scoped to the platform the deploy actually runs on. The package ships seven
-  // platform builds and tracing all of them adds about 100 MB of binaries that
-  // can never load there.
+  // its first request, so the shared library is listed by hand.
+  // Only the two native files the CPU build needs are listed. The package ships
+  // builds for other platforms, and on Linux it can also fetch GPU libraries of
+  // about 270 MB, none of which can load on the deploy.
+  // Transformers.js loads onnxruntime-node through createRequire, which tracing
+  // does not follow either, so its JavaScript and the CommonJS build of
+  // onnxruntime-common it requires are listed too.
   outputFileTracingIncludes: {
-    "/api/**/*": ["./node_modules/onnxruntime-node/bin/napi-v3/linux/x64/**"],
+    "/api/**/*": [
+      "./node_modules/onnxruntime-node/package.json",
+      "./node_modules/onnxruntime-node/dist/**",
+      "./node_modules/onnxruntime-common/package.json",
+      "./node_modules/onnxruntime-common/dist/cjs/**",
+      "./node_modules/onnxruntime-node/bin/napi-v6/linux/x64/onnxruntime_binding.node",
+      "./node_modules/onnxruntime-node/bin/napi-v6/linux/x64/libonnxruntime.so.1",
+    ],
   },
 };
 

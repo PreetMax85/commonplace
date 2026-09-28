@@ -27,6 +27,17 @@ function tooLarge(mb: number) {
   return NextResponse.json({ error: `Sources can be up to ${mb} MB.` }, { status: 413 });
 }
 
+// Only the shape of the link. Whether it reaches a public address is checked
+// when the page is fetched, on every redirect.
+function isWebLink(url: string | undefined): boolean {
+  try {
+    const { protocol } = new URL(url ?? "");
+    return protocol === "http:" || protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 async function failStalledSources(notebookId: string) {
   const cutoff = new Date(Date.now() - STALE_INDEXING_MS).toISOString();
   const { error } = await supabaseAdmin
@@ -142,6 +153,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     } catch {
       return NextResponse.json({ error: "That does not look like a YouTube video link." }, { status: 400 });
     }
+  }
+  if (type === "url" && !isWebLink(url)) {
+    return NextResponse.json({ error: "Enter a full web link starting with http:// or https://." }, { status: 400 });
   }
 
   // An uploaded file is already stored, so it is part of what this counts.

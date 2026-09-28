@@ -1,3 +1,5 @@
+import { lookup } from "node:dns/promises";
+import { BlockList } from "node:net";
 import { JSDOM } from "jsdom";
 import { Readability } from "@mozilla/readability";
 import { chunkText, RawChunk } from "../chunking";
@@ -10,6 +12,24 @@ const FETCH_TIMEOUT_MS = 15_000;
 // Far above any article (a long one is a few hundred KB of HTML), and the
 // page is held in memory whole, so a link to a huge file must stop here.
 const MAX_PAGE_BYTES = 5 * 1024 * 1024;
+const MAX_REDIRECTS = 5;
+
+// The server fetches whatever link a visitor gives it and shows them the
+// text, so a link must not reach addresses only the server can: its own
+// machine, a private network, or a cloud metadata service. IPv4 rules also
+// match the same address written in IPv6's mapped form (::ffff:127.0.0.1).
+const privateRanges = new BlockList();
+for (const [address, prefix] of [
+  ["0.0.0.0", 8], ["10.0.0.0", 8], ["100.64.0.0", 10], ["127.0.0.0", 8], ["169.254.0.0", 16],
+  ["172.16.0.0", 12], ["192.0.0.0", 24], ["192.168.0.0", 16], ["198.18.0.0", 15], ["224.0.0.0", 3],
+] as const) {
+  privateRanges.addSubnet(address, prefix, "ipv4");
+}
+for (const [address, prefix] of [
+  ["::", 128], ["::1", 128], ["64:ff9b::", 96], ["fc00::", 7], ["fe80::", 10], ["ff00::", 8],
+] as const) {
+  privateRanges.addSubnet(address, prefix, "ipv6");
+}
 
 export async function extractUrl(url: string): Promise<{ chunks: RawChunk[]; title: string }> {
   const html = await fetchPage(url);
@@ -25,21 +45,61 @@ export async function extractUrl(url: string): Promise<{ chunks: RawChunk[]; tit
   return { chunks, title };
 }
 
+// Redirects are followed by hand so every hop is checked: a public page can
+// redirect to a private address. The check and the fetch each look the name
+// up, so a DNS server that answers differently the second time can still get
+// past it. Closing that needs control over the connection itself, which is
+// more than a notebook app's link fetcher warrants.
 async function fetchPage(url: string): Promise<string> {
+  const signal = AbortSignal.timeout(FETCH_TIMEOUT_MS);
   try {
-    const res = await fetch(url, {
-      headers: { "User-Agent": "Mozilla/5.0" },
-      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-    });
-    if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
-    checkContentType(res.headers.get("content-type"));
-    return await readLimited(res);
+    let current = new URL(url);
+    for (let redirects = 0; ; redirects++) {
+      await checkPublic(current);
+      const res = await fetch(current, {
+        headers: { "User-Agent": "Mozilla/5.0" },
+        redirect: "manual",
+        signal,
+      });
+      const location = res.headers.get("location");
+      if (res.status >= 300 && res.status < 400 && location) {
+        await res.body?.cancel();
+        if (redirects === MAX_REDIRECTS) throw new Error("That link redirects too many times.");
+        current = new URL(location, current);
+        continue;
+      }
+      if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+      checkContentType(res.headers.get("content-type"));
+      return await readLimited(res);
+    }
   } catch (err) {
     if (err instanceof Error && err.name === "TimeoutError") {
       throw new Error(`That page took too long to load (over ${FETCH_TIMEOUT_MS / 1000} seconds).`);
     }
     throw err;
   }
+}
+
+async function checkPublic(url: URL) {
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    throw new Error("Only http and https links can be added.");
+  }
+  // An IPv6 address keeps its brackets in the hostname.
+  const host = url.hostname.replace(/^\[|\]$/g, "");
+  let addresses: { address: string; family: number }[];
+  try {
+    addresses = await lookup(host, { all: true, verbatim: true });
+  } catch {
+    throw new Error(`Could not find the site ${host}.`);
+  }
+  const blocked = addresses.some(({ address, family }) => {
+    try {
+      return privateRanges.check(address, family === 6 ? "ipv6" : "ipv4");
+    } catch {
+      return true; // an address the check cannot read is not let through
+    }
+  });
+  if (blocked) throw new Error("That link points to a private network address, so it cannot be added.");
 }
 
 // A missing type is let through, since some servers leave it out on real

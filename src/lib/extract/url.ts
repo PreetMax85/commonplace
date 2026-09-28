@@ -65,11 +65,15 @@ async function fetchPage(url: string): Promise<string> {
       if (res.status >= 300 && res.status < 400 && location) {
         await res.body?.cancel();
         if (redirects === MAX_REDIRECTS) throw new Error("That link redirects too many times.");
-        current = new URL(location, current);
+        try {
+          current = new URL(location, current);
+        } catch {
+          throw new Error("That link redirects to an address that is not valid.");
+        }
         continue;
       }
       try {
-        if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+        if (!res.ok) throw new Error(statusMessage(res.status));
         checkContentType(res.headers.get("content-type"));
       } catch (err) {
         // Nothing more will be read, so the connection is freed now rather
@@ -83,8 +87,23 @@ async function fetchPage(url: string): Promise<string> {
     if (err instanceof Error && err.name === "TimeoutError") {
       throw new Error(`That page took too long to load (over ${FETCH_TIMEOUT_MS / 1000} seconds).`);
     }
+    // fetch reports every network failure (refused, reset, bad certificate)
+    // with this one message, and the detail means nothing to a visitor.
+    if (err instanceof TypeError && err.message === "fetch failed") {
+      throw new Error("Could not connect to that site.");
+    }
     throw err;
   }
+}
+
+// These reach the visitor as the reason the source failed. Many sites refuse
+// automated readers outright, and pasting the text is the way around that.
+function statusMessage(status: number): string {
+  if (status === 404 || status === 410) return `That page does not exist (status ${status}).`;
+  if (status === 401 || status === 403 || status === 429) {
+    return `That site refused the request (status ${status}). Some sites block automated reading, so try pasting the text instead.`;
+  }
+  return `That site answered with an error (status ${status}).`;
 }
 
 async function checkPublic(url: URL) {

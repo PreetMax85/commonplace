@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "node scripts/check-trace.mjs",
     "start": "next start",
     "eval": "node --env-file=.env.local eval/run.ts",
     "eval:check": "node --env-file=.env.local eval/check-labels.ts",

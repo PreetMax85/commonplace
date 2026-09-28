@@ -86,7 +86,8 @@ alter table chunks
 create index if not exists chunks_fts_idx on chunks using gin (fts);
 
 -- RPC for hybrid search: vector and keyword results merged by reciprocal rank
--- fusion (see migration 0006 for why each choice was made).
+-- fusion (see migration 0006 for why each choice was made, and 0009 for why
+-- each shortlist holds at least 20 candidates).
 create or replace function match_chunks_hybrid(
   query_text text,
   query_embedding vector(384),
@@ -116,7 +117,7 @@ as $$
     from chunks
     where chunks.notebook_id = match_notebook_id
     order by chunks.embedding <=> query_embedding
-    limit least(match_count, 30) * 2
+    limit greatest(least(match_count, 30) * 2, 20)
   ),
   keyword as (
     select
@@ -126,7 +127,7 @@ as $$
     where chunks.notebook_id = match_notebook_id
       and chunks.fts @@ query.q
     order by rank_ix
-    limit least(match_count, 30) * 2
+    limit greatest(least(match_count, 30) * 2, 20)
   )
   select
     chunks.id,

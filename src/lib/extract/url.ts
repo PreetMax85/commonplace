@@ -68,8 +68,15 @@ async function fetchPage(url: string): Promise<string> {
         current = new URL(location, current);
         continue;
       }
-      if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
-      checkContentType(res.headers.get("content-type"));
+      try {
+        if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+        checkContentType(res.headers.get("content-type"));
+      } catch (err) {
+        // Nothing more will be read, so the connection is freed now rather
+        // than left open until the timer fires.
+        await res.body?.cancel();
+        throw err;
+      }
       return await readLimited(res);
     }
   } catch (err) {

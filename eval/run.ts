@@ -14,7 +14,7 @@ import { execSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { supabaseAdmin } from "../src/lib/supabase.ts";
-import { embedText, EMBED_MODEL } from "../src/lib/llm.ts";
+import { embedText, EMBED_MODEL, ANSWER_PASSAGES } from "../src/lib/llm.ts";
 import { loadSet, resolveSources, matchingChunks, type Chunk } from "./lib.ts";
 
 const set = loadSet();
@@ -127,6 +127,24 @@ for (const [i, hybridResult] of results.hybrid.entries()) {
     if (r != null && r <= vectorReturned.length && vectorReturned[r - 1].chunk_id !== row.chunk_id) {
       throw new Error(`${hybridResult.id}: vector rank ${r} differs between match_chunks and match_chunks_hybrid`);
     }
+  }
+}
+
+// The app asks for ANSWER_PASSAGES chunks, not match_count, so the eval only
+// measures what users get if asking for fewer chunks returns the same order.
+for (const [i, q] of set.questions.entries()) {
+  const embedding = await embedText(q.question);
+  const { data, error } = await supabaseAdmin.rpc("match_chunks_hybrid", {
+    query_text: q.question,
+    query_embedding: embedding,
+    match_notebook_id: set.notebook_id,
+    match_count: ANSWER_PASSAGES,
+  });
+  if (error) throw new Error(`hybrid search failed: ${error.message}`);
+  const app = (data as Row[]).map((m) => m.id).join();
+  const evaluated = results.hybrid[i].returned.slice(0, ANSWER_PASSAGES).map((r) => r.chunk_id).join();
+  if (app !== evaluated) {
+    throw new Error(`${q.id}: the app's top ${ANSWER_PASSAGES} differs from the eval's. Has migration 0009 been run?`);
   }
 }
 
